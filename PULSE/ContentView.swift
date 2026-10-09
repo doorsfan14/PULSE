@@ -436,18 +436,18 @@ struct ContentView: View {
                     // A full-width profile banner, not a card.
                     Rectangle()
                         .fill(Color.accentColor.opacity(0.28))
-                        .frame(height: 150)
+                        .frame(height: 112)
                         .accessibilityLabel("Profile banner")
 
                     HStack(alignment: .top) {
                         Image(systemName: "person.crop.circle.fill")
-                            .font(.system(size: 82))
+                            .font(.system(size: 76))
                             .symbolRenderingMode(.hierarchical)
                             .foregroundStyle(.secondary)
                             .background(.background, in: Circle())
-                            .overlay(Circle().stroke(.background, lineWidth: 4))
-                            .offset(y: -34)
-                            .padding(.bottom, -34)
+                            .overlay(Circle().stroke(.background, lineWidth: 2))
+                            .offset(y: -28)
+                            .padding(.bottom, -28)
 
                         Spacer()
 
@@ -487,7 +487,7 @@ struct ContentView: View {
                         .padding(.top, 8)
                     }
                     .padding(.horizontal, 16)
-                    .padding(.bottom, 14)
+                    .padding(.bottom, 18)
 
                     Divider()
 
@@ -497,6 +497,8 @@ struct ContentView: View {
                         profileSectionButton("Media")
                         profileSectionButton("Likes")
                     }
+                    .padding(.vertical, 8)
+                    .frame(minHeight: 52)
 
                     Divider()
 
@@ -557,6 +559,7 @@ struct ContentView: View {
                 }
             }
             .background(.background)
+            .ignoresSafeArea(edges: .top)
             .toolbar(.hidden, for: .navigationBar)
         }
     }
@@ -565,7 +568,7 @@ struct ContentView: View {
         Button {
             selectedProfileSection = section
         } label: {
-            VStack(spacing: 10) {
+            VStack(spacing: 8) {
                 Text(section)
                     .font(.subheadline.weight(selectedProfileSection == section ? .semibold : .regular))
                     .foregroundStyle(selectedProfileSection == section ? .primary : .secondary)
@@ -573,7 +576,7 @@ struct ContentView: View {
                     .fill(selectedProfileSection == section ? Color.accentColor : .clear)
                     .frame(height: 3)
             }
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, minHeight: 36)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
