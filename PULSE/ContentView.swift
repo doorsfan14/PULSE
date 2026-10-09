@@ -436,7 +436,7 @@ struct ContentView: View {
                     // A full-width profile banner, not a card.
                     Rectangle()
                         .fill(Color.accentColor.opacity(0.28))
-                        .frame(height: 112)
+                        .frame(height: 140)
                         .accessibilityLabel("Profile banner")
 
                     HStack(alignment: .top) {
@@ -568,16 +568,18 @@ struct ContentView: View {
         Button {
             selectedProfileSection = section
         } label: {
-            VStack(spacing: 8) {
-                Text(section)
-                    .font(.subheadline.weight(selectedProfileSection == section ? .semibold : .regular))
-                    .foregroundStyle(selectedProfileSection == section ? .primary : .secondary)
-                Capsule()
-                    .fill(selectedProfileSection == section ? Color.accentColor : .clear)
-                    .frame(height: 3)
-            }
-            .frame(maxWidth: .infinity, minHeight: 36)
-            .contentShape(Rectangle())
+            Text(section)
+                .font(.subheadline.weight(selectedProfileSection == section ? .semibold : .regular))
+                .foregroundStyle(selectedProfileSection == section ? .primary : .secondary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 9)
+                .frame(maxWidth: .infinity)
+                .background {
+                    if selectedProfileSection == section {
+                        Capsule().fill(Color.accentColor.opacity(0.14))
+                    }
+                }
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
