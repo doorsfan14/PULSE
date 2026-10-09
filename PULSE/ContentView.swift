@@ -55,70 +55,167 @@ struct ContentView: View {
     }
 
     private var welcomeScreen: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Spacer()
+        ZStack {
+            Color(uiColor: .systemBackground)
+                .ignoresSafeArea()
 
-            ZStack {
-                RoundedRectangle(cornerRadius: 30)
+            GeometryReader { geometry in
+                Circle()
                     .fill(Color.accentColor.opacity(0.12))
-                    .frame(width: 104, height: 104)
-                Image(systemName: "waveform")
-                    .font(.system(size: 46, weight: .semibold))
-                    .foregroundStyle(.tint)
+                    .frame(width: 260, height: 260)
+                    .blur(radius: 70)
+                    .offset(x: geometry.size.width * 0.38, y: -90)
+
+                Circle()
+                    .fill(Color.purple.opacity(0.09))
+                    .frame(width: 220, height: 220)
+                    .blur(radius: 70)
+                    .offset(x: -110, y: geometry.size.height * 0.38)
             }
-            .padding(.bottom, 32)
+            .ignoresSafeArea()
+            .accessibilityHidden(true)
 
-            Text("PULSE")
-                .font(.system(size: 16, weight: .bold, design: .rounded))
-                .tracking(4)
-                .foregroundStyle(.tint)
-                .padding(.bottom, 12)
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(spacing: 11) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 13, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color.accentColor, Color.accentColor.opacity(0.72)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 42, height: 42)
+                        Image(systemName: "waveform")
+                            .font(.system(size: 21, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
 
-            Text("Connect in\none place.")
-                .font(.system(size: 38, weight: .bold))
-                .tracking(-1.2)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.bottom, 14)
+                    Text("PULSE")
+                        .font(.system(size: 19, weight: .heavy, design: .rounded))
+                        .tracking(2.4)
 
-            Text("A place to share what's on your mind, discover new perspectives, and join the conversation.")
-                .font(.title3)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+                    Spacer()
 
-            Spacer()
-            Spacer()
+                    Text("SOCIAL")
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .tracking(1.5)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 11)
+                        .padding(.vertical, 7)
+                        .background(Color.secondary.opacity(0.09), in: Capsule())
+                }
+                .padding(.top, 12)
 
-            Button {
-                screen = .createAccount
-            } label: {
-                Text("Create account")
+                Spacer(minLength: 32)
+
+                ZStack {
+                    RoundedRectangle(cornerRadius: 34, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color.accentColor.opacity(0.17),
+                                    Color.purple.opacity(0.10),
+                                    Color.accentColor.opacity(0.04)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+
+                    Circle()
+                        .stroke(Color.accentColor.opacity(0.16), lineWidth: 1)
+                        .frame(width: 190, height: 190)
+
+                    Circle()
+                        .stroke(Color.accentColor.opacity(0.12), lineWidth: 1)
+                        .frame(width: 138, height: 138)
+
+                    RoundedRectangle(cornerRadius: 25, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.accentColor, Color.accentColor.opacity(0.72)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 92, height: 92)
+                        .shadow(color: Color.accentColor.opacity(0.25), radius: 22, y: 10)
+
+                    Image(systemName: "waveform")
+                        .font(.system(size: 43, weight: .semibold))
+                        .foregroundStyle(.white)
+
+                    Circle()
+                        .fill(Color(uiColor: .systemBackground))
+                        .frame(width: 15, height: 15)
+                        .overlay(Circle().stroke(Color.accentColor.opacity(0.45), lineWidth: 4))
+                        .offset(x: 79, y: -63)
+
+                    Circle()
+                        .fill(Color.accentColor.opacity(0.8))
+                        .frame(width: 8, height: 8)
+                        .offset(x: -88, y: 49)
+                }
+                .frame(height: 250)
+                .clipShape(RoundedRectangle(cornerRadius: 34, style: .continuous))
+                .padding(.bottom, 34)
+                .accessibilityHidden(true)
+
+                Text("Connect in\none place.")
+                    .font(.system(size: 42, weight: .bold, design: .rounded))
+                    .tracking(-1.7)
+                    .lineSpacing(-2)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.bottom, 15)
+
+                Text("Your conversations, your interests, your people — all together on PULSE.")
+                    .font(.system(size: 17))
+                    .foregroundStyle(.secondary)
+                    .lineSpacing(4)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Spacer(minLength: 28)
+
+                Button {
+                    screen = .createAccount
+                } label: {
+                    HStack(spacing: 10) {
+                        Text("Get started")
+                        Image(systemName: "arrow.right")
+                            .font(.subheadline.weight(.semibold))
+                    }
                     .font(.headline)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 54)
-            }
-            .buttonStyle(.borderedProminent)
+                    .frame(height: 56)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
 
-            Button {
-                screen = .signIn
-            } label: {
-                Text("I already have an account")
-                    .font(.headline)
+                Button {
+                    screen = .signIn
+                } label: {
+                    HStack(spacing: 5) {
+                        Text("Already on PULSE?")
+                            .foregroundStyle(.secondary)
+                        Text("Sign in")
+                            .fontWeight(.semibold)
+                    }
+                    .font(.subheadline)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 54)
+                    .frame(height: 50)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 5)
+                .padding(.bottom, 10)
             }
-            .buttonStyle(.plain)
-            .padding(.top, 8)
-
-            Text("A new space for your voice.")
-                .font(.footnote)
-                .foregroundStyle(.tertiary)
-                .frame(maxWidth: .infinity)
-                .padding(.top, 18)
-                .padding(.bottom, 18)
+            .padding(.horizontal, 25)
+            .frame(maxWidth: 520)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .padding(.horizontal, 26)
-        .frame(maxWidth: 520)
-        .frame(maxWidth: .infinity)
     }
 
     private var createAccountScreen: some View {
