@@ -1,5 +1,6 @@
 import SwiftUI
 import CoreMotion
+import UIKit
 
 private enum AuthScreen {
     case welcome
@@ -123,7 +124,6 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
-            .ignoresSafeArea(.container, edges: .all)
             .clipped()
             .onAppear {
                 motion.start()
@@ -134,6 +134,7 @@ struct ContentView: View {
                 titleTask?.cancel()
             }
         }
+        .ignoresSafeArea(.container, edges: .all)
     }
 
     private func welcomeButton(
@@ -154,12 +155,12 @@ struct ContentView: View {
                             LinearGradient(
                                 colors: brighter
                                     ? [
-                                        Color(red: 0.035, green: 0.085, blue: 0.20),
-                                        Color(red: 0.012, green: 0.027, blue: 0.075)
+                                        Color(red: 0.012, green: 0.027, blue: 0.075),
+                                        Color(red: 0.035, green: 0.085, blue: 0.20)
                                     ]
                                     : [
-                                        Color(red: 0.025, green: 0.060, blue: 0.15),
-                                        Color(red: 0.010, green: 0.020, blue: 0.060)
+                                        Color(red: 0.010, green: 0.020, blue: 0.060),
+                                        Color(red: 0.025, green: 0.060, blue: 0.15)
                                     ],
                                 startPoint: .top,
                                 endPoint: .bottom
@@ -196,7 +197,7 @@ struct ContentView: View {
                         )
                 }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(WelcomeBounceButtonStyle())
     }
 
     private func startTypewriter() {
@@ -206,6 +207,9 @@ struct ContentView: View {
             for character in welcomeTitle {
                 guard !Task.isCancelled else { return }
                 typedTitle.append(character)
+                let haptic = UIImpactFeedbackGenerator(style: .soft)
+                haptic.prepare()
+                haptic.impactOccurred(intensity: 0.35)
                 try? await Task.sleep(for: .milliseconds(52))
             }
         }
@@ -462,6 +466,17 @@ struct ContentView: View {
     private func showBackendNotice(_ feature: String) {
         message = "\(feature) is designed in the interface, but it won't work until PULSE is connected to an authentication backend. Passkeys also need server-generated challenges and a registered relying-party domain."
         showMessage = true
+    }
+}
+
+private struct WelcomeBounceButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.94 : 1.0)
+            .animation(
+                .spring(response: 0.26, dampingFraction: 0.48),
+                value: configuration.isPressed
+            )
     }
 }
 
