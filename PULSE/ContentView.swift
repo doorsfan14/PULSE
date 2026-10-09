@@ -59,6 +59,14 @@ private struct PulseActivity: Identifiable {
     let symbol: String
 }
 
+private struct PulseConversation: Identifiable {
+    let id: String
+    let name: String
+    let username: String
+    let preview: String
+    let time: String
+}
+
 private enum PulseFeed: String, CaseIterable, Identifiable {
     case forYou = "For You"
     case following = "Following"
@@ -102,6 +110,11 @@ struct ContentView: View {
         PulseActivity(name: "Kai Bennett", username: "kaiplays", action: "started following you", date: "22m", symbol: "person.badge.plus"),
         PulseActivity(name: "Ari Sol", username: "arisol", action: "replied to a conversation", date: "1h", symbol: "bubble.left"),
         PulseActivity(name: "Noah Rivera", username: "noahdraws", action: "mentioned you in a post", date: "3h", symbol: "at")
+    ]
+    private let conversations: [PulseConversation] = [
+        PulseConversation(id: "mikamakes", name: "Mika Torres", username: "mikamakes", preview: "That new post was so good!", time: "2m"),
+        PulseConversation(id: "kaiplays", name: "Kai Bennett", username: "kaiplays", preview: "Are you playing later?", time: "18m"),
+        PulseConversation(id: "arisol", name: "Ari Sol", username: "arisol", preview: "Sent you a photo", time: "1h")
     ]
 
     var body: some View {
@@ -360,11 +373,7 @@ struct ContentView: View {
     private var messagesTab: some View {
         NavigationStack {
             List {
-                ForEach([
-                    ("Mika Torres", "mikamakes", "That new post was so good!", "2m"),
-                    ("Kai Bennett", "kaiplays", "Are you playing later?", "18m"),
-                    ("Ari Sol", "arisol", "Sent you a photo", "1h")
-                ], id: \.1) { conversation in
+                ForEach(conversations) { conversation in
                     Button {
                         statusMessage = "Messaging is a local demo and isn't connected to a server yet."
                         showStatus = true
@@ -375,18 +384,18 @@ struct ContentView: View {
                                 .foregroundStyle(.secondary)
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack {
-                                    Text(conversation.0)
+                                    Text(conversation.name)
                                         .font(.subheadline.weight(.semibold))
                                         .foregroundStyle(.primary)
                                     Text("@\(conversation.1)")
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                     Spacer()
-                                    Text(conversation.3)
+                                    Text(conversation.time)
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 }
-                                Text(conversation.2)
+                                Text(conversation.preview)
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
                                     .lineLimit(2)
