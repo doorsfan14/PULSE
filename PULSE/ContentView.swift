@@ -193,12 +193,12 @@ struct ContentView: View {
                                     .init(color: Color(red: 0.55, green: 0.80, blue: 1).opacity(0.68), location: 1)
                                 ],
                                 startPoint: UnitPoint(
-                                    x: 0.5 + motion.roll * 0.20,
-                                    y: 0.0 + motion.pitch * 0.10
+                                    x: 0.5 + CGFloat(motion.roll) * 0.20,
+                                    y: 0.0 + CGFloat(motion.pitch) * 0.10
                                 ),
                                 endPoint: UnitPoint(
-                                    x: 0.5 - motion.roll * 0.20,
-                                    y: 1.0 - motion.pitch * 0.10
+                                    x: 0.5 - CGFloat(motion.roll) * 0.20,
+                                    y: 1.0 - CGFloat(motion.pitch) * 0.10
                                 )
                             ),
                             lineWidth: 1
