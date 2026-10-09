@@ -433,6 +433,18 @@ struct ContentView: View {
         NavigationStack {
             List {
                 Section {
+                    Rectangle()
+                        .fill(Color.accentColor.opacity(0.28))
+                        .frame(height: 140)
+                        .overlay(alignment: .bottomLeading) {
+                            Text(" ")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .listRowInsets(EdgeInsets())
+                        .listRowSeparator(.hidden)
+                }
+
+                Section {
                     HStack(spacing: 12) {
                         Image(systemName: "person.crop.circle.fill")
                             .font(.system(size: 58))
@@ -494,25 +506,9 @@ struct ContentView: View {
                     }
                 }
 
-                Section("Account") {
-                    Button {
-                        showSettings = true
-                    } label: {
-                        Label("Settings", systemImage: "gearshape")
-                    }
-                }
             }
-            .listStyle(.insetGrouped)
+            .listStyle(.plain)
             .navigationTitle("Profile")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showSettings = true
-                    } label: {
-                        Image(systemName: "gearshape")
-                    }
-                }
-            }
         }
     }
 
