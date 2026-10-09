@@ -18,7 +18,7 @@ struct ContentView: View {
     @State private var showPassword = false
     @State private var showMessage = false
     @State private var message = ""
-    @State private var welcomeAppeared = false
+    @State private var highlightProgress: CGFloat = -1.2
 
     private var passwordsMatch: Bool {
         !password.isEmpty && password == confirmPassword
@@ -62,36 +62,60 @@ struct ContentView: View {
                 .font(.system(size: 39, weight: .bold, design: .rounded))
                 .tracking(-1.6)
                 .fixedSize(horizontal: false, vertical: true)
-                .opacity(welcomeAppeared ? 1 : 0)
-                .offset(y: welcomeAppeared ? 0 : 10)
-                .animation(.spring(response: 0.55, dampingFraction: 0.86), value: welcomeAppeared)
 
             Spacer()
 
             VStack(spacing: 12) {
                 Button {
-                    withAnimation(.spring(response: 0.32, dampingFraction: 0.78)) {
+                    withAnimation(.spring(response: 0.38, dampingFraction: 0.76)) {
                         screen = .createAccount
                     }
                 } label: {
                     Text("Create account")
                         .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(.primary)
                         .frame(maxWidth: .infinity)
                         .frame(height: 48)
                         .contentShape(Capsule())
+                        .background(.ultraThinMaterial, in: Capsule())
+                        .overlay {
+                            Capsule()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.accentColor.opacity(0.30),
+                                            Color.accentColor.opacity(0.13),
+                                            Color.primary.opacity(0.035)
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                        }
+                        .overlay {
+                            Capsule()
+                                .strokeBorder(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.white.opacity(0.88),
+                                            Color.accentColor.opacity(0.58),
+                                            Color.white.opacity(0.20)
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 1
+                                )
+                        }
+                        .overlay {
+                            pillHighlight
+                        }
+                        .clipShape(Capsule())
                 }
                 .buttonStyle(.plain)
-                .background(.ultraThinMaterial, in: Capsule())
-                .overlay {
-                    Capsule()
-                        .stroke(Color.primary.opacity(0.26), lineWidth: 1)
-                }
-                .opacity(welcomeAppeared ? 1 : 0)
-                .offset(y: welcomeAppeared ? 0 : 8)
-                .animation(.spring(response: 0.55, dampingFraction: 0.86).delay(0.08), value: welcomeAppeared)
 
                 Button {
-                    withAnimation(.spring(response: 0.32, dampingFraction: 0.78)) {
+                    withAnimation(.spring(response: 0.38, dampingFraction: 0.76)) {
                         screen = .signIn
                     }
                 } label: {
@@ -101,16 +125,42 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 48)
                         .contentShape(Capsule())
+                        .background(.ultraThinMaterial, in: Capsule())
+                        .overlay {
+                            Capsule()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.accentColor.opacity(0.17),
+                                            Color.primary.opacity(0.025),
+                                            Color.white.opacity(0.11)
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                        }
+                        .overlay {
+                            Capsule()
+                                .strokeBorder(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.white.opacity(0.70),
+                                            Color.primary.opacity(0.16),
+                                            Color.accentColor.opacity(0.38)
+                                        ],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 1
+                                )
+                        }
+                        .overlay {
+                            pillHighlight
+                        }
+                        .clipShape(Capsule())
                 }
                 .buttonStyle(.plain)
-                .background(.ultraThinMaterial, in: Capsule())
-                .overlay {
-                    Capsule()
-                        .stroke(Color.primary.opacity(0.15), lineWidth: 1)
-                }
-                .opacity(welcomeAppeared ? 1 : 0)
-                .offset(y: welcomeAppeared ? 0 : 8)
-                .animation(.spring(response: 0.55, dampingFraction: 0.86).delay(0.14), value: welcomeAppeared)
             }
             .frame(maxWidth: 320)
             .frame(maxWidth: .infinity)
@@ -123,13 +173,32 @@ struct ContentView: View {
         .frame(maxWidth: 480)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .onAppear {
-            withAnimation {
-                welcomeAppeared = true
+            highlightProgress = -1.2
+            withAnimation(.linear(duration: 2.4).repeatForever(autoreverses: false)) {
+                highlightProgress = 1.2
             }
         }
-        .onDisappear {
-            welcomeAppeared = false
+    }
+
+    private var pillHighlight: some View {
+        GeometryReader { geometry in
+            LinearGradient(
+                colors: [
+                    .clear,
+                    Color.white.opacity(0.42),
+                    Color.white.opacity(0.12),
+                    .clear
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(width: geometry.size.width * 0.34)
+            .rotationEffect(.degrees(20))
+            .offset(x: geometry.size.width * highlightProgress)
+            .blendMode(.screen)
         }
+        .clipShape(Capsule())
+        .allowsHitTesting(false)
     }
 
     private var createAccountScreen: some View {
