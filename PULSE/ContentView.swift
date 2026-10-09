@@ -80,6 +80,7 @@ struct ContentView: View {
     @State private var followedUsers: Set<String> = ["alexm"]
     @State private var savedPostIDs: Set<UUID> = []
     @State private var showSettings = false
+    @State private var showProfile = false
     @State private var showComposer = false
     @State private var composerText = ""
     @State private var replyTarget: PulsePost?
@@ -106,20 +107,17 @@ struct ContentView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             homeTab
-                .tabItem { Label("Home", systemImage: "house") }
+                .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
             exploreTab
-                .tabItem { Label("Explore", systemImage: "magnifyingglass") }
+                .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(1)
-            createTab
-                .tabItem { Label("Create", systemImage: "plus.square") }
-                .tag(2)
             activityTab
-                .tabItem { Label("Activity", systemImage: "heart") }
+                .tabItem { Label("Notifications", systemImage: "bell") }
+                .tag(2)
+            messagesTab
+                .tabItem { Label("Messages", systemImage: "envelope") }
                 .tag(3)
-            profileTab
-                .tabItem { Label("Profile", systemImage: "person.crop.circle") }
-                .tag(4)
         }
         .sheet(isPresented: $showComposer) {
             composeSheet
@@ -129,6 +127,9 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showSettings) {
             settingsSheet
+        }
+        .sheet(isPresented: $showProfile) {
+            profileTab
         }
         .alert("PULSE", isPresented: $showStatus) {
             Button("OK", role: .cancel) { }
@@ -140,49 +141,43 @@ struct ContentView: View {
     private var homeTab: some View {
         NavigationStack {
             List {
-                Section {
-                    Picker("Feed", selection: $selectedFeed) {
-                        ForEach(PulseFeed.allCases) { feed in
-                            Text(feed.rawValue).tag(feed)
-                        }
+                Picker("Feed", selection: $selectedFeed) {
+                    ForEach(PulseFeed.allCases) { feed in
+                        Text(feed.rawValue).tag(feed)
                     }
-                    .pickerStyle(.segmented)
                 }
+                .pickerStyle(.segmented)
+                .listRowSeparator(.hidden)
 
-                if selectedFeed == .following {
-                    let followedPosts = posts.filter { followedUsers.contains($0.username) || $0.username == "alexm" }
-                    if followedPosts.isEmpty {
-                        ContentUnavailableView(
-                            "Your feed is quiet",
-                            systemImage: "person.2",
-                            description: Text("Follow people in Explore to see their posts here.")
-                        )
-                    } else {
-                        ForEach(followedPosts) { post in
-                            postCell(post)
-                        }
-                    }
+                let visiblePosts = selectedFeed == .following
+                    ? posts.filter { followedUsers.contains($0.username) || $0.username == "alexm" }
+                    : posts
+
+                if visiblePosts.isEmpty {
+                    ContentUnavailableView(
+                        "Your feed is quiet",
+                        systemImage: "person.2",
+                        description: Text("Follow people in Search to see their posts here.")
+                    )
+                    .listRowSeparator(.hidden)
                 } else {
-                    Section("Latest posts") {
-                        ForEach(posts) { post in
-                            postCell(post)
-                        }
+                    ForEach(visiblePosts) { post in
+                        postCell(post)
                     }
                 }
             }
             .listStyle(.plain)
             .navigationTitle("PULSE")
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showComposer = true
-                        composerText = ""
-                    } label: {
-                        Image(systemName: "square.and.pencil")
-                    }
-                    .accessibilityLabel("Write a post")
-                }
                 ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showProfile = true
+                    } label: {
+                        Image(systemName: "person.crop.circle")
+                    }
+                    .accessibilityLabel("Profile")
+                }
+                ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showSettings = true
                     } label: {
@@ -194,6 +189,20 @@ struct ContentView: View {
             .refreshable {
                 statusMessage = "You're all caught up."
                 showStatus = true
+            }
+            .overlay(alignment: .bottomTrailing) {
+                Button {
+                    composerText = ""
+                    showComposer = true
+                } label: {
+                    Image(systemName: "square.and.pencil")
+                        .font(.title2)
+                        .frame(width: 54, height: 54)
+                }
+                .buttonStyle(.borderedProminent)
+                .clipShape(Circle())
+                .padding()
+                .accessibilityLabel("Write a post")
             }
         }
     }
@@ -345,6 +354,67 @@ struct ContentView: View {
             }
             .listStyle(.insetGrouped)
             .navigationTitle("Activity")
+        }
+    }
+
+    private var messagesTab: some View {
+        NavigationStack {
+            List {
+                ForEach([
+                    ("Mika Torres", "mikamakes", "That new post was so good!", "2m"),
+                    ("Kai Bennett", "kaiplays", "Are you playing later?", "18m"),
+                    ("Ari Sol", "arisol", "Sent you a photo", "1h")
+                ], id: \.1) { conversation in
+                    Button {
+                        statusMessage = "Messaging is a local demo and isn't connected to a server yet."
+                        showStatus = true
+                    } label: {
+                        HStack(alignment: .top, spacing: 12) {
+                            Image(systemName: "person.crop.circle.fill")
+                                .font(.largeTitle)
+                                .foregroundStyle(.secondary)
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack {
+                                    Text(conversation.0)
+                                        .font(.subheadline.weight(.semibold))
+                                        .foregroundStyle(.primary)
+                                    Text("@\(conversation.1)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                    Spacer()
+                                    Text(conversation.3)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Text(conversation.2)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(2)
+                            }
+                        }
+                        .padding(.vertical, 5)
+                    }
+                    .buttonStyle(.plain)
+                }
+                Section {
+                    Text("Direct messages are sample conversations in this demo.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .listStyle(.plain)
+            .navigationTitle("Messages")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        statusMessage = "New messages will be available when messaging is connected."
+                        showStatus = true
+                    } label: {
+                        Image(systemName: "envelope.badge")
+                    }
+                    .accessibilityLabel("New message")
+                }
+            }
         }
     }
 
