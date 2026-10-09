@@ -18,6 +18,7 @@ struct ContentView: View {
     @State private var showPassword = false
     @State private var showMessage = false
     @State private var message = ""
+    @State private var welcomeAppeared = false
 
     private var passwordsMatch: Bool {
         !password.isEmpty && password == confirmPassword
@@ -43,7 +44,6 @@ struct ContentView: View {
                     signInScreen
                 }
             }
-            .background(Color(uiColor: .systemBackground))
             .toolbar(.hidden, for: .navigationBar)
             .animation(.easeInOut(duration: 0.2), value: screen == .welcome)
             .alert("PULSE", isPresented: $showMessage) {
@@ -55,43 +55,81 @@ struct ContentView: View {
     }
 
     private var welcomeScreen: some View {
-        VStack(spacing: 14) {
-            Button {
-                screen = .createAccount
-            } label: {
-                Text("Create account")
-                    .font(.system(size: 17, weight: .semibold))
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .contentShape(Capsule())
-            }
-            .buttonStyle(.plain)
-            .background(.ultraThinMaterial, in: Capsule())
-            .overlay {
-                Capsule()
-                    .stroke(Color.primary.opacity(0.24), lineWidth: 1)
-            }
+        VStack(alignment: .leading, spacing: 0) {
+            Spacer()
 
-            Button {
-                screen = .signIn
-            } label: {
-                Text("Log in")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(.primary)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .contentShape(Capsule())
+            Text("Connect in one place.")
+                .font(.system(size: 39, weight: .bold, design: .rounded))
+                .tracking(-1.6)
+                .fixedSize(horizontal: false, vertical: true)
+                .opacity(welcomeAppeared ? 1 : 0)
+                .offset(y: welcomeAppeared ? 0 : 10)
+                .animation(.spring(response: 0.55, dampingFraction: 0.86), value: welcomeAppeared)
+
+            Spacer()
+
+            VStack(spacing: 12) {
+                Button {
+                    withAnimation(.spring(response: 0.32, dampingFraction: 0.78)) {
+                        screen = .createAccount
+                    }
+                } label: {
+                    Text("Create account")
+                        .font(.system(size: 17, weight: .semibold))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                        .contentShape(Capsule())
+                }
+                .buttonStyle(.plain)
+                .background(.ultraThinMaterial, in: Capsule())
+                .overlay {
+                    Capsule()
+                        .stroke(Color.primary.opacity(0.26), lineWidth: 1)
+                }
+                .opacity(welcomeAppeared ? 1 : 0)
+                .offset(y: welcomeAppeared ? 0 : 8)
+                .animation(.spring(response: 0.55, dampingFraction: 0.86).delay(0.08), value: welcomeAppeared)
+
+                Button {
+                    withAnimation(.spring(response: 0.32, dampingFraction: 0.78)) {
+                        screen = .signIn
+                    }
+                } label: {
+                    Text("Log in")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(.primary)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                        .contentShape(Capsule())
+                }
+                .buttonStyle(.plain)
+                .background(.ultraThinMaterial, in: Capsule())
+                .overlay {
+                    Capsule()
+                        .stroke(Color.primary.opacity(0.15), lineWidth: 1)
+                }
+                .opacity(welcomeAppeared ? 1 : 0)
+                .offset(y: welcomeAppeared ? 0 : 8)
+                .animation(.spring(response: 0.55, dampingFraction: 0.86).delay(0.14), value: welcomeAppeared)
             }
-            .buttonStyle(.plain)
-            .background(.ultraThinMaterial, in: Capsule())
-            .overlay {
-                Capsule()
-                    .stroke(Color.primary.opacity(0.14), lineWidth: 1)
-            }
+            .frame(maxWidth: 320)
+            .frame(maxWidth: .infinity)
+            .padding(.bottom, 22)
+
+            Spacer()
+                .frame(maxHeight: 18)
         }
         .padding(.horizontal, 28)
-        .frame(maxWidth: 340)
+        .frame(maxWidth: 480)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear {
+            withAnimation {
+                welcomeAppeared = true
+            }
+        }
+        .onDisappear {
+            welcomeAppeared = false
+        }
     }
 
     private var createAccountScreen: some View {
