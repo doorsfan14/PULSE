@@ -55,71 +55,43 @@ struct ContentView: View {
     }
 
     private var welcomeScreen: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Spacer()
+        VStack(spacing: 14) {
+            Button {
+                screen = .createAccount
+            } label: {
+                Text("Create account")
+                    .font(.system(size: 17, weight: .semibold))
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .contentShape(Capsule())
+            }
+            .buttonStyle(.plain)
+            .background(.ultraThinMaterial, in: Capsule())
+            .overlay {
+                Capsule()
+                    .stroke(Color.primary.opacity(0.24), lineWidth: 1)
+            }
 
-            HStack(spacing: 12) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .fill(Color.accentColor)
-                        .frame(width: 48, height: 48)
-                    Image(systemName: "waveform")
-                        .font(.system(size: 23, weight: .bold))
-                        .foregroundStyle(.white)
-                }
-
-                Text("PULSE")
-                    .font(.system(size: 25, weight: .heavy, design: .rounded))
-                    .tracking(2)
+            Button {
+                screen = .signIn
+            } label: {
+                Text("Log in")
+                    .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(.primary)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .contentShape(Capsule())
             }
-            .padding(.bottom, 38)
-
-            Text("Connect in one place.")
-                .font(.system(size: 39, weight: .bold, design: .rounded))
-                .tracking(-1.6)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.bottom, 14)
-
-            Text("Share what matters. Find your people.")
-                .font(.system(size: 17))
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-
-            Spacer()
-
-            VStack(spacing: 12) {
-                Button {
-                    screen = .createAccount
-                } label: {
-                    Text("Create account")
-                        .font(.system(size: 17, weight: .semibold))
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 56)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-
-                Button {
-                    screen = .signIn
-                } label: {
-                    Text("Log in")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(.primary)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 56)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .buttonStyle(.plain)
+            .background(.ultraThinMaterial, in: Capsule())
+            .overlay {
+                Capsule()
+                    .stroke(Color.primary.opacity(0.14), lineWidth: 1)
             }
-            .padding(.bottom, 18)
         }
-        .padding(.horizontal, 26)
-        .frame(maxWidth: 480)
+        .padding(.horizontal, 28)
+        .frame(maxWidth: 340)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(uiColor: .systemBackground))
     }
 
     private var createAccountScreen: some View {
