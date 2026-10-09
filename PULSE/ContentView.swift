@@ -74,7 +74,7 @@ struct ContentView: View {
                 .foregroundStyle(.tint)
                 .padding(.bottom, 12)
 
-            Text("Your people.\nYour point of view.")
+            Text("Connect in\none place.")
                 .font(.system(size: 38, weight: .bold))
                 .tracking(-1.2)
                 .fixedSize(horizontal: false, vertical: true)
