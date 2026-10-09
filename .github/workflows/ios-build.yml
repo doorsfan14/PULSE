@@ -1,4 +1,4 @@
-name: iOS build
+name: iOS build and IPA
 
 on:
   push:
@@ -24,3 +24,34 @@ jobs:
             -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO \
             build
+
+      - name: Build unsigned iOS device app
+        run: |
+          xcodebuild \
+            -project PULSE.xcodeproj \
+            -scheme PULSE \
+            -sdk iphoneos \
+            -configuration Debug \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Package unsigned IPA
+        run: |
+          APP_PATH="build/Build/Products/Debug-iphoneos/PULSE.app"
+          test -d "$APP_PATH"
+          mkdir -p ipa/Payload
+          cp -R "$APP_PATH" ipa/Payload/PULSE.app
+          cd ipa
+          /usr/bin/zip -qry ../PULSE-unsigned.ipa Payload
+          cd ..
+          test -s PULSE-unsigned.ipa
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PULSE-unsigned-IPA
+          path: PULSE-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 14
