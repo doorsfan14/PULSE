@@ -40,18 +40,30 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
+            ZStack {
                 switch screen {
                 case .welcome:
                     welcomeScreen
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .leading).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
                 case .createAccount:
                     createAccountScreen
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .trailing).combined(with: .opacity)
+                        ))
                 case .signIn:
                     signInScreen
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .trailing).combined(with: .opacity)
+                        ))
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .toolbar(.hidden, for: .navigationBar)
-            .animation(.easeInOut(duration: 0.2), value: screen == .welcome)
             .alert("PULSE", isPresented: $showMessage) {
                 Button("OK", role: .cancel) { }
             } message: {
@@ -155,12 +167,12 @@ struct ContentView: View {
                             LinearGradient(
                                 colors: brighter
                                     ? [
-                                        Color(red: 0.012, green: 0.027, blue: 0.075),
-                                        Color(red: 0.035, green: 0.085, blue: 0.20)
+                                        Color(red: 0.012, green: 0.020, blue: 0.043),
+                                        Color(red: 0.032, green: 0.043, blue: 0.075)
                                     ]
                                     : [
-                                        Color(red: 0.010, green: 0.020, blue: 0.060),
-                                        Color(red: 0.025, green: 0.060, blue: 0.15)
+                                        Color(red: 0.010, green: 0.016, blue: 0.036),
+                                        Color(red: 0.023, green: 0.030, blue: 0.055)
                                     ],
                                 startPoint: .top,
                                 endPoint: .bottom
@@ -396,7 +408,9 @@ struct ContentView: View {
 
     private var backButton: some View {
         Button {
-            screen = .welcome
+            withAnimation(.spring(response: 0.42, dampingFraction: 0.88)) {
+                screen = .welcome
+            }
         } label: {
             Label("Back", systemImage: "chevron.left")
                 .font(.body.weight(.medium))
