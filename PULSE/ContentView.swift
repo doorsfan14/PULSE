@@ -281,7 +281,7 @@ struct ContentView: View {
                 }
             }
             .listStyle(.plain)
-            .navigationTitle("Explore")
+            .toolbar(.hidden, for: .navigationBar)
         }
     }
 
@@ -326,7 +326,7 @@ struct ContentView: View {
                     Text("This demo keeps posts in memory for the current app session. A backend is not connected yet.")
                 }
             }
-            .navigationTitle("Create")
+            .toolbar(.hidden, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Clear") {
@@ -368,7 +368,7 @@ struct ContentView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("Activity")
+            .toolbar(.hidden, for: .navigationBar)
         }
     }
 
@@ -557,7 +557,7 @@ struct ContentView: View {
                 }
             }
             .background(.background)
-            .navigationTitle("Profile")
+            .toolbar(.hidden, for: .navigationBar)
         }
     }
 
