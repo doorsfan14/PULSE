@@ -71,8 +71,8 @@ struct ContentView: View {
                     .frame(width: geometry.size.width * 0.88)
                     .blur(radius: 78)
                     .offset(
-                        x: CGFloat(motion.roll) * 42 - geometry.size.width * 0.34,
-                        y: CGFloat(motion.pitch) * 38 - geometry.size.height * 0.31
+                        x: -geometry.size.width * 0.34,
+                        y: -geometry.size.height * 0.31
                     )
 
                 Circle()
@@ -80,8 +80,8 @@ struct ContentView: View {
                     .frame(width: geometry.size.width * 0.68)
                     .blur(radius: 72)
                     .offset(
-                        x: CGFloat(motion.roll) * -54 + geometry.size.width * 0.40,
-                        y: CGFloat(motion.pitch) * -46 + geometry.size.height * 0.22
+                        x: geometry.size.width * 0.40,
+                        y: geometry.size.height * 0.22
                     )
 
                 Circle()
@@ -98,10 +98,7 @@ struct ContentView: View {
                         lineWidth: 1
                     )
                     .frame(width: geometry.size.width * 1.08)
-                    .offset(
-                        x: CGFloat(motion.roll) * 16,
-                        y: CGFloat(motion.pitch) * 14
-                    )
+                    .offset(x: 0, y: 0)
 
                 VStack(alignment: .leading, spacing: 0) {
                     Spacer()
