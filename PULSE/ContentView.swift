@@ -84,33 +84,19 @@ struct ContentView: View {
                         y: geometry.size.height * 0.22
                     )
 
-                Circle()
-                    .stroke(
-                        LinearGradient(
-                            colors: [
-                                Color.white.opacity(0.08),
-                                Color(red: 0.32, green: 0.66, blue: 1).opacity(0.025),
-                                Color.white.opacity(0.01)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1
-                    )
-                    .frame(width: geometry.size.width * 1.08)
-                    .offset(x: 0, y: 0)
-
-                VStack(alignment: .leading, spacing: 0) {
-                    Spacer()
+                VStack(spacing: 0) {
+                    Spacer(minLength: 0)
 
                     Text(typedTitle)
                         .font(.system(size: 39, weight: .bold, design: .default))
                         .tracking(-1.35)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity, alignment: .center)
                         .fixedSize(horizontal: false, vertical: true)
                         .shadow(color: Color(red: 0.35, green: 0.65, blue: 1).opacity(0.12), radius: 18)
                         .accessibilityLabel(welcomeTitle)
 
-                    Spacer()
+                    Spacer(minLength: 0)
 
                     VStack(spacing: 12) {
                         welcomeButton(title: "Create account", brighter: true) {
@@ -129,14 +115,15 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.bottom, 22)
 
-                    Spacer()
+                    Spacer(minLength: 0)
                         .frame(maxHeight: 18)
                 }
                 .padding(.horizontal, 28)
                 .frame(maxWidth: 480)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             }
-            .ignoresSafeArea()
+            .frame(width: geometry.size.width, height: geometry.size.height)
+            .ignoresSafeArea(.container, edges: .all)
             .clipped()
             .onAppear {
                 motion.start()
