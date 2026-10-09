@@ -387,7 +387,7 @@ struct ContentView: View {
                                     Text(conversation.name)
                                         .font(.subheadline.weight(.semibold))
                                         .foregroundStyle(.primary)
-                                    Text("@\(conversation.1)")
+                                    Text("@\(conversation.username)")
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                     Spacer()
