@@ -136,6 +136,7 @@ struct ContentView: View {
                 .frame(maxWidth: 480)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .ignoresSafeArea()
             .clipped()
             .onAppear {
                 motion.start()
@@ -173,38 +174,38 @@ struct ContentView: View {
                                         Color(red: 0.025, green: 0.060, blue: 0.15),
                                         Color(red: 0.010, green: 0.020, blue: 0.060)
                                     ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
+                                startPoint: .top,
+                                endPoint: .bottom
                             )
                         )
                 }
                 .overlay {
+                    // A restrained rim light that shifts with device tilt.
                     Capsule()
                         .strokeBorder(
                             LinearGradient(
                                 stops: [
-                                    .init(color: Color.white.opacity(brighter ? 0.78 : 0.58), location: 0),
-                                    .init(color: Color(red: 0.48, green: 0.76, blue: 1).opacity(0.82), location: 0.22),
-                                    .init(color: Color(red: 0.17, green: 0.34, blue: 0.62).opacity(0.34), location: 0.58),
-                                    .init(color: Color.white.opacity(0.04), location: 0.78),
-                                    .init(color: Color(red: 0.55, green: 0.80, blue: 1).opacity(0.68), location: 1)
+                                    .init(color: Color.white.opacity(0.18 + abs(motion.roll) * 0.13), location: 0),
+                                    .init(color: Color(red: 0.48, green: 0.76, blue: 1).opacity(0.12 + abs(motion.pitch) * 0.18), location: 0.30),
+                                    .init(color: Color.white.opacity(0.035), location: 0.68),
+                                    .init(color: Color(red: 0.55, green: 0.80, blue: 1).opacity(0.12 + abs(motion.roll) * 0.16), location: 1)
                                 ],
                                 startPoint: UnitPoint(
-                                    x: 0.5 + CGFloat(motion.roll) * 0.20,
-                                    y: 0.0 + CGFloat(motion.pitch) * 0.10
+                                    x: 0.5 + CGFloat(motion.roll) * 0.28,
+                                    y: 0.0 + CGFloat(motion.pitch) * 0.12
                                 ),
                                 endPoint: UnitPoint(
-                                    x: 0.5 - CGFloat(motion.roll) * 0.20,
-                                    y: 1.0 - CGFloat(motion.pitch) * 0.10
+                                    x: 0.5 - CGFloat(motion.roll) * 0.28,
+                                    y: 1.0 - CGFloat(motion.pitch) * 0.12
                                 )
                             ),
-                            lineWidth: 1
+                            lineWidth: 0.8
                         )
                         .shadow(
-                            color: Color(red: 0.28, green: 0.57, blue: 1).opacity(0.13),
-                            radius: 7,
-                            x: CGFloat(motion.roll) * 3,
-                            y: CGFloat(motion.pitch) * 3
+                            color: Color(red: 0.28, green: 0.57, blue: 1).opacity(0.06),
+                            radius: 3,
+                            x: CGFloat(motion.roll) * 2,
+                            y: CGFloat(motion.pitch) * 2
                         )
                 }
         }
