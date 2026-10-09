@@ -431,85 +431,152 @@ struct ContentView: View {
 
     private var profileTab: some View {
         NavigationStack {
-            List {
-                Section {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    // A full-width profile banner, not a card.
                     Rectangle()
                         .fill(Color.accentColor.opacity(0.28))
-                        .frame(height: 140)
-                        .overlay(alignment: .bottomLeading) {
-                            Text(" ")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .listRowInsets(EdgeInsets())
-                        .listRowSeparator(.hidden)
-                }
+                        .frame(height: 150)
+                        .accessibilityLabel("Profile banner")
 
-                Section {
-                    HStack(spacing: 12) {
+                    HStack(alignment: .top) {
                         Image(systemName: "person.crop.circle.fill")
-                            .font(.system(size: 58))
+                            .font(.system(size: 82))
+                            .symbolRenderingMode(.hierarchical)
                             .foregroundStyle(.secondary)
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text("Alex Morgan")
-                                .font(.title3.weight(.semibold))
-                            Text("@alexm")
-                                .foregroundStyle(.secondary)
-                            Text("Collecting little moments and interesting ideas.")
-                                .font(.subheadline)
+                            .background(.background, in: Circle())
+                            .overlay(Circle().stroke(.background, lineWidth: 4))
+                            .offset(y: -34)
+                            .padding(.bottom, -34)
+
+                        Spacer()
+
+                        Button("Edit profile") {
+                            statusMessage = "Profile editing will be available when account settings are connected."
+                            showStatus = true
                         }
+                        .buttonStyle(.bordered)
+                        .padding(.top, 12)
                     }
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, 16)
 
-                    HStack(spacing: 20) {
-                        Label("\(posts.filter { $0.username == "alexm" }.count) Posts", systemImage: "text.bubble")
-                        Label("\(followedUsers.count) Following", systemImage: "person.2")
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("Alex Morgan")
+                            .font(.title2.weight(.bold))
+                        Text("@alexm")
+                            .foregroundStyle(.secondary)
+
+                        Text("Collecting little moments and interesting ideas.")
+                            .padding(.top, 5)
+
+                        HStack(spacing: 18) {
+                            HStack(spacing: 4) {
+                                Text("\(posts.filter { $0.username == "alexm" }.count)")
+                                    .fontWeight(.semibold)
+                                Text("Posts")
+                                    .foregroundStyle(.secondary)
+                            }
+                            HStack(spacing: 4) {
+                                Text("\(followedUsers.count)")
+                                    .fontWeight(.semibold)
+                                Text("Following")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .font(.subheadline)
+                        .padding(.top, 8)
                     }
-                    .font(.subheadline)
-                }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 14)
 
-                Section {
-                    Picker("Profile section", selection: $selectedProfileSection) {
-                        Text("Posts").tag("Posts")
-                        Text("Replies").tag("Replies")
-                        Text("Media").tag("Media")
-                        Text("Likes").tag("Likes")
+                    Divider()
+
+                    HStack(spacing: 0) {
+                        profileSectionButton("Posts")
+                        profileSectionButton("Replies")
+                        profileSectionButton("Media")
+                        profileSectionButton("Likes")
                     }
-                    .pickerStyle(.segmented)
-                }
 
-                switch selectedProfileSection {
-                case "Posts":
-                    Section("Posts") {
-                        let ownPosts = posts.filter { $0.username == "alexm" }
-                        if ownPosts.isEmpty {
-                            ContentUnavailableView("No posts yet", systemImage: "text.bubble", description: Text("Anything you publish will appear here."))
-                        } else {
-                            ForEach(ownPosts) { post in
-                                postCell(post)
+                    Divider()
+
+                    Group {
+                        switch selectedProfileSection {
+                        case "Posts":
+                            let ownPosts = posts.filter { $0.username == "alexm" }
+                            if ownPosts.isEmpty {
+                                ContentUnavailableView(
+                                    "No posts yet",
+                                    systemImage: "text.bubble",
+                                    description: Text("Anything you publish will appear here.")
+                                )
+                                .frame(maxWidth: .infinity)
+                                .padding(.top, 28)
+                            } else {
+                                ForEach(ownPosts) { post in
+                                    postCell(post)
+                                        .padding(.horizontal, 16)
+                                    Divider().padding(.leading, 16)
+                                }
+                            }
+                        case "Replies":
+                            ContentUnavailableView(
+                                "Your replies",
+                                systemImage: "bubble.left.and.bubble.right",
+                                description: Text("Conversations you reply to will appear here.")
+                            )
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 28)
+                        case "Media":
+                            ContentUnavailableView(
+                                "Your media",
+                                systemImage: "photo",
+                                description: Text("Photos and videos you share will appear here.")
+                            )
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 28)
+                        default:
+                            let likedPosts = posts.filter(\.isLiked)
+                            if likedPosts.isEmpty {
+                                ContentUnavailableView(
+                                    "No likes yet",
+                                    systemImage: "heart",
+                                    description: Text("Posts you like will appear here.")
+                                )
+                                .frame(maxWidth: .infinity)
+                                .padding(.top, 28)
+                            } else {
+                                ForEach(likedPosts) { post in
+                                    postCell(post)
+                                        .padding(.horizontal, 16)
+                                    Divider().padding(.leading, 16)
+                                }
                             }
                         }
                     }
-                case "Replies":
-                    ContentUnavailableView("Your replies", systemImage: "bubble.left.and.bubble.right", description: Text("Conversations you reply to will appear here."))
-                case "Media":
-                    ContentUnavailableView("Your media", systemImage: "photo", description: Text("Photos and videos you share will appear here."))
-                default:
-                    Section("Liked posts") {
-                        let likedPosts = posts.filter(\.isLiked)
-                        if likedPosts.isEmpty {
-                            ContentUnavailableView("No likes yet", systemImage: "heart", description: Text("Posts you like will appear here."))
-                        } else {
-                            ForEach(likedPosts) { post in
-                                postCell(post)
-                            }
-                        }
-                    }
                 }
-
             }
-            .listStyle(.plain)
+            .background(.background)
             .navigationTitle("Profile")
         }
+    }
+
+    private func profileSectionButton(_ section: String) -> some View {
+        Button {
+            selectedProfileSection = section
+        } label: {
+            VStack(spacing: 10) {
+                Text(section)
+                    .font(.subheadline.weight(selectedProfileSection == section ? .semibold : .regular))
+                    .foregroundStyle(selectedProfileSection == section ? .primary : .secondary)
+                Capsule()
+                    .fill(selectedProfileSection == section ? Color.accentColor : .clear)
+                    .frame(height: 3)
+            }
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
     private func postCell(_ post: PulsePost) -> some View {
