@@ -202,7 +202,7 @@ struct ContentView: View {
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
-        .animation(.easeInOut(duration: 0.18), value: selectedTab)
+        .animation(.snappy(duration: 0.22), value: selectedTab)
         .animation(.snappy(duration: 0.22), value: feedMode)
         .animation(.snappy(duration: 0.22), value: selectedExploreCategory)
     }
@@ -210,39 +210,70 @@ struct ContentView: View {
     private var launchReveal: some View {
         ZStack {
             Color(uiColor: .systemBackground).ignoresSafeArea()
-            ProgressView()
-                .controlSize(.regular)
-                .tint(PulseAccent.purple)
+            LinearGradient(
+                colors: [PulseAccent.purple.opacity(0.10), .clear, PulseAccent.blue.opacity(0.08)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 10) {
+                Text("PULSE")
+                    .font(.system(size: 36, weight: .black, design: .rounded))
+                    .tracking(-1.8)
+                    .foregroundStyle(.primary)
+
+                Text("Your world, in conversation.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                Capsule()
+                    .fill(LinearGradient(colors: [PulseAccent.purple, PulseAccent.blue], startPoint: .leading, endPoint: .trailing))
+                    .frame(width: 42, height: 3)
+                    .padding(.top, 9)
+                    .scaleEffect(x: contentVisible ? 1.0 : 0.3, y: 1, anchor: .leading)
+            }
+            .opacity(contentVisible ? 0 : 1)
+            .offset(y: contentVisible ? -5 : 0)
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Loading PULSE")
+        .accessibilityLabel("PULSE loading")
     }
 
     private var header: some View {
-        HStack(spacing: 12) {
-            Text(headerTitle)
-                .font(.system(size: 22, weight: .bold))
-                .foregroundStyle(.primary)
-                .contentTransition(.opacity)
+        HStack(alignment: .center, spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(headerTitle)
+                    .font(.system(size: 27, weight: .bold, design: .rounded))
+                    .tracking(-0.8)
+                    .contentTransition(.opacity)
+                Text(headerSubtitle)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
 
-            Spacer()
+            Spacer(minLength: 8)
 
-            if selectedTab != .explore {
+            if selectedTab == .explore {
+                EmptyView()
+            } else {
                 Button {
                     showSettings = true
                 } label: {
-                    Image(systemName: "gearshape")
-                        .font(.system(size: 17, weight: .regular))
+                    Image(systemName: "slider.horizontal.3")
+                        .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(.primary)
-                        .frame(width: 44, height: 44)
-                        .contentShape(Rectangle())
+                        .frame(width: 40, height: 40)
+                        .background(Color(uiColor: .secondarySystemBackground), in: Circle())
+                        .overlay(Circle().strokeBorder(Color.primary.opacity(0.05)))
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Settings")
             }
         }
-        .padding(.horizontal, 16)
-        .frame(height: 44)
+        .padding(.horizontal, 18)
+        .padding(.top, 10)
+        .padding(.bottom, 12)
         .background(Color(uiColor: .systemBackground))
     }
 
@@ -301,7 +332,7 @@ struct ContentView: View {
             .padding(.bottom, 12)
         }
         .refreshable {
-            try? await Task.sleep(for: .milliseconds(500))
+            await Task.sleep(for: .milliseconds(500))
             showToast("You're up to date")
         }
         .scrollIndicators(.hidden)
@@ -534,7 +565,7 @@ struct ContentView: View {
                             } label: {
                                 Text(category)
                                     .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(selectedExploreCategory == category ? Color.white : Color.secondary)
+                                    .foregroundStyle(selectedExploreCategory == category ? .white : .secondary)
                                     .padding(.horizontal, 15)
                                     .padding(.vertical, 9)
                                     .background {
@@ -646,7 +677,7 @@ struct ContentView: View {
             } label: {
                 Text(followedPeople.contains(person.id) ? "Following" : "Follow")
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(followedPeople.contains(person.id) ? Color.primary : Color.white)
+                    .foregroundStyle(followedPeople.contains(person.id) ? .primary : .white)
                     .padding(.horizontal, 13)
                     .padding(.vertical, 8)
                     .background(followedPeople.contains(person.id) ? Color(uiColor: .tertiarySystemFill) : PulseAccent.purple, in: Capsule())
@@ -743,7 +774,7 @@ struct ContentView: View {
         Button(action: action) {
             Text(title)
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(selected ? Color.white : Color.secondary)
+                .foregroundStyle(selected ? .white : .secondary)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
                 .background(selected ? PulseAccent.purple : Color(uiColor: .secondarySystemBackground), in: Capsule())
@@ -1044,37 +1075,47 @@ struct ContentView: View {
                     if tab == .create {
                         showComposer = true
                     } else {
-                        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.18)) {
-                            selectedTab = tab
-                        }
+                        withAnimation(.snappy(duration: 0.24)) { selectedTab = tab }
                     }
                 } label: {
                     VStack(spacing: 4) {
-                        Image(systemName: selectedTab == tab ? tab.selectedSymbol : tab.symbol)
-                            .font(.system(size: 22, weight: selectedTab == tab ? .semibold : .regular))
-                            .symbolRenderingMode(.hierarchical)
+                        ZStack {
+                            if selectedTab == tab {
+                                Capsule()
+                                    .fill(PulseAccent.purple.opacity(0.12))
+                                    .frame(width: tab == .create ? 49 : 45, height: 29)
+                                    .matchedGeometryEffect(id: "nav-pill", in: navAnimation)
+                            }
+                            Image(systemName: selectedTab == tab ? tab.selectedSymbol : tab.symbol)
+                                .font(.system(size: tab == .create ? 18 : 19, weight: .semibold))
+                                .symbolRenderingMode(.hierarchical)
+                                .foregroundStyle(selectedTab == tab ? PulseAccent.purple : Color.secondary)
+                                .frame(height: 29)
+                        }
                         Text(tab.rawValue)
-                            .font(.system(size: 10, weight: selectedTab == tab ? .semibold : .regular))
+                            .font(.system(size: 10, weight: selectedTab == tab ? .semibold : .medium))
+                            .foregroundStyle(selectedTab == tab ? PulseAccent.purple : Color.secondary)
                     }
-                    .foregroundStyle(selectedTab == tab ? PulseAccent.purple : Color.secondary)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 49)
+                    .frame(height: 54)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(selectedTab == tab ? .isSelected : [])
             }
         }
-        .padding(.horizontal, 4)
-        .padding(.top, 4)
+        .padding(.horizontal, 8)
+        .padding(.top, 7)
         .background {
             Color(uiColor: .systemBackground)
                 .overlay(alignment: .top) {
-                    Rectangle().fill(Color(uiColor: .separator).opacity(0.45)).frame(height: 0.5)
+                    Rectangle().fill(Color.primary.opacity(0.075)).frame(height: 1)
                 }
                 .ignoresSafeArea(edges: .bottom)
         }
     }
+
+    @Namespace private var navAnimation
 
     private var settingsSheet: some View {
         NavigationStack {
