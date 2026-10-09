@@ -88,7 +88,6 @@ struct ContentView: View {
     @State private var followedUsers: Set<String> = ["alexm"]
     @State private var savedPostIDs: Set<UUID> = []
     @State private var showSettings = false
-    @State private var showProfile = false
     @State private var showComposer = false
     @State private var composerText = ""
     @State private var replyTarget: PulsePost?
@@ -125,12 +124,18 @@ struct ContentView: View {
             exploreTab
                 .tabItem { Label("Search", systemImage: "magnifyingglass") }
                 .tag(1)
+            createTab
+                .tabItem { Label("Create", systemImage: "plus.square") }
+                .tag(2)
             activityTab
                 .tabItem { Label("Notifications", systemImage: "bell") }
-                .tag(2)
+                .tag(3)
             messagesTab
                 .tabItem { Label("Messages", systemImage: "envelope") }
-                .tag(3)
+                .tag(4)
+            profileTab
+                .tabItem { Label("Profile", systemImage: "person.crop.circle") }
+                .tag(5)
         }
         .sheet(isPresented: $showComposer) {
             composeSheet
@@ -140,9 +145,6 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showSettings) {
             settingsSheet
-        }
-        .sheet(isPresented: $showProfile) {
-            profileTab
         }
         .alert("PULSE", isPresented: $showStatus) {
             Button("OK", role: .cancel) { }
@@ -182,14 +184,6 @@ struct ContentView: View {
             .listStyle(.plain)
             .navigationTitle("PULSE")
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        showProfile = true
-                    } label: {
-                        Image(systemName: "person.crop.circle")
-                    }
-                    .accessibilityLabel("Profile")
-                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showSettings = true
