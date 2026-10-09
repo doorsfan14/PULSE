@@ -18,7 +18,6 @@ struct ContentView: View {
     @State private var showPassword = false
     @State private var showMessage = false
     @State private var message = ""
-    @State private var highlightProgress: CGFloat = -1.2
 
     private var passwordsMatch: Bool {
         !password.isEmpty && password == confirmPassword
@@ -73,19 +72,17 @@ struct ContentView: View {
                 } label: {
                     Text("Create account")
                         .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .frame(height: 48)
                         .contentShape(Capsule())
-                        .background(.ultraThinMaterial, in: Capsule())
-                        .overlay {
+                        .background {
                             Capsule()
                                 .fill(
                                     LinearGradient(
                                         colors: [
-                                            Color.accentColor.opacity(0.30),
-                                            Color.accentColor.opacity(0.13),
-                                            Color.primary.opacity(0.035)
+                                            Color(red: 0.025, green: 0.065, blue: 0.17),
+                                            Color(red: 0.015, green: 0.035, blue: 0.105)
                                         ],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
@@ -97,9 +94,8 @@ struct ContentView: View {
                                 .strokeBorder(
                                     LinearGradient(
                                         colors: [
-                                            Color.white.opacity(0.88),
-                                            Color.accentColor.opacity(0.58),
-                                            Color.white.opacity(0.20)
+                                            Color(red: 0.22, green: 0.32, blue: 0.52).opacity(0.78),
+                                            Color(red: 0.10, green: 0.17, blue: 0.32).opacity(0.92)
                                         ],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
@@ -107,10 +103,6 @@ struct ContentView: View {
                                     lineWidth: 1
                                 )
                         }
-                        .overlay {
-                            pillHighlight
-                        }
-                        .clipShape(Capsule())
                 }
                 .buttonStyle(.plain)
 
@@ -121,19 +113,17 @@ struct ContentView: View {
                 } label: {
                     Text("Log in")
                         .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .frame(height: 48)
                         .contentShape(Capsule())
-                        .background(.ultraThinMaterial, in: Capsule())
-                        .overlay {
+                        .background {
                             Capsule()
                                 .fill(
                                     LinearGradient(
                                         colors: [
-                                            Color.accentColor.opacity(0.17),
-                                            Color.primary.opacity(0.025),
-                                            Color.white.opacity(0.11)
+                                            Color(red: 0.035, green: 0.075, blue: 0.19),
+                                            Color(red: 0.012, green: 0.028, blue: 0.085)
                                         ],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
@@ -145,9 +135,8 @@ struct ContentView: View {
                                 .strokeBorder(
                                     LinearGradient(
                                         colors: [
-                                            Color.white.opacity(0.70),
-                                            Color.primary.opacity(0.16),
-                                            Color.accentColor.opacity(0.38)
+                                            Color(red: 0.16, green: 0.25, blue: 0.43).opacity(0.72),
+                                            Color(red: 0.075, green: 0.13, blue: 0.26).opacity(0.90)
                                         ],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
@@ -155,10 +144,6 @@ struct ContentView: View {
                                     lineWidth: 1
                                 )
                         }
-                        .overlay {
-                            pillHighlight
-                        }
-                        .clipShape(Capsule())
                 }
                 .buttonStyle(.plain)
             }
@@ -172,33 +157,6 @@ struct ContentView: View {
         .padding(.horizontal, 28)
         .frame(maxWidth: 480)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear {
-            highlightProgress = -1.2
-            withAnimation(.linear(duration: 2.4).repeatForever(autoreverses: false)) {
-                highlightProgress = 1.2
-            }
-        }
-    }
-
-    private var pillHighlight: some View {
-        GeometryReader { geometry in
-            LinearGradient(
-                colors: [
-                    .clear,
-                    Color.white.opacity(0.42),
-                    Color.white.opacity(0.12),
-                    .clear
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(width: geometry.size.width * 0.34)
-            .rotationEffect(.degrees(20))
-            .offset(x: geometry.size.width * highlightProgress)
-            .blendMode(.screen)
-        }
-        .clipShape(Capsule())
-        .allowsHitTesting(false)
     }
 
     private var createAccountScreen: some View {
