@@ -332,7 +332,7 @@ struct ContentView: View {
             .padding(.bottom, 12)
         }
         .refreshable {
-            await Task.sleep(for: .milliseconds(500))
+            try? await Task.sleep(for: .milliseconds(500))
             showToast("You're up to date")
         }
         .scrollIndicators(.hidden)
@@ -565,7 +565,7 @@ struct ContentView: View {
                             } label: {
                                 Text(category)
                                     .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(selectedExploreCategory == category ? .white : .secondary)
+                                    .foregroundStyle(selectedExploreCategory == category ? Color.white : Color.secondary)
                                     .padding(.horizontal, 15)
                                     .padding(.vertical, 9)
                                     .background {
@@ -677,7 +677,7 @@ struct ContentView: View {
             } label: {
                 Text(followedPeople.contains(person.id) ? "Following" : "Follow")
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(followedPeople.contains(person.id) ? .primary : .white)
+                    .foregroundStyle(followedPeople.contains(person.id) ? Color.primary : Color.white)
                     .padding(.horizontal, 13)
                     .padding(.vertical, 8)
                     .background(followedPeople.contains(person.id) ? Color(uiColor: .tertiarySystemFill) : PulseAccent.purple, in: Capsule())
@@ -774,7 +774,7 @@ struct ContentView: View {
         Button(action: action) {
             Text(title)
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(selected ? .white : .secondary)
+                .foregroundStyle(selected ? Color.white : Color.secondary)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
                 .background(selected ? PulseAccent.purple : Color(uiColor: .secondarySystemBackground), in: Capsule())
