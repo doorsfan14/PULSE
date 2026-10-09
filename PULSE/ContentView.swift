@@ -280,7 +280,7 @@ struct ContentView: View {
                     }
                 }
             }
-            .listStyle(.insetGrouped)
+            .listStyle(.plain)
             .navigationTitle("Explore")
         }
     }
