@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreMotion
 
 private enum AuthScreen {
     case welcome
@@ -18,6 +19,11 @@ struct ContentView: View {
     @State private var showPassword = false
     @State private var showMessage = false
     @State private var message = ""
+    @State private var typedTitle = ""
+    @State private var titleTask: Task<Void, Never>?
+    @StateObject private var motion = WelcomeMotionManager()
+
+    private let welcomeTitle = "Connect in one place."
 
     private var passwordsMatch: Bool {
         !password.isEmpty && password == confirmPassword
@@ -54,109 +60,170 @@ struct ContentView: View {
     }
 
     private var welcomeScreen: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Spacer()
+        GeometryReader { geometry in
+            ZStack {
+                Color(red: 0.012, green: 0.018, blue: 0.045)
+                    .ignoresSafeArea()
 
-            Text("Connect in one place.")
-                .font(.system(size: 39, weight: .bold, design: .rounded))
-                .tracking(-1.6)
-                .fixedSize(horizontal: false, vertical: true)
+                // Soft ambient light fields drift with the device's motion.
+                Circle()
+                    .fill(Color(red: 0.10, green: 0.35, blue: 0.82).opacity(0.22))
+                    .frame(width: geometry.size.width * 0.88)
+                    .blur(radius: 78)
+                    .offset(
+                        x: CGFloat(motion.roll) * 42 - geometry.size.width * 0.34,
+                        y: CGFloat(motion.pitch) * 38 - geometry.size.height * 0.31
+                    )
 
-            Spacer()
+                Circle()
+                    .fill(Color(red: 0.24, green: 0.58, blue: 0.98).opacity(0.13))
+                    .frame(width: geometry.size.width * 0.68)
+                    .blur(radius: 72)
+                    .offset(
+                        x: CGFloat(motion.roll) * -54 + geometry.size.width * 0.40,
+                        y: CGFloat(motion.pitch) * -46 + geometry.size.height * 0.22
+                    )
 
-            VStack(spacing: 12) {
-                Button {
-                    withAnimation(.spring(response: 0.38, dampingFraction: 0.76)) {
-                        screen = .createAccount
+                Circle()
+                    .stroke(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.08),
+                                Color(red: 0.32, green: 0.66, blue: 1).opacity(0.025),
+                                Color.white.opacity(0.01)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+                    .frame(width: geometry.size.width * 1.08)
+                    .offset(
+                        x: CGFloat(motion.roll) * 16,
+                        y: CGFloat(motion.pitch) * 14
+                    )
+
+                VStack(alignment: .leading, spacing: 0) {
+                    Spacer()
+
+                    Text(typedTitle)
+                        .font(.system(size: 39, weight: .bold, design: .default))
+                        .tracking(-1.35)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .shadow(color: Color(red: 0.35, green: 0.65, blue: 1).opacity(0.12), radius: 18)
+                        .accessibilityLabel(welcomeTitle)
+
+                    Spacer()
+
+                    VStack(spacing: 12) {
+                        welcomeButton(title: "Create account", brighter: true) {
+                            withAnimation(.spring(response: 0.38, dampingFraction: 0.76)) {
+                                screen = .createAccount
+                            }
+                        }
+
+                        welcomeButton(title: "Log in", brighter: false) {
+                            withAnimation(.spring(response: 0.38, dampingFraction: 0.76)) {
+                                screen = .signIn
+                            }
+                        }
                     }
-                } label: {
-                    Text("Create account")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 48)
-                        .contentShape(Capsule())
-                        .background {
-                            Capsule()
-                                .fill(
-                                    LinearGradient(
-                                        colors: [
-                                            Color(red: 0.025, green: 0.065, blue: 0.17),
-                                            Color(red: 0.015, green: 0.035, blue: 0.105)
-                                        ],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                        }
-                        .overlay {
-                            Capsule()
-                                .strokeBorder(
-                                    LinearGradient(
-                                        colors: [
-                                            Color(red: 0.22, green: 0.32, blue: 0.52).opacity(0.78),
-                                            Color(red: 0.10, green: 0.17, blue: 0.32).opacity(0.92)
-                                        ],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ),
-                                    lineWidth: 1
-                                )
-                        }
-                }
-                .buttonStyle(.plain)
+                    .frame(maxWidth: 320)
+                    .frame(maxWidth: .infinity)
+                    .padding(.bottom, 22)
 
-                Button {
-                    withAnimation(.spring(response: 0.38, dampingFraction: 0.76)) {
-                        screen = .signIn
-                    }
-                } label: {
-                    Text("Log in")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 48)
-                        .contentShape(Capsule())
-                        .background {
-                            Capsule()
-                                .fill(
-                                    LinearGradient(
-                                        colors: [
-                                            Color(red: 0.035, green: 0.075, blue: 0.19),
-                                            Color(red: 0.012, green: 0.028, blue: 0.085)
-                                        ],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                        }
-                        .overlay {
-                            Capsule()
-                                .strokeBorder(
-                                    LinearGradient(
-                                        colors: [
-                                            Color(red: 0.16, green: 0.25, blue: 0.43).opacity(0.72),
-                                            Color(red: 0.075, green: 0.13, blue: 0.26).opacity(0.90)
-                                        ],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ),
-                                    lineWidth: 1
-                                )
-                        }
+                    Spacer()
+                        .frame(maxHeight: 18)
                 }
-                .buttonStyle(.plain)
+                .padding(.horizontal, 28)
+                .frame(maxWidth: 480)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .frame(maxWidth: 320)
-            .frame(maxWidth: .infinity)
-            .padding(.bottom, 22)
-
-            Spacer()
-                .frame(maxHeight: 18)
+            .clipped()
+            .onAppear {
+                motion.start()
+                startTypewriter()
+            }
+            .onDisappear {
+                motion.stop()
+                titleTask?.cancel()
+            }
         }
-        .padding(.horizontal, 28)
-        .frame(maxWidth: 480)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func welcomeButton(
+        title: String,
+        brighter: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 17, weight: .semibold, design: .default))
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 50)
+                .contentShape(Capsule())
+                .background {
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: brighter
+                                    ? [
+                                        Color(red: 0.035, green: 0.085, blue: 0.20),
+                                        Color(red: 0.012, green: 0.027, blue: 0.075)
+                                    ]
+                                    : [
+                                        Color(red: 0.025, green: 0.060, blue: 0.15),
+                                        Color(red: 0.010, green: 0.020, blue: 0.060)
+                                    ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                }
+                .overlay {
+                    Capsule()
+                        .strokeBorder(
+                            LinearGradient(
+                                stops: [
+                                    .init(color: Color.white.opacity(brighter ? 0.78 : 0.58), location: 0),
+                                    .init(color: Color(red: 0.48, green: 0.76, blue: 1).opacity(0.82), location: 0.22),
+                                    .init(color: Color(red: 0.17, green: 0.34, blue: 0.62).opacity(0.34), location: 0.58),
+                                    .init(color: Color.white.opacity(0.04), location: 0.78),
+                                    .init(color: Color(red: 0.55, green: 0.80, blue: 1).opacity(0.68), location: 1)
+                                ],
+                                startPoint: UnitPoint(
+                                    x: 0.5 + motion.roll * 0.20,
+                                    y: 0.0 + motion.pitch * 0.10
+                                ),
+                                endPoint: UnitPoint(
+                                    x: 0.5 - motion.roll * 0.20,
+                                    y: 1.0 - motion.pitch * 0.10
+                                )
+                            ),
+                            lineWidth: 1
+                        )
+                        .shadow(
+                            color: Color(red: 0.28, green: 0.57, blue: 1).opacity(0.13),
+                            radius: 7,
+                            x: CGFloat(motion.roll) * 3,
+                            y: CGFloat(motion.pitch) * 3
+                        )
+                }
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func startTypewriter() {
+        titleTask?.cancel()
+        typedTitle = ""
+        titleTask = Task { @MainActor in
+            for character in welcomeTitle {
+                guard !Task.isCancelled else { return }
+                typedTitle.append(character)
+                try? await Task.sleep(for: .milliseconds(52))
+            }
+        }
     }
 
     private var createAccountScreen: some View {
@@ -410,6 +477,37 @@ struct ContentView: View {
     private func showBackendNotice(_ feature: String) {
         message = "\(feature) is designed in the interface, but it won't work until PULSE is connected to an authentication backend. Passkeys also need server-generated challenges and a registered relying-party domain."
         showMessage = true
+    }
+}
+
+private final class WelcomeMotionManager: ObservableObject {
+    @Published var roll: Double = 0
+    @Published var pitch: Double = 0
+
+    private let manager = CMMotionManager()
+    private let queue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.name = "com.azure.pulse.welcome-motion"
+        queue.qualityOfService = .userInteractive
+        return queue
+    }()
+
+    func start() {
+        guard manager.isDeviceMotionAvailable, !manager.isDeviceMotionActive else { return }
+        manager.deviceMotionUpdateInterval = 1.0 / 30.0
+        manager.startDeviceMotionUpdates(to: queue) { [weak self] motion, _ in
+            guard let motion else { return }
+            let nextRoll = max(-1.0, min(1.0, motion.attitude.roll))
+            let nextPitch = max(-1.0, min(1.0, motion.attitude.pitch))
+            DispatchQueue.main.async {
+                self?.roll = nextRoll
+                self?.pitch = nextPitch
+            }
+        }
+    }
+
+    func stop() {
+        manager.stopDeviceMotionUpdates()
     }
 }
 
