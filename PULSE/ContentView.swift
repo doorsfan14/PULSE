@@ -8,6 +8,13 @@ private enum AuthScreen {
     case signIn
 }
 
+private enum LegalDocument: String, Identifiable {
+    case terms
+    case privacyPolicy
+
+    var id: String { rawValue }
+}
+
 struct ContentView: View {
     @State private var screen: AuthScreen = .welcome
     @State private var name = ""
@@ -363,7 +370,7 @@ struct ContentView: View {
                     Text("By continuing, you agree to our")
                         .foregroundStyle(.secondary)
                     Button("Terms of Service") {
-                        showTerms = true
+                        activeLegalDocument = .terms
                     }
                     .font(.custom("PlusJakartaSans-SemiBold", size: 12))
                     .foregroundStyle(Color(red: 0.48, green: 0.68, blue: 1))
