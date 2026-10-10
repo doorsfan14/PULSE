@@ -110,7 +110,7 @@ import SwiftUI
 import CoreMotion
 import UIKit
 
-private enum AuthScreen {
+private enum AuthScreen: Equatable {
     case welcome
     case createAccount
     case signIn
@@ -124,6 +124,7 @@ private enum LegalDocument: String, Identifiable {
 }
 
 struct ContentView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @State private var screen: AuthScreen = .welcome
     @State private var name = ""
     @State private var username = ""
@@ -162,7 +163,7 @@ struct ContentView: View {
             ZStack {
                 // Share one animated backdrop across screens so transitions don't
                 // render multiple sets of blurred, continuously moving gradients.
-                PULSEBackdrop()
+                PULSEBackdrop(animate: screen == .welcome)
 
                 switch screen {
                 case .welcome:
@@ -206,7 +207,6 @@ struct ContentView: View {
                 .presentationDragIndicator(.visible)
             }
         }
-        .preferredColorScheme(.dark)
     }
 
     private var welcomeScreen: some View {
@@ -232,20 +232,20 @@ struct ContentView: View {
                         } label: {
                             Text(L("Terms Of Service"))
                                 .font(.custom("PlusJakartaSans-Medium", size: 12))
-                                .foregroundStyle(.white.opacity(0.76))
+                                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.76) : .primary.opacity(0.70))
                         }
                         .buttonStyle(.plain)
 
                         Text("•")
                             .font(.custom("PlusJakartaSans-Regular", size: 12))
-                            .foregroundStyle(.white.opacity(0.38))
+                            .foregroundStyle(colorScheme == .dark ? .white.opacity(0.38) : .primary.opacity(0.35))
 
                         Button {
                             activeLegalDocument = .privacyPolicy
                         } label: {
                             Text(L("Privacy Policy"))
                                 .font(.custom("PlusJakartaSans-Medium", size: 12))
-                                .foregroundStyle(.white.opacity(0.76))
+                                .foregroundStyle(colorScheme == .dark ? .white.opacity(0.76) : .primary.opacity(0.70))
                         }
                         .buttonStyle(.plain)
                     }
@@ -299,7 +299,7 @@ struct ContentView: View {
         Button(action: action) {
             Text(title)
                 .font(.custom("PlusJakartaSans-SemiBold", size: 17))
-                .foregroundStyle(.white)
+                .foregroundStyle(colorScheme == .dark ? .white : Color(red: 0.08, green: 0.13, blue: 0.24))
                 .frame(maxWidth: .infinity)
                 .frame(height: 50)
                 .contentShape(Capsule())
@@ -307,7 +307,8 @@ struct ContentView: View {
                     Capsule()
                         .fill(
                             LinearGradient(
-                                colors: brighter
+                                colors: colorScheme == .dark
+                                ? (brighter
                                     ? [
                                         Color(red: 0.012, green: 0.020, blue: 0.043),
                                         Color(red: 0.032, green: 0.043, blue: 0.075)
@@ -315,7 +316,16 @@ struct ContentView: View {
                                     : [
                                         Color(red: 0.010, green: 0.016, blue: 0.036),
                                         Color(red: 0.023, green: 0.030, blue: 0.055)
-                                    ],
+                                    ])
+                                : (brighter
+                                    ? [
+                                        Color(red: 0.99, green: 0.995, blue: 1.0),
+                                        Color(red: 0.88, green: 0.93, blue: 1.0)
+                                    ]
+                                    : [
+                                        Color(red: 0.97, green: 0.985, blue: 1.0),
+                                        Color(red: 0.84, green: 0.90, blue: 0.99)
+                                    ]),
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
@@ -324,7 +334,7 @@ struct ContentView: View {
                 .overlay {
                     // Layered edge highlights mimic subtle glass refraction.
                     Capsule()
-                        .strokeBorder(Color.white.opacity(0.055), lineWidth: 2.4)
+                        .strokeBorder((colorScheme == .dark ? Color.white : Color(red: 0.30, green: 0.49, blue: 0.90)).opacity(colorScheme == .dark ? 0.055 : 0.18), lineWidth: 2.4)
                         .blur(radius: 2.2)
                         .padding(-1.2)
 
@@ -332,9 +342,9 @@ struct ContentView: View {
                         .strokeBorder(
                             LinearGradient(
                                 colors: [
-                                    Color.white.opacity(0.20),
-                                    Color(red: 0.62, green: 0.66, blue: 0.76).opacity(0.035),
-                                    Color.white.opacity(0.10)
+                                    (colorScheme == .dark ? Color.white : Color(red: 0.18, green: 0.38, blue: 0.78)).opacity(colorScheme == .dark ? 0.20 : 0.48),
+                                    (colorScheme == .dark ? Color(red: 0.62, green: 0.66, blue: 0.76) : Color(red: 0.50, green: 0.68, blue: 0.96)).opacity(colorScheme == .dark ? 0.035 : 0.18),
+                                    (colorScheme == .dark ? Color.white : Color(red: 0.28, green: 0.47, blue: 0.85)).opacity(colorScheme == .dark ? 0.10 : 0.30)
                                 ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
@@ -347,10 +357,10 @@ struct ContentView: View {
                         .strokeBorder(
                             LinearGradient(
                                 stops: [
-                                    .init(color: Color.white.opacity(0.18 + abs(motion.roll) * 0.13), location: 0),
-                                    .init(color: Color(red: 0.48, green: 0.76, blue: 1).opacity(0.12 + abs(motion.pitch) * 0.18), location: 0.30),
-                                    .init(color: Color.white.opacity(0.035), location: 0.68),
-                                    .init(color: Color(red: 0.55, green: 0.80, blue: 1).opacity(0.12 + abs(motion.roll) * 0.16), location: 1)
+                                    .init(color: (colorScheme == .dark ? Color.white : Color(red: 0.16, green: 0.38, blue: 0.82)).opacity((colorScheme == .dark ? 0.18 : 0.48) + abs(motion.roll) * 0.13), location: 0),
+                                    .init(color: Color(red: 0.30, green: 0.58, blue: 1).opacity((colorScheme == .dark ? 0.12 : 0.24) + abs(motion.pitch) * 0.18), location: 0.30),
+                                    .init(color: (colorScheme == .dark ? Color.white : Color(red: 0.55, green: 0.68, blue: 0.90)).opacity(colorScheme == .dark ? 0.035 : 0.20), location: 0.68),
+                                    .init(color: Color(red: 0.43, green: 0.62, blue: 0.98).opacity((colorScheme == .dark ? 0.12 : 0.38) + abs(motion.roll) * 0.16), location: 1)
                                 ],
                                 startPoint: UnitPoint(
                                     x: 0.5 + CGFloat(motion.roll) * 0.28,
@@ -545,7 +555,7 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 7) {
             Text(L(heading))
                 .font(.custom("PlusJakartaSans-SemiBold", size: 16))
-                .foregroundStyle(.white)
+                .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
 
             Text(L(body))
@@ -622,7 +632,7 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity)
             }
             .scrollIndicators(.hidden)
-            .background(PULSEBackdrop())
+            .background(PULSEBackdrop(animate: false))
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(L("Done")) { activeLegalDocument = nil }
@@ -630,7 +640,6 @@ struct ContentView: View {
                 }
             }
         }
-        .preferredColorScheme(.dark)
     }
 
     private var signInScreen: some View {
@@ -720,11 +729,11 @@ struct ContentView: View {
         } label: {
             Label(L("Back"), systemImage: "chevron.left")
                 .font(.custom("PlusJakartaSans-Medium", size: 15))
-                .foregroundStyle(.white.opacity(0.88))
+                .foregroundStyle(.primary.opacity(0.88))
                 .padding(.horizontal, 15)
                 .padding(.vertical, 10)
-                .background(Color.white.opacity(0.045), in: Capsule())
-                .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 0.7))
+                .background(Color.primary.opacity(0.045), in: Capsule())
+                .overlay(Capsule().stroke(Color.primary.opacity(0.12), lineWidth: 0.7))
         }
         .buttonStyle(WelcomeBounceButtonStyle())
         .modifier(PULSEEntrance(delay: 0.02))
@@ -737,7 +746,7 @@ struct ContentView: View {
         } label: {
             Label(title, systemImage: symbol)
                 .font(.custom("PlusJakartaSans-SemiBold", size: 15))
-                .foregroundStyle(.white.opacity(0.92))
+                .foregroundStyle(.primary.opacity(0.92))
                 .frame(maxWidth: .infinity)
                 .frame(height: 52)
                 .contentShape(RoundedRectangle(cornerRadius: 16))
@@ -773,8 +782,7 @@ struct ContentView: View {
                 TextField(placeholder, text: text)
             }
             .inputSurface()
-                .animation(.easeInOut(duration: 0.22), value: text.wrappedValue)
-        }
+            }
     }
 
     private func validationHint(_ text: String, color: Color = .secondary) -> some View {
@@ -864,16 +872,16 @@ private extension View {
             .frame(minHeight: 54)
             .background {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(Color.white.opacity(0.045))
+                    .fill(Color.primary.opacity(0.045))
             }
             .overlay {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .stroke(
                         LinearGradient(
                             colors: [
-                                Color.white.opacity(0.17),
-                                Color(red: 0.40, green: 0.63, blue: 0.98).opacity(0.12),
-                                Color.white.opacity(0.055)
+                                Color.primary.opacity(0.17),
+                                Color(red: 0.40, green: 0.63, blue: 0.98).opacity(0.18),
+                                Color.primary.opacity(0.055)
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
@@ -881,7 +889,7 @@ private extension View {
                         lineWidth: 0.8
                     )
             }
-            .shadow(color: Color(red: 0.15, green: 0.38, blue: 0.85).opacity(0.06), radius: 16, y: 5)
+            .shadow(color: Color(red: 0.15, green: 0.38, blue: 0.85).opacity(0.06), radius: 12, y: 4)
     }
 }
 
@@ -891,13 +899,15 @@ private extension Text {
     func termsParagraph() -> some View {
         self
             .font(.custom("PlusJakartaSans-Regular", size: 14))
-            .foregroundStyle(.white.opacity(0.78))
+            .foregroundStyle(Color.primary.opacity(0.78))
             .lineSpacing(4)
             .fixedSize(horizontal: false, vertical: true)
     }
 }
 
 private struct PULSEBackdrop: View {
+    let animate: Bool = true
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var drift = false
     @State private var counterDrift = false
@@ -908,11 +918,17 @@ private struct PULSEBackdrop: View {
         GeometryReader { geometry in
             ZStack {
                 LinearGradient(
-                    colors: [
-                        Color(red: 0.012, green: 0.018, blue: 0.045),
-                        Color(red: 0.018, green: 0.032, blue: 0.078),
-                        Color(red: 0.009, green: 0.014, blue: 0.034)
-                    ],
+                    colors: colorScheme == .dark
+                        ? [
+                            Color(red: 0.012, green: 0.018, blue: 0.045),
+                            Color(red: 0.018, green: 0.032, blue: 0.078),
+                            Color(red: 0.009, green: 0.014, blue: 0.034)
+                        ]
+                        : [
+                            Color(red: 0.975, green: 0.985, blue: 1.0),
+                            Color(red: 0.91, green: 0.945, blue: 1.0),
+                            Color(red: 0.99, green: 0.975, blue: 1.0)
+                        ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
@@ -924,9 +940,9 @@ private struct PULSEBackdrop: View {
                         RadialGradient(
                             colors: [
                                 Color(red: 0.18, green: 0.40, blue: 1.0)
-                                    .opacity(breathe ? 0.27 : 0.14),
+                                    .opacity(colorScheme == .dark ? (breathe ? 0.27 : 0.14) : (breathe ? 0.24 : 0.18)),
                                 Color(red: 0.10, green: 0.25, blue: 0.72)
-                                    .opacity(breathe ? 0.12 : 0.055),
+                                    .opacity(colorScheme == .dark ? (breathe ? 0.12 : 0.055) : (breathe ? 0.12 : 0.07)),
                                 .clear
                             ],
                             center: .center,
@@ -938,7 +954,7 @@ private struct PULSEBackdrop: View {
                         width: geometry.size.width * 1.32,
                         height: geometry.size.height * 0.76
                     )
-                    .blur(radius: 38)
+                    .blur(radius: 30)
                     .offset(
                         x: drift ? -geometry.size.width * 0.19 : geometry.size.width * 0.16,
                         y: drift ? -geometry.size.height * 0.22 : -geometry.size.height * 0.035
@@ -949,9 +965,9 @@ private struct PULSEBackdrop: View {
                         RadialGradient(
                             colors: [
                                 Color(red: 0.08, green: 0.34, blue: 0.82)
-                                    .opacity(breathe ? 0.17 : 0.075),
+                                    .opacity(colorScheme == .dark ? (breathe ? 0.17 : 0.075) : (breathe ? 0.16 : 0.10)),
                                 Color(red: 0.06, green: 0.19, blue: 0.52)
-                                    .opacity(breathe ? 0.075 : 0.03),
+                                    .opacity(colorScheme == .dark ? (breathe ? 0.075 : 0.03) : (breathe ? 0.08 : 0.035)),
                                 .clear
                             ],
                             center: .center,
@@ -963,7 +979,7 @@ private struct PULSEBackdrop: View {
                         width: geometry.size.width * 1.16,
                         height: geometry.size.height * 0.62
                     )
-                    .blur(radius: 46)
+                    .blur(radius: 34)
                     .offset(
                         x: counterDrift ? geometry.size.width * 0.23 : -geometry.size.width * 0.19,
                         y: counterDrift ? geometry.size.height * 0.31 : geometry.size.height * 0.17
@@ -973,10 +989,10 @@ private struct PULSEBackdrop: View {
                     .fill(
                         RadialGradient(
                             colors: [
-                                Color(red: 0.28, green: 0.22, blue: 0.78)
-                                    .opacity(breathe ? 0.095 : 0.045),
+                                Color(red: 0.38, green: 0.30, blue: 0.86)
+                                    .opacity(colorScheme == .dark ? (breathe ? 0.095 : 0.045) : (breathe ? 0.13 : 0.07)),
                                 Color(red: 0.12, green: 0.16, blue: 0.48)
-                                    .opacity(breathe ? 0.04 : 0.018),
+                                    .opacity(colorScheme == .dark ? (breathe ? 0.04 : 0.018) : (breathe ? 0.05 : 0.025)),
                                 .clear
                             ],
                             center: .center,
@@ -988,7 +1004,7 @@ private struct PULSEBackdrop: View {
                         width: geometry.size.width * 0.98,
                         height: geometry.size.height * 0.55
                     )
-                    .blur(radius: 44)
+                    .blur(radius: 32)
                     .offset(
                         x: violetDrift ? geometry.size.width * 0.24 : -geometry.size.width * 0.17,
                         y: violetDrift ? -geometry.size.height * 0.13 : geometry.size.height * 0.08
@@ -996,11 +1012,17 @@ private struct PULSEBackdrop: View {
 
                 // Keep foreground content readable over the glow.
                 LinearGradient(
-                    colors: [
-                        Color.black.opacity(0.02),
-                        Color.black.opacity(0.08),
-                        Color.black.opacity(0.30)
-                    ],
+                    colors: colorScheme == .dark
+                        ? [
+                            Color.black.opacity(0.02),
+                            Color.black.opacity(0.08),
+                            Color.black.opacity(0.30)
+                        ]
+                        : [
+                            Color.white.opacity(0.00),
+                            Color.white.opacity(0.03),
+                            Color.white.opacity(0.10)
+                        ],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -1010,22 +1032,40 @@ private struct PULSEBackdrop: View {
         }
         .ignoresSafeArea()
         .onAppear {
-            // Respect the system accessibility setting instead of animating
-            // large background shapes when Reduce Motion is enabled.
-            guard !reduceMotion else { return }
+            startAmbientAnimationIfNeeded()
+        }
+        .onChange(of: animate) { _, _ in
+            startAmbientAnimationIfNeeded()
+        }
+        .onChange(of: reduceMotion) { _, _ in
+            startAmbientAnimationIfNeeded()
+        }
+    }
 
-            withAnimation(.easeInOut(duration: 18).repeatForever(autoreverses: true)) {
-                drift = true
+    private func startAmbientAnimationIfNeeded() {
+        guard animate && !reduceMotion else {
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            withTransaction(transaction) {
+                drift = false
+                counterDrift = false
+                breathe = false
+                violetDrift = false
             }
-            withAnimation(.easeInOut(duration: 23).repeatForever(autoreverses: true)) {
-                counterDrift = true
-            }
-            withAnimation(.easeInOut(duration: 7.5).repeatForever(autoreverses: true)) {
-                breathe = true
-            }
-            withAnimation(.easeInOut(duration: 27).repeatForever(autoreverses: true)) {
-                violetDrift = true
-            }
+            return
+        }
+
+        withAnimation(.easeInOut(duration: 18).repeatForever(autoreverses: true)) {
+            drift = true
+        }
+        withAnimation(.easeInOut(duration: 23).repeatForever(autoreverses: true)) {
+            counterDrift = true
+        }
+        withAnimation(.easeInOut(duration: 7.5).repeatForever(autoreverses: true)) {
+            breathe = true
+        }
+        withAnimation(.easeInOut(duration: 27).repeatForever(autoreverses: true)) {
+            violetDrift = true
         }
     }
 }
@@ -1047,6 +1087,7 @@ private struct PULSEEntrance: ViewModifier {
 }
 
 private struct PULSEPrimaryButtonStyle: ButtonStyle {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.isEnabled) private var isEnabled
 
     func makeBody(configuration: Configuration) -> some View {
@@ -1057,10 +1098,15 @@ private struct PULSEPrimaryButtonStyle: ButtonStyle {
                 RoundedRectangle(cornerRadius: 17, style: .continuous)
                     .fill(
                         LinearGradient(
-                            colors: [
-                                Color(red: 0.15, green: 0.38, blue: 0.82),
-                                Color(red: 0.20, green: 0.48, blue: 0.96)
-                            ],
+                            colors: colorScheme == .dark
+                                ? [
+                                    Color(red: 0.15, green: 0.38, blue: 0.82),
+                                    Color(red: 0.20, green: 0.48, blue: 0.96)
+                                ]
+                                : [
+                                    Color(red: 0.13, green: 0.32, blue: 0.76),
+                                    Color(red: 0.20, green: 0.43, blue: 0.90)
+                                ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -1070,7 +1116,9 @@ private struct PULSEPrimaryButtonStyle: ButtonStyle {
                 RoundedRectangle(cornerRadius: 17, style: .continuous)
                     .stroke(
                         LinearGradient(
-                            colors: [Color.white.opacity(0.38), Color.white.opacity(0.07)],
+                            colors: colorScheme == .dark
+                                ? [Color.white.opacity(0.38), Color.white.opacity(0.07)]
+                                : [Color(red: 0.70, green: 0.88, blue: 1.0).opacity(0.95), Color.white.opacity(0.28)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
@@ -1090,15 +1138,21 @@ private struct PULSEPrimaryButtonStyle: ButtonStyle {
 }
 
 private struct PULSESecondaryButtonStyle: ButtonStyle {
+    @Environment(\.colorScheme) private var colorScheme
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .background {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(Color.white.opacity(configuration.isPressed ? 0.085 : 0.04))
+                    .fill(colorScheme == .dark
+                        ? Color.white.opacity(configuration.isPressed ? 0.085 : 0.04)
+                        : Color.white.opacity(configuration.isPressed ? 0.95 : 0.78))
             }
             .overlay {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(Color.white.opacity(configuration.isPressed ? 0.24 : 0.13), lineWidth: 0.8)
+                    .stroke(colorScheme == .dark
+                        ? Color.white.opacity(configuration.isPressed ? 0.24 : 0.13)
+                        : Color(red: 0.20, green: 0.40, blue: 0.80).opacity(configuration.isPressed ? 0.52 : 0.24), lineWidth: 0.8)
             }
             .scaleEffect(configuration.isPressed ? 0.98 : 1)
             .animation(.spring(response: 0.30, dampingFraction: 0.72), value: configuration.isPressed)
