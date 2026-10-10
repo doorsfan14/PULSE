@@ -19,6 +19,7 @@ struct ContentView: View {
     @State private var signInPassword = ""
     @State private var showPassword = false
     @State private var showMessage = false
+    @State private var showTerms = false
     @State private var message = ""
     @State private var typedTitle = ""
     @State private var ambientMotion = false
@@ -70,6 +71,11 @@ struct ContentView: View {
                 Button("OK", role: .cancel) { }
             } message: {
                 Text(message)
+            }
+            .sheet(isPresented: $showTerms) {
+                termsSheet
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
             }
         }
         .preferredColorScheme(.dark)
@@ -353,6 +359,20 @@ struct ContentView: View {
                 .disabled(!canCreateAccount)
                 .modifier(PULSEEntrance(delay: 0.20))
 
+                HStack(spacing: 4) {
+                    Text("By continuing, you agree to our")
+                        .foregroundStyle(.secondary)
+                    Button("Terms of Service") {
+                        showTerms = true
+                    }
+                    .font(.custom("PlusJakartaSans-SemiBold", size: 12))
+                    .foregroundStyle(Color(red: 0.48, green: 0.68, blue: 1))
+                    .buttonStyle(.plain)
+                }
+                .font(.custom("PlusJakartaSans-Regular", size: 12))
+                .frame(maxWidth: .infinity)
+                .modifier(PULSEEntrance(delay: 0.22))
+
                 separatorLabel("OR")
                     .modifier(PULSEEntrance(delay: 0.24))
 
@@ -379,6 +399,80 @@ struct ContentView: View {
             .frame(maxWidth: .infinity)
             }
             .scrollIndicators(.hidden)
+        }
+    }
+
+
+    private var termsSheet: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("PULSE")
+                            .font(.custom("PlusJakartaSans-SemiBold", size: 12))
+                            .tracking(2.5)
+                            .foregroundStyle(Color(red: 0.48, green: 0.68, blue: 1))
+                        Text("Terms of Service")
+                            .font(.custom("PlusJakartaSans-Bold", size: 30))
+                            .tracking(-0.7)
+                        Text("Effective October 9, 2026 · Draft for review")
+                            .font(.custom("PlusJakartaSans-Regular", size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Text("Welcome to PULSE. These Terms explain the rules for using PULSE. By using the service, you agree to these Terms. If you do not agree, do not use PULSE.")
+                        .termsParagraph()
+
+                    termsSection("1. Eligibility", "You must be at least 13 years old, or the higher minimum age required where you live. If you are under the age of legal majority, you must have any parent or guardian permission required by law. PULSE is not intended for children under 13.")
+
+                    termsSection("2. Accounts", "Provide accurate information, keep your account details reasonably secure, and do not impersonate others or evade restrictions. Account creation, sign-in, and passkey features may not work while PULSE is a prototype; a screen for a feature does not mean it is operational.")
+
+                    termsSection("3. Your content", "You retain ownership of content you submit, to the extent permitted by law. You grant PULSE a non-exclusive, worldwide, royalty-free license to host, store, reproduce, and display that content only as reasonably necessary to operate, secure, maintain, and provide the service. You are responsible for having the rights to share your content.")
+
+                    termsSection("4. Prohibited conduct", "Do not harass, threaten, stalk, exploit or endanger minors, share private information unlawfully, infringe others’ rights, scam or spam people, impersonate others, post unlawful content, attack or disrupt the service, access data without permission, or use automation to abuse PULSE.")
+
+                    termsSection("5. Safety and enforcement", "We may investigate reports and restrict content or accounts for violations, safety risks, or legal reasons. PULSE is an early-stage project; reporting, moderation, appeals, and enforcement may not yet be available or fully operational. We do not promise pre-publication review or a response time.")
+
+                    termsSection("6. Privacy", "A separate Privacy Policy must explain how personal information is handled. These Terms do not replace that policy. PULSE should not launch or collect real user information until an accurate Privacy Policy and appropriate data-handling practices are in place.")
+
+                    termsSection("7. Availability and changes", "Features may change, pause, or be discontinued. We do not guarantee uninterrupted or error-free service. We may update these Terms and will provide notice or obtain consent for material changes where required by law.")
+
+                    termsSection("8. Suspension and termination", "You may stop using PULSE at any time. We may restrict or end access for violations, safety risks, legal requirements, or conduct that threatens the service. Account deletion and data retention must be explained in the Privacy Policy once implemented.")
+
+                    termsSection("9. Disclaimers and liability", "To the extent permitted by law, PULSE is provided on an available-as-is basis. Nothing here excludes rights or remedies that cannot legally be excluded or limits liability where doing so would be unlawful.")
+
+                    termsSection("10. Law and contact", "Applicable law and dispute procedures must be finalized before public launch. Mandatory legal protections remain unaffected. Before launch, the PULSE operator must replace the contact placeholder with a real support or legal contact.")
+
+                    Text("IMPORTANT: This is a starting-point draft, not a final legal document. Have it reviewed by a qualified lawyer before public release.")
+                        .font(.custom("PlusJakartaSans-Medium", size: 13))
+                        .foregroundStyle(Color(red: 1, green: 0.76, blue: 0.38))
+                        .padding(14)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.white.opacity(0.045), in: RoundedRectangle(cornerRadius: 14))
+                }
+                .padding(24)
+                .frame(maxWidth: 620, alignment: .leading)
+                .frame(maxWidth: .infinity)
+            }
+            .scrollIndicators(.hidden)
+            .background(PULSEBackdrop())
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { showTerms = false }
+                        .font(.custom("PlusJakartaSans-SemiBold", size: 14))
+                }
+            }
+        }
+        .preferredColorScheme(.dark)
+    }
+
+    private func termsSection(_ title: String, _ body: String) -> some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Text(title)
+                .font(.custom("PlusJakartaSans-SemiBold", size: 16))
+                .foregroundStyle(.white)
+            Text(body)
+                .termsParagraph()
         }
     }
 
@@ -621,6 +715,17 @@ private extension View {
     }
 }
 
+
+
+private extension Text {
+    func termsParagraph() -> some View {
+        self
+            .font(.custom("PlusJakartaSans-Regular", size: 14))
+            .foregroundStyle(.white.opacity(0.78))
+            .lineSpacing(4)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+}
 
 private struct PULSEBackdrop: View {
     @State private var drift = false
