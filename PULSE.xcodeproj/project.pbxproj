@@ -20,6 +20,7 @@
 		B10000000000000000000012 /* PlusJakartaSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000012 /* PlusJakartaSans-Regular.ttf */; };
 		B10000000000000000000013 /* PlusJakartaSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000013 /* PlusJakartaSans-SemiBold.ttf */; };
 		B10000000000000000000014 /* PlusJakartaSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000014 /* PlusJakartaSans-SemiBoldItalic.ttf */; };
+		B10000000000000000000015 /* GoogleG.png in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000015 /* GoogleG.png */; };
 		A20000000000000000000001 /* PULSEApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PULSEApp.swift; sourceTree = "<group>"; };
 		A20000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B20000000000000000000001 /* PlusJakartaSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PlusJakartaSans-Bold.ttf"; sourceTree = "<group>"; };
@@ -36,6 +37,7 @@
 		B20000000000000000000012 /* PlusJakartaSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PlusJakartaSans-Regular.ttf"; sourceTree = "<group>"; };
 		B20000000000000000000013 /* PlusJakartaSans-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PlusJakartaSans-SemiBold.ttf"; sourceTree = "<group>"; };
 		B20000000000000000000014 /* PlusJakartaSans-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PlusJakartaSans-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
+		B20000000000000000000015 /* GoogleG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GoogleG.png; sourceTree = "<group>"; };
 		A20000000000000000000003 /* PULSE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PULSE.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A30000000000000000000001 = {
 			isa = PBXGroup;
@@ -57,7 +59,10 @@
 		};
 		B30000000000000000000001 /* Resources */ = {
 			isa = PBXGroup;
-			children = (B30000000000000000000002 /* Fonts */,);
+			children = (
+				B20000000000000000000015 /* GoogleG.png */,
+				B30000000000000000000002 /* Fonts */,
+			);
 			path = Resources;
 			sourceTree = "<group>";
 		};
@@ -128,6 +133,7 @@
 				B10000000000000000000012 /* PlusJakartaSans-Regular.ttf in Resources */,
 				B10000000000000000000013 /* PlusJakartaSans-SemiBold.ttf in Resources */,
 				B10000000000000000000014 /* PlusJakartaSans-SemiBoldItalic.ttf in Resources */,
+				B10000000000000000000015 /* GoogleG.png in Resources */,
 			); runOnlyForDeploymentPostprocessing = 0; };
 		A70000000000000000000001 /* Project object */ = {
 			isa = PBXProject;

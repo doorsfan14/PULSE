@@ -825,8 +825,11 @@ struct ContentView: View {
             showBackendNotice("Google authentication")
         } label: {
             HStack(spacing: 11) {
-                GoogleLogo()
+                Image("GoogleG")
+                    .resizable()
+                    .scaledToFit()
                     .frame(width: 22, height: 22)
+                    .accessibilityHidden(true)
                 Text(title)
                     .font(.custom("PlusJakartaSans-SemiBold", size: 15))
                     .foregroundStyle(.primary.opacity(0.92))
@@ -904,55 +907,6 @@ struct ContentView: View {
     private func showBackendNotice(_ feature: String) {
         message = L("This feature is designed in the interface, but it won’t work until PULSE is connected to an authentication backend. Passkeys also need server-generated challenges and a registered relying-party domain.")
         showMessage = true
-    }
-}
-
-private struct GoogleLogo: View {
-    private let blue = Color(red: 0.259, green: 0.522, blue: 0.957)
-    private let red = Color(red: 0.918, green: 0.263, blue: 0.208)
-    private let yellow = Color(red: 0.984, green: 0.737, blue: 0.020)
-    private let green = Color(red: 0.204, green: 0.659, blue: 0.325)
-
-    var body: some View {
-        GeometryReader { geometry in
-            let side = min(geometry.size.width, geometry.size.height)
-            let line = side * 0.19
-            ZStack {
-                GoogleArc(start: 225, end: 315)
-                    .stroke(red, style: StrokeStyle(lineWidth: line, lineCap: .butt))
-                GoogleArc(start: 135, end: 225)
-                    .stroke(yellow, style: StrokeStyle(lineWidth: line, lineCap: .butt))
-                GoogleArc(start: 45, end: 135)
-                    .stroke(green, style: StrokeStyle(lineWidth: line, lineCap: .butt))
-                GoogleArc(start: -45, end: 45)
-                    .stroke(blue, style: StrokeStyle(lineWidth: line, lineCap: .butt))
-                Rectangle()
-                    .fill(blue)
-                    .frame(width: side * 0.43, height: line)
-                    .offset(x: side * 0.20, y: side * 0.01)
-            }
-            .frame(width: side, height: side)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-        .frame(width: 24, height: 24)
-        .accessibilityHidden(true)
-    }
-}
-
-private struct GoogleArc: Shape {
-    let start: Double
-    let end: Double
-
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.addArc(
-            center: CGPoint(x: rect.midX, y: rect.midY),
-            radius: min(rect.width, rect.height) * 0.36,
-            startAngle: .degrees(start),
-            endAngle: .degrees(end),
-            clockwise: false
-        )
-        return path
     }
 }
 
