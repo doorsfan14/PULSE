@@ -51,6 +51,22 @@ private enum PULSELocalization {
  "12. Third-party services":["es":"12. Servicios de terceros","fr":"12. Services tiers","pt":"12. Serviços de terceiros","de":"12. Drittanbieterdienste","zh":"12. 第三方服务","ja":"12. サードパーティサービス","ko":"12. 타사 서비스","ar":"12. خدمات الجهات الخارجية","hi":"12. तृतीय-पक्ष सेवाएँ"],
  "13. Policy changes":["es":"13. Cambios en la política","fr":"13. Modifications de la politique","pt":"13. Alterações da política","de":"13. Änderungen der Richtlinie","zh":"13. 政策变更","ja":"13. ポリシーの変更","ko":"13. 방침 변경","ar":"13. تغييرات السياسة","hi":"13. नीति में बदलाव"],
  "14. Contact":["es":"14. Contacto","fr":"14. Contact","pt":"14. Contato","de":"14. Kontakt","zh":"14. 联系方式","ja":"14. お問い合わせ","ko":"14. 문의","ar":"14. التواصل","hi":"14. संपर्क"],
+ "Welcome to PULSE": ["es":"Bienvenido a PULSE","fr":"Bienvenue sur PULSE","pt":"Boas-vindas ao PULSE","de":"Willkommen bei PULSE","zh":"欢迎使用 PULSE","ja":"PULSE へようこそ","ko":"PULSE에 오신 것을 환영합니다","ar":"مرحبًا بك في PULSE","hi":"PULSE में आपका स्वागत है"],
+ "A few details and you're ready to get started.": ["es":"Completa unos datos y estarás listo para comenzar.","fr":"Quelques informations et vous pourrez commencer.","pt":"Preencha alguns dados e você poderá começar.","de":"Nur ein paar Angaben, dann kannst du loslegen.","zh":"填写少量信息即可开始使用。","ja":"いくつかの情報を入力すれば、すぐに始められます。","ko":"몇 가지 정보만 입력하면 시작할 수 있습니다.","ar":"أدخل بعض التفاصيل لتكون جاهزًا للبدء.","hi":"कुछ जानकारी भरें और आप शुरू करने के लिए तैयार हैं।"],
+ "you@example.com": ["es":"tu@ejemplo.com","fr":"vous@exemple.com","pt":"voce@exemplo.com","de":"du@beispiel.de","zh":"you@example.com","ja":"you@example.com","ko":"you@example.com","ar":"you@example.com","hi":"you@example.com"],
+ "At least 8 characters": ["es":"Al menos 8 caracteres","fr":"8 caractères minimum","pt":"Pelo menos 8 caracteres","de":"Mindestens 8 Zeichen","zh":"至少 8 个字符","ja":"8文字以上","ko":"8자 이상","ar":"8 أحرف على الأقل","hi":"कम से कम 8 अक्षर"],
+ "Hide password": ["es":"Ocultar contraseña","fr":"Masquer le mot de passe","pt":"Ocultar senha","de":"Passwort ausblenden","zh":"隐藏密码","ja":"パスワードを隠す","ko":"비밀번호 숨기기","ar":"إخفاء كلمة المرور","hi":"पासवर्ड छिपाएँ"],
+ "Show password": ["es":"Mostrar contraseña","fr":"Afficher le mot de passe","pt":"Mostrar senha","de":"Passwort anzeigen","zh":"显示密码","ja":"パスワードを表示","ko":"비밀번호 표시","ar":"إظهار كلمة المرور","hi":"पासवर्ड दिखाएँ"],
+ "Use at least 8 characters.": ["es":"Usa al menos 8 caracteres.","fr":"Utilisez au moins 8 caractères.","pt":"Use pelo menos 8 caracteres.","de":"Verwende mindestens 8 Zeichen.","zh":"请至少使用 8 个字符。","ja":"8文字以上で入力してください。","ko":"8자 이상 입력하세요.","ar":"استخدم 8 أحرف على الأقل.","hi":"कम से कम 8 अक्षरों का उपयोग करें।"],
+ "Passwords don't match.": ["es":"Las contraseñas no coinciden.","fr":"Les mots de passe ne correspondent pas.","pt":"As senhas não coincidem.","de":"Die Passwörter stimmen nicht überein.","zh":"两次输入的密码不一致。","ja":"パスワードが一致しません。","ko":"비밀번호가 일치하지 않습니다.","ar":"كلمتا المرور غير متطابقتين.","hi":"पासवर्ड मेल नहीं खाते।"],
+ "OR": ["es":"O","fr":"OU","pt":"OU","de":"ODER","zh":"或","ja":"または","ko":"또는","ar":"أو","hi":"या"],
+ "New to PULSE?": ["es":"¿Nuevo en PULSE?","fr":"Nouveau sur PULSE ?","pt":"Novo no PULSE?","de":"Neu bei PULSE?","zh":"刚开始使用 PULSE？","ja":"PULSE は初めてですか？","ko":"PULSE를 처음 사용하시나요?","ar":"هل أنت جديد في PULSE؟","hi":"PULSE पर नए हैं?"],
+ "Format looks good. Unique availability must be confirmed by the account service.": ["es":"El formato es correcto. El servicio de cuentas debe confirmar si el nombre está disponible.","fr":"Le format est valide. Le service de comptes doit confirmer la disponibilité du nom.","pt":"O formato está correto. O serviço de contas precisa confirmar se o nome está disponível.","de":"Das Format ist gültig. Der Kontodienst muss die Verfügbarkeit des Namens bestätigen.","zh":"格式正确。用户名是否可用仍需由账户服务确认。","ja":"形式は正しいです。ユーザー名が利用可能かどうかはアカウントサービスで確認する必要があります。","ko":"형식이 올바릅니다. 사용자 이름 사용 가능 여부는 계정 서비스에서 확인해야 합니다.","ar":"التنسيق صحيح. يجب أن تؤكد خدمة الحسابات مدى توفر اسم المستخدم.","hi":"फ़ॉर्मैट सही है। उपयोगकर्ता नाम उपलब्ध है या नहीं, इसकी पुष्टि खाता सेवा को करनी होगी।"],
+ "Account registration": ["es":"Registro de cuenta","fr":"Création de compte","pt":"Cadastro de conta","de":"Kontoerstellung","zh":"账户注册","ja":"アカウント登録","ko":"계정 등록","ar":"إنشاء الحساب","hi":"खाता पंजीकरण"],
+ "Passkeys": ["es":"Llaves de acceso","fr":"Clés d’accès","pt":"Chaves de acesso","de":"Passkeys","zh":"通行密钥","ja":"パスキー","ko":"패스키","ar":"مفاتيح المرور","hi":"पासकी"],
+ " is designed in the interface, but it won't work until PULSE is connected to an authentication backend. Passkeys also need server-generated challenges and a registered relying-party domain.": ["es":" está diseñado en la interfaz, pero no funcionará hasta que PULSE se conecte a un servicio de autenticación. Las llaves de acceso también necesitan desafíos generados por el servidor y un dominio de confianza registrado.","fr":" est prévu dans l’interface, mais ne fonctionnera pas tant que PULSE ne sera pas connecté à un service d’authentification. Les clés d’accès nécessitent également des défis générés par le serveur et un domaine de confiance enregistré.","pt":" está previsto na interface, mas não funcionará até que o PULSE seja conectado a um serviço de autenticação. As chaves de acesso também precisam de desafios gerados pelo servidor e de um domínio confiável registrado.","de":" ist in der Oberfläche vorgesehen, funktioniert aber erst, wenn PULSE mit einem Authentifizierungsdienst verbunden ist. Passkeys benötigen außerdem serverseitig erzeugte Challenges und eine registrierte vertrauende Partei-Domain.","zh":"已在界面中设计，但只有在 PULSE 接入身份验证后端后才能使用。通行密钥还需要由服务器生成的挑战以及已注册的信赖方域名。","ja":"は画面上に用意されていますが、PULSE が認証バックエンドに接続されるまで動作しません。パスキーにはサーバー生成のチャレンジと登録済みの信頼当事者ドメインも必要です。","ko":"은 인터페이스에 구현되어 있지만 PULSE가 인증 백엔드에 연결되기 전에는 작동하지 않습니다. 패스키에는 서버에서 생성한 챌린지와 등록된 신뢰 당사자 도메인도 필요합니다.","ar":"مصمم في الواجهة، لكنه لن يعمل حتى يتم ربط PULSE بخادم للمصادقة. كما تحتاج مفاتيح المرور إلى تحديات ينشئها الخادم ونطاق موثوق مسجل.","hi":"इंटरफ़ेस में उपलब्ध है, लेकिन PULSE को प्रमाणीकरण बैकएंड से जोड़ने तक काम नहीं करेगा। पासकी के लिए सर्वर द्वारा बनाए गए चैलेंज और पंजीकृत भरोसेमंद-पक्ष डोमेन की भी आवश्यकता होती है।"],
+ "Pick up where you left off.": ["es":"Continúa donde lo dejaste.","fr":"Reprenez là où vous en étiez.","pt":"Continue de onde você parou.","de":"Mach dort weiter, wo du aufgehört hast.","zh":"继续上次的进度。","ja":"前回の続きから始めましょう。","ko":"이어서 계속하세요.","ar":"تابع من حيث توقفت.","hi":"जहाँ छोड़ा था, वहीं से आगे बढ़ें।"],
+ "Use 3–20 letters, numbers, or underscores.": ["es":"Usa entre 3 y 20 letras, números o guiones bajos.","fr":"Utilisez 3 à 20 lettres, chiffres ou traits de soulignement.","pt":"Use de 3 a 20 letras, números ou sublinhados.","de":"Verwende 3–20 Buchstaben, Zahlen oder Unterstriche.","zh":"请使用 3–20 个字母、数字或下划线。","ja":"英字・数字・アンダースコアを3〜20文字で使用してください。","ko":"영문자, 숫자 또는 밑줄을 3~20자 사용하세요.","ar":"استخدم من 3 إلى 20 حرفًا أو رقمًا أو شرطة سفلية.","hi":"3–20 अक्षर, अंक या अंडरस्कोर इस्तेमाल करें。"],
  ];
  
  static let legalMap: [String:[String:String]] = [
@@ -446,7 +462,7 @@ struct ContentView: View {
                         }
 
                     if !username.isEmpty && !isValidUsername(username) {
-                        validationHint("Use 3–20 letters, numbers, or underscores.")
+                        validationHint(L("Use 3–20 letters, numbers, or underscores."))
                     } else if !username.isEmpty && !usernameAvailabilityMessage.isEmpty {
                         HStack(spacing: 6) {
                             Image(systemName: usernameAvailabilityIsError ? "info.circle" : "checkmark.circle")
@@ -458,7 +474,7 @@ struct ContentView: View {
                         .padding(.horizontal, 2)
                     }
 
-                    inputField(L("Email address"), placeholder: "you@example.com", text: $email, symbol: "envelope")
+                    inputField(L("Email address"), placeholder: L("you@example.com"), text: $email, symbol: "envelope")
                         .textContentType(.emailAddress)
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
@@ -473,9 +489,9 @@ struct ContentView: View {
                                 .frame(width: 20)
                             Group {
                                 if showPassword {
-                                    TextField("At least 8 characters", text: $password)
+                                    TextField(L("At least 8 characters"), text: $password)
                                 } else {
-                                    SecureField("At least 8 characters", text: $password)
+                                    SecureField(L("At least 8 characters"), text: $password)
                                 }
                             }
                             .textContentType(.newPassword)
@@ -486,11 +502,11 @@ struct ContentView: View {
                                     .foregroundStyle(.secondary)
                             }
                             .buttonStyle(.plain)
-                            .accessibilityLabel(showPassword ? "Hide password" : "Show password")
+                            .accessibilityLabel(L(showPassword ? "Hide password" : "Show password"))
                         }
                         .inputSurface()
                         if !password.isEmpty && password.count < 8 {
-                            validationHint("Use at least 8 characters.")
+                            validationHint(L("Use at least 8 characters."))
                         }
                     }
 
@@ -501,12 +517,12 @@ struct ContentView: View {
                             Image(systemName: "lock.shield")
                                 .foregroundStyle(.secondary)
                                 .frame(width: 20)
-                            SecureField("Enter your password again", text: $confirmPassword)
+                            SecureField(L("Enter your password again"), text: $confirmPassword)
                                 .textContentType(.newPassword)
                         }
                         .inputSurface()
                         if !confirmPassword.isEmpty && !passwordsMatch {
-                            validationHint("Passwords don't match.", color: .red)
+                            validationHint(L("Passwords don't match."), color: .red)
                         }
                     }
                 }
@@ -538,7 +554,7 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity)
                 .modifier(PULSEEntrance(delay: 0.22))
 
-                separatorLabel("OR")
+                separatorLabel(L("OR"))
                     .modifier(PULSEEntrance(delay: 0.24))
 
                 passkeyButton(title: L("Create account with a passkey"), symbol: "person.badge.key.fill")
@@ -679,7 +695,7 @@ struct ContentView: View {
                 .modifier(PULSEEntrance(delay: 0.06))
 
                 VStack(spacing: 17) {
-                    inputField(L("Email address"), placeholder: "you@example.com", text: $signInEmail, symbol: "envelope")
+                    inputField(L("Email address"), placeholder: L("you@example.com"), text: $signInEmail, symbol: "envelope")
                         .textContentType(.emailAddress)
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
@@ -712,7 +728,7 @@ struct ContentView: View {
                 .disabled(!isValidEmail(signInEmail) || signInPassword.isEmpty)
                 .modifier(PULSEEntrance(delay: 0.18))
 
-                separatorLabel("OR")
+                separatorLabel(L("OR"))
                     .modifier(PULSEEntrance(delay: 0.24))
 
                 passkeyButton(title: L("Continue with a passkey"), symbol: "person.badge.key.fill")
@@ -834,12 +850,12 @@ struct ContentView: View {
             usernameAvailabilityIsError = true
             return
         }
-        usernameAvailabilityMessage = "Format looks good. Unique availability must be confirmed by the account service."
+        usernameAvailabilityMessage = L("Format looks good. Unique availability must be confirmed by the account service.")
         usernameAvailabilityIsError = true
     }
 
     private func showBackendNotice(_ feature: String) {
-        message = "\(feature) is designed in the interface, but it won't work until PULSE is connected to an authentication backend. Passkeys also need server-generated challenges and a registered relying-party domain."
+        message = "\(L(feature))\(L(" is designed in the interface, but it won\'t work until PULSE is connected to an authentication backend. Passkeys also need server-generated challenges and a registered relying-party domain."))"
         showMessage = true
     }
 }
