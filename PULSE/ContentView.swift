@@ -1,3 +1,26 @@
+private enum PULSELocalization {
+ static var lang: String { let c = Locale.preferredLanguages.first.map { String($0.prefix(2)) } ?? "en"; return ["es","fr","pt","de","zh","ja","ko","ar","hi"].contains(c) ? c : "en" }
+ static let map: [String:[String:String]] = [
+ "Terms Of Service":["es":"Términos del servicio","fr":"Conditions d’utilisation","pt":"Termos de serviço","de":"Nutzungsbedingungen","zh":"服务条款","ja":"利用規約","ko":"서비스 약관","ar":"شروط الخدمة","hi":"सेवा की शर्तें"],
+ "Privacy Policy":["es":"Política de privacidad","fr":"Politique de confidentialité","pt":"Política de privacidade","de":"Datenschutzerklärung","zh":"隐私政策","ja":"プライバシーポリシー","ko":"개인정보 처리방침","ar":"سياسة الخصوصية","hi":"गोपनीयता नीति"],
+ "Create account":["es":"Crear cuenta","fr":"Créer un compte","pt":"Criar conta","de":"Konto erstellen","zh":"创建账户","ja":"アカウントを作成","ko":"계정 만들기","ar":"إنشاء حساب","hi":"खाता बनाएँ"],
+ "Log in":["es":"Iniciar sesión","fr":"Se connecter","pt":"Entrar","de":"Anmelden","zh":"登录","ja":"ログイン","ko":"로그인","ar":"تسجيل الدخول","hi":"लॉग इन करें"],
+ "Full name":["es":"Nombre completo","fr":"Nom complet","pt":"Nome completo","de":"Vollständiger Name","zh":"姓名","ja":"氏名","ko":"이름","ar":"الاسم الكامل","hi":"पूरा नाम"],
+ "Username":["es":"Nombre de usuario","fr":"Nom d’utilisateur","pt":"Nome de usuário","de":"Benutzername","zh":"用户名","ja":"ユーザー名","ko":"사용자 이름","ar":"اسم المستخدم","hi":"उपयोगकर्ता नाम"],
+ "Email address":["es":"Correo electrónico","fr":"Adresse e-mail","pt":"E-mail","de":"E-Mail-Adresse","zh":"电子邮件地址","ja":"メールアドレス","ko":"이메일 주소","ar":"البريد الإلكتروني","hi":"ईमेल पता"],
+ "Password":["es":"Contraseña","fr":"Mot de passe","pt":"Senha","de":"Passwort","zh":"密码","ja":"パスワード","ko":"비밀번호","ar":"كلمة المرور","hi":"पासवर्ड"],
+ "Confirm password":["es":"Confirmar contraseña","fr":"Confirmer le mot de passe","pt":"Confirmar senha","de":"Passwort bestätigen","zh":"确认密码","ja":"パスワードを確認","ko":"비밀번호 확인","ar":"تأكيد كلمة المرور","hi":"पासवर्ड की पुष्टि करें"],
+ "Welcome back":["es":"Bienvenido de nuevo","fr":"Heureux de vous revoir","pt":"Boas-vindas de volta","de":"Willkommen zurück","zh":"欢迎回来","ja":"おかえりなさい","ko":"다시 오신 것을 환영합니다","ar":"مرحبًا بعودتك","hi":"वापसी पर स्वागत है"],
+ "Sign in":["es":"Iniciar sesión","fr":"Se connecter","pt":"Entrar","de":"Anmelden","zh":"登录","ja":"サインイン","ko":"로그인","ar":"تسجيل الدخول","hi":"साइन इन करें"],
+ "Create an account":["es":"Crear una cuenta","fr":"Créer un compte","pt":"Criar uma conta","de":"Konto erstellen","zh":"创建账户","ja":"アカウントを作成","ko":"계정 만들기","ar":"إنشاء حساب","hi":"खाता बनाएँ"],
+ "Back":["es":"Atrás","fr":"Retour","pt":"Voltar","de":"Zurück","zh":"返回","ja":"戻る","ko":"뒤로","ar":"رجوع","hi":"वापस"],
+ "Done":["es":"Listo","fr":"Terminé","pt":"Concluído","de":"Fertig","zh":"完成","ja":"完了","ko":"완료","ar":"تم","hi":"हो गया"],
+ "OK":["es":"Aceptar","fr":"OK","pt":"OK","de":"OK","zh":"确定","ja":"OK","ko":"확인","ar":"حسنًا","hi":"ठीक है"]
+ ];
+ static func t(_ key:String)->String { map[key]?[lang] ?? key }
+}
+private func L(_ key:String)->String { PULSELocalization.t(key) }
+
 import SwiftUI
 import CoreMotion
 import UIKit
@@ -35,7 +58,7 @@ struct ContentView: View {
     @State private var titleTask: Task<Void, Never>?
     @StateObject private var motion = WelcomeMotionManager()
 
-    private let welcomeTitle = "Welcome to PULSE"
+    private let welcomeTitle = L("Welcome to PULSE")
 
     private var passwordsMatch: Bool {
         !password.isEmpty && password == confirmPassword
@@ -77,7 +100,7 @@ struct ContentView: View {
             .toolbar(.hidden, for: .navigationBar)
             .font(.custom("PlusJakartaSans-Regular", size: 17))
             .alert("PULSE", isPresented: $showMessage) {
-                Button("OK", role: .cancel) { }
+                Button(L("OK"), role: .cancel) { }
             } message: {
                 Text(message)
             }
@@ -167,7 +190,7 @@ struct ContentView: View {
                         Button {
                             activeLegalDocument = .terms
                         } label: {
-                            Text("Terms Of Service")
+                            Text(L("Terms Of Service"))
                                 .font(.custom("PlusJakartaSans-Medium", size: 12))
                                 .foregroundStyle(.white.opacity(0.76))
                         }
@@ -180,7 +203,7 @@ struct ContentView: View {
                         Button {
                             activeLegalDocument = .privacyPolicy
                         } label: {
-                            Text("Privacy Policy")
+                            Text(L("Privacy Policy"))
                                 .font(.custom("PlusJakartaSans-Medium", size: 12))
                                 .foregroundStyle(.white.opacity(0.76))
                         }
@@ -190,13 +213,13 @@ struct ContentView: View {
                     .modifier(PULSEEntrance(delay: 0.16))
 
                     VStack(spacing: 12) {
-                        welcomeButton(title: "Create account", brighter: true) {
+                        welcomeButton(title: L("Create account"), brighter: true) {
                             withAnimation(.spring(response: 0.78, dampingFraction: 0.90)) {
                                 screen = .createAccount
                             }
                         }
 
-                        welcomeButton(title: "Log in", brighter: false) {
+                        welcomeButton(title: L("Log in"), brighter: false) {
                             withAnimation(.spring(response: 0.78, dampingFraction: 0.90)) {
                                 screen = .signIn
                             }
@@ -345,11 +368,11 @@ struct ContentView: View {
                 .modifier(PULSEEntrance(delay: 0.06))
 
                 VStack(spacing: 17) {
-                    inputField("Full name", placeholder: "Your name", text: $name, symbol: "person")
+                    inputField(L("Full name"), placeholder: L("Your name"), text: $name, symbol: "person")
                         .textContentType(.name)
                         .textInputAutocapitalization(.words)
 
-                    inputField("Username", placeholder: "Choose a username", text: $username, symbol: "at")
+                    inputField(L("Username"), placeholder: L("Choose a username"), text: $username, symbol: "at")
                         .textContentType(.username)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
@@ -370,14 +393,14 @@ struct ContentView: View {
                         .padding(.horizontal, 2)
                     }
 
-                    inputField("Email address", placeholder: "you@example.com", text: $email, symbol: "envelope")
+                    inputField(L("Email address"), placeholder: "you@example.com", text: $email, symbol: "envelope")
                         .textContentType(.emailAddress)
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Password")
+                        Text(L("Password"))
                             .font(.custom("PlusJakartaSans-Medium", size: 15))
                         HStack(spacing: 12) {
                             Image(systemName: "lock")
@@ -407,7 +430,7 @@ struct ContentView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Confirm password")
+                        Text(L("Confirm password"))
                             .font(.custom("PlusJakartaSans-Medium", size: 15))
                         HStack(spacing: 12) {
                             Image(systemName: "lock.shield")
@@ -427,7 +450,7 @@ struct ContentView: View {
                 Button {
                     showBackendNotice("Account registration")
                 } label: {
-                    Text("Create account")
+                    Text(L("Create account"))
                         .font(.custom("PlusJakartaSans-SemiBold", size: 17))
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
@@ -458,7 +481,7 @@ struct ContentView: View {
                 HStack(spacing: 5) {
                     Text("Already have an account?")
                         .foregroundStyle(.secondary)
-                    Button("Sign in") {
+                    Button(L("Sign in")) {
                         withAnimation(.spring(response: 0.78, dampingFraction: 0.90)) {
                             screen = .signIn
                         }
@@ -564,7 +587,7 @@ struct ContentView: View {
             .background(PULSEBackdrop())
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { activeLegalDocument = nil }
+                    Button(L("Done")) { activeLegalDocument = nil }
                         .font(.custom("PlusJakartaSans-SemiBold", size: 14))
                 }
             }
@@ -582,7 +605,7 @@ struct ContentView: View {
                     .padding(.top, 8)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Welcome back")
+                    Text(L("Welcome back"))
                         .font(.custom("PlusJakartaSans-Bold", size: 34))
                         .tracking(-0.5)
                     Text("Pick up where you left off.")
@@ -591,14 +614,14 @@ struct ContentView: View {
                 .modifier(PULSEEntrance(delay: 0.06))
 
                 VStack(spacing: 17) {
-                    inputField("Email address", placeholder: "you@example.com", text: $signInEmail, symbol: "envelope")
+                    inputField(L("Email address"), placeholder: "you@example.com", text: $signInEmail, symbol: "envelope")
                         .textContentType(.emailAddress)
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Password")
+                        Text(L("Password"))
                             .font(.custom("PlusJakartaSans-Medium", size: 15))
                         HStack(spacing: 12) {
                             Image(systemName: "lock")
@@ -659,7 +682,7 @@ struct ContentView: View {
                 screen = .welcome
             }
         } label: {
-            Label("Back", systemImage: "chevron.left")
+            Label(L("Back"), systemImage: "chevron.left")
                 .font(.custom("PlusJakartaSans-Medium", size: 15))
                 .foregroundStyle(.white.opacity(0.88))
                 .padding(.horizontal, 15)
