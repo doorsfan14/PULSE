@@ -24,6 +24,33 @@ private enum PULSELocalization {
  "Enter your password again":["es":"Vuelve a introducir tu contraseña","fr":"Saisissez à nouveau votre mot de passe","pt":"Digite sua senha novamente","de":"Gib dein Passwort erneut ein","zh":"再次输入密码","ja":"パスワードをもう一度入力","ko":"비밀번호를 다시 입력하세요","ar":"أدخل كلمة المرور مرة أخرى","hi":"अपना पासवर्ड फिर से दर्ज करें"],
  "Your password":["es":"Tu contraseña","fr":"Votre mot de passe","pt":"Sua senha","de":"Dein Passwort","zh":"你的密码","ja":"パスワード","ko":"비밀번호","ar":"كلمة المرور","hi":"आपका पासवर्ड"],
  "Effective October 9, 2026":["es":"Vigente desde el 9 de octubre de 2026","fr":"En vigueur le 9 octobre 2026","pt":"Em vigor em 9 de outubro de 2026","de":"Gültig ab 9. Oktober 2026","zh":"生效日期：2026年10月9日","ja":"2026年10月9日発効","ko":"2026년 10월 9일 시행","ar":"ساري اعتبارًا من 9 أكتوبر 2026","hi":"9 अक्टूबर 2026 से प्रभावी"]
+ "1. Eligibility":["es":"1. Elegibilidad","fr":"1. Admissibilité","pt":"1. Elegibilidade","de":"1. Berechtigung","zh":"1. 资格要求","ja":"1. 利用資格","ko":"1. 자격 요건","ar":"1. الأهلية","hi":"1. पात्रता"],
+ "2. Accounts and security":["es":"2. Cuentas y seguridad","fr":"2. Comptes et sécurité","pt":"2. Contas e segurança","de":"2. Konten und Sicherheit","zh":"2. 账户与安全","ja":"2. アカウントとセキュリティ","ko":"2. 계정 및 보안","ar":"2. الحسابات والأمان","hi":"2. खाते और सुरक्षा"],
+ "3. Your content":["es":"3. Tu contenido","fr":"3. Votre contenu","pt":"3. Seu conteúdo","de":"3. Deine Inhalte","zh":"3. 你的内容","ja":"3. あなたのコンテンツ","ko":"3. 콘텐츠","ar":"3. المحتوى الخاص بك","hi":"3. आपका कंटेंट"],
+ "4. Public content and interactions":["es":"4. Contenido público e interacciones","fr":"4. Contenu public et interactions","pt":"4. Conteúdo público e interações","de":"4. Öffentliche Inhalte und Interaktionen","zh":"4. 公开内容与互动","ja":"4. 公開コンテンツと交流","ko":"4. 공개 콘텐츠 및 상호작용","ar":"4. المحتوى العام والتفاعلات","hi":"4. सार्वजनिक कंटेंट और सहभागिता"],
+ "5. Acceptable use":["es":"5. Uso aceptable","fr":"5. Utilisation acceptable","pt":"5. Uso aceitável","de":"5. Zulässige Nutzung","zh":"5. 可接受的使用方式","ja":"5. 許容される利用","ko":"5. 허용되는 사용","ar":"5. الاستخدام المقبول","hi":"5. स्वीकार्य उपयोग"],
+ "6. Safety and enforcement":["es":"6. Seguridad y cumplimiento","fr":"6. Sécurité et application","pt":"6. Segurança e aplicação","de":"6. Sicherheit und Durchsetzung","zh":"6. 安全与执行","ja":"6. 安全と規約の執行","ko":"6. 안전 및 집행","ar":"6. السلامة وإنفاذ الشروط","hi":"6. सुरक्षा और प्रवर्तन"],
+ "7. Privacy":["es":"7. Privacidad","fr":"7. Confidentialité","pt":"7. Privacidade","de":"7. Datenschutz","zh":"7. 隐私","ja":"7. プライバシー","ko":"7. 개인정보 보호","ar":"7. الخصوصية","hi":"7. गोपनीयता"],
+ "8. Availability and changes":["es":"8. Disponibilidad y cambios","fr":"8. Disponibilité et modifications","pt":"8. Disponibilidade e alterações","de":"8. Verfügbarkeit und Änderungen","zh":"8. 可用性与变更","ja":"8. 提供状況と変更","ko":"8. 이용 가능성 및 변경","ar":"8. التوفر والتغييرات","hi":"8. उपलब्धता और बदलाव"],
+ "9. Suspension and termination":["es":"9. Suspensión y terminación","fr":"9. Suspension et résiliation","pt":"9. Suspensão e encerramento","de":"9. Sperrung und Beendigung","zh":"9. 暂停与终止","ja":"9. 停止と終了","ko":"9. 정지 및 종료","ar":"9. التعليق والإنهاء","hi":"9. निलंबन और समाप्ति"],
+ "10. Disclaimers":["es":"10. Exenciones de responsabilidad","fr":"10. Exclusions de responsabilité","pt":"10. Isenções de responsabilidade","de":"10. Haftungsausschlüsse","zh":"10. 免责声明","ja":"10. 免責事項","ko":"10. 면책 조항","ar":"10. إخلاء المسؤولية","hi":"10. अस्वीकरण"],
+ "11. Limitation of liability":["es":"11. Limitación de responsabilidad","fr":"11. Limitation de responsabilité","pt":"11. Limitação de responsabilidade","de":"11. Haftungsbeschränkung","zh":"11. 责任限制","ja":"11. 責任制限","ko":"11. 책임 제한","ar":"11. حدود المسؤولية","hi":"11. दायित्व की सीमा"],
+ "12. Governing law and disputes":["es":"12. Ley aplicable y disputas","fr":"12. Droit applicable et litiges","pt":"12. Lei aplicável e disputas","de":"12. Anwendbares Recht und Streitigkeiten","zh":"12. 适用法律与争议","ja":"12. 準拠法と紛争","ko":"12. 준거법 및 분쟁","ar":"12. القانون الحاكم والنزاعات","hi":"12. लागू कानून और विवाद"],
+ "13. Contact":["es":"13. Contacto","fr":"13. Contact","pt":"13. Contato","de":"13. Kontakt","zh":"13. 联系方式","ja":"13. お問い合わせ","ko":"13. 문의","ar":"13. التواصل","hi":"13. संपर्क"],
+ "1. Information you provide":["es":"1. Información que proporcionas","fr":"1. Informations que vous fournissez","pt":"1. Informações fornecidas por você","de":"1. Von dir bereitgestellte Informationen","zh":"1. 你提供的信息","ja":"1. 提供する情報","ko":"1. 제공하는 정보","ar":"1. المعلومات التي تقدمها","hi":"1. आपके द्वारा दी गई जानकारी"],
+ "2. Technical information":["es":"2. Información técnica","fr":"2. Informations techniques","pt":"2. Informações técnicas","de":"2. Technische Informationen","zh":"2. 技术信息","ja":"2. 技術情報","ko":"2. 기술 정보","ar":"2. المعلومات التقنية","hi":"2. तकनीकी जानकारी"],
+ "3. How we use information":["es":"3. Cómo usamos la información","fr":"3. Utilisation des informations","pt":"3. Como usamos as informações","de":"3. Verwendung von Informationen","zh":"3. 我们如何使用信息","ja":"3. 情報の利用方法","ko":"3. 정보 이용 방법","ar":"3. كيفية استخدام المعلومات","hi":"3. हम जानकारी का उपयोग कैसे करते हैं"],
+ "4. Public content":["es":"4. Contenido público","fr":"4. Contenu public","pt":"4. Conteúdo público","de":"4. Öffentliche Inhalte","zh":"4. 公开内容","ja":"4. 公開コンテンツ","ko":"4. 공개 콘텐츠","ar":"4. المحتوى العام","hi":"4. सार्वजनिक कंटेंट"],
+ "5. How information is shared":["es":"5. Cómo se comparte la información","fr":"5. Partage des informations","pt":"5. Como as informações são compartilhadas","de":"5. Weitergabe von Informationen","zh":"5. 信息共享方式","ja":"5. 情報の共有方法","ko":"5. 정보 공유 방식","ar":"5. كيفية مشاركة المعلومات","hi":"5. जानकारी कैसे साझा की जाती है"],
+ "6. Service providers":["es":"6. Proveedores de servicios","fr":"6. Prestataires de services","pt":"6. Prestadores de serviços","de":"6. Dienstleister","zh":"6. 服务提供商","ja":"6. サービス提供者","ko":"6. 서비스 제공업체","ar":"6. مزودو الخدمات","hi":"6. सेवा प्रदाता"],
+ "7. Security":["es":"7. Seguridad","fr":"7. Sécurité","pt":"7. Segurança","de":"7. Sicherheit","zh":"7. 安全","ja":"7. セキュリティ","ko":"7. 보안","ar":"7. الأمان","hi":"7. सुरक्षा"],
+ "8. Retention and deletion":["es":"8. Conservación y eliminación","fr":"8. Conservation et suppression","pt":"8. Retenção e exclusão","de":"8. Aufbewahrung und Löschung","zh":"8. 保留与删除","ja":"8. 保存と削除","ko":"8. 보관 및 삭제","ar":"8. الاحتفاظ والحذف","hi":"8. रखरखाव और हटाना"],
+ "9. Your choices and rights":["es":"9. Tus opciones y derechos","fr":"9. Vos choix et vos droits","pt":"9. Suas escolhas e direitos","de":"9. Deine Wahlmöglichkeiten und Rechte","zh":"9. 你的选择与权利","ja":"9. 選択肢と権利","ko":"9. 선택 및 권리","ar":"9. خياراتك وحقوقك","hi":"9. आपके विकल्प और अधिकार"],
+ "10. Children and teens":["es":"10. Niños y adolescentes","fr":"10. Enfants et adolescents","pt":"10. Crianças e adolescentes","de":"10. Kinder und Jugendliche","zh":"10. 儿童与青少年","ja":"10. 子どもと青少年","ko":"10. 아동 및 청소년","ar":"10. الأطفال والمراهقون","hi":"10. बच्चे और किशोर"],
+ "11. International processing":["es":"11. Tratamiento internacional","fr":"11. Traitement international","pt":"11. Tratamento internacional","de":"11. Internationale Verarbeitung","zh":"11. 国际处理","ja":"11. 国際的な処理","ko":"11. 국제 처리","ar":"11. المعالجة الدولية","hi":"11. अंतरराष्ट्रीय प्रसंस्करण"],
+ "12. Third-party services":["es":"12. Servicios de terceros","fr":"12. Services tiers","pt":"12. Serviços de terceiros","de":"12. Drittanbieterdienste","zh":"12. 第三方服务","ja":"12. サードパーティサービス","ko":"12. 타사 서비스","ar":"12. خدمات الجهات الخارجية","hi":"12. तृतीय-पक्ष सेवाएँ"],
+ "13. Policy changes":["es":"13. Cambios en la política","fr":"13. Modifications de la politique","pt":"13. Alterações da política","de":"13. Änderungen der Richtlinie","zh":"13. 政策变更","ja":"13. ポリシーの変更","ko":"13. 방침 변경","ar":"13. تغييرات السياسة","hi":"13. नीति में बदलाव"],
+ "14. Contact":["es":"14. Contacto","fr":"14. Contact","pt":"14. Contato","de":"14. Kontakt","zh":"14. 联系方式","ja":"14. お問い合わせ","ko":"14. 문의","ar":"14. التواصل","hi":"14. संपर्क"],
  ];
  
  static let legalMap: [String:[String:String]] = [
@@ -514,7 +541,7 @@ struct ContentView: View {
                 separatorLabel("OR")
                     .modifier(PULSEEntrance(delay: 0.24))
 
-                passkeyButton(title: "Create account with a passkey", symbol: "person.badge.key.fill")
+                passkeyButton(title: L("Create account with a passkey"), symbol: "person.badge.key.fill")
 
                 HStack(spacing: 5) {
                     Text(L("Already have an account?"))
@@ -555,7 +582,7 @@ struct ContentView: View {
     }
 
     private var termsSheet: some View {
-        legalDocumentSheet(title: "Terms of Service", subtitle: "Effective October 9, 2026") {
+        legalDocumentSheet(title: L("Terms of Service"), subtitle: L("Effective October 9, 2026")) {
             Text(L("Welcome to PULSE. These Terms of Service govern your access to and use of PULSE. By using PULSE, you agree to these Terms. If you do not agree, do not use the service."))
                 .termsParagraph()
             termsSection("1. Eligibility", "You must be at least 13 years old, or the higher minimum age required where you live. If you are under the age of legal majority, you must have any parent or guardian permission required by applicable law. You are responsible for using PULSE in compliance with the laws that apply to you.")
@@ -575,7 +602,7 @@ struct ContentView: View {
     }
 
     private var privacyPolicySheet: some View {
-        legalDocumentSheet(title: "Privacy Policy", subtitle: "Effective October 9, 2026") {
+        legalDocumentSheet(title: L("Privacy Policy"), subtitle: L("Effective October 9, 2026")) {
             Text(L("PULSE respects your privacy. This Privacy Policy explains how personal information is collected, used, stored, and shared when you use PULSE."))
                 .termsParagraph()
             termsSection("1. Information you provide", "Depending on the features you use, information may include your name, username, email address, profile details, posts, comments, media, support requests, reports, and preferences. Avoid including sensitive personal information in public posts or profile fields.")
@@ -676,7 +703,7 @@ struct ContentView: View {
                 Button {
                     showBackendNotice("Sign in")
                 } label: {
-                    Text("Sign in")
+                    Text(L("Sign in"))
                         .font(.custom("PlusJakartaSans-SemiBold", size: 17))
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
@@ -688,7 +715,7 @@ struct ContentView: View {
                 separatorLabel("OR")
                     .modifier(PULSEEntrance(delay: 0.24))
 
-                passkeyButton(title: "Continue with a passkey", symbol: "person.badge.key.fill")
+                passkeyButton(title: L("Continue with a passkey"), symbol: "person.badge.key.fill")
 
                 HStack(spacing: 5) {
                     Text(L("New to PULSE?"))
