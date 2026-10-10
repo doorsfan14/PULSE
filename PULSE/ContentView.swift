@@ -4,6 +4,8 @@ private enum PULSELocalization {
  "Terms Of Service":["es":"Términos del servicio","fr":"Conditions d’utilisation","pt":"Termos de serviço","de":"Nutzungsbedingungen","zh":"服务条款","ja":"利用規約","ko":"서비스 약관","ar":"شروط الخدمة","hi":"सेवा की शर्तें"],
  "Privacy Policy":["es":"Política de privacidad","fr":"Politique de confidentialité","pt":"Política de privacidade","de":"Datenschutzerklärung","zh":"隐私政策","ja":"プライバシーポリシー","ko":"개인정보 처리방침","ar":"سياسة الخصوصية","hi":"गोपनीयता नीति"],
  "Create account":["es":"Crear cuenta","fr":"Créer un compte","pt":"Criar conta","de":"Konto erstellen","zh":"创建账户","ja":"アカウントを作成","ko":"계정 만들기","ar":"إنشاء حساب","hi":"खाता बनाएँ"],
+ "Create account with Google":["es":"Crear cuenta con Google","fr":"Créer un compte avec Google","pt":"Criar conta com o Google","de":"Konto mit Google erstellen","zh":"使用 Google 创建账户","ja":"Google でアカウントを作成","ko":"Google로 계정 만들기","ar":"إنشاء حساب باستخدام Google","hi":"Google से खाता बनाएँ"],
+ "Log in with a passkey":["es":"Iniciar sesión con una llave de acceso","fr":"Se connecter avec une clé d’accès","pt":"Entrar com uma chave de acesso","de":"Mit einem Passkey anmelden","zh":"使用通行密钥登录","ja":"パスキーでログイン","ko":"패스키로 로그인","ar":"تسجيل الدخول باستخدام مفتاح مرور","hi":"पासकी से लॉग इन करें"],
  "Log in":["es":"Iniciar sesión","fr":"Se connecter","pt":"Entrar","de":"Anmelden","zh":"登录","ja":"ログイン","ko":"로그인","ar":"تسجيل الدخول","hi":"लॉग इन करें"],
  "Full name":["es":"Nombre completo","fr":"Nom complet","pt":"Nome completo","de":"Vollständiger Name","zh":"姓名","ja":"氏名","ko":"이름","ar":"الاسم الكامل","hi":"पूरा नाम"],
  "Username":["es":"Nombre de usuario","fr":"Nom d’utilisateur","pt":"Nome de usuário","de":"Benutzername","zh":"用户名","ja":"ユーザー名","ko":"사용자 이름","ar":"اسم المستخدم","hi":"उपयोगकर्ता नाम"],
@@ -587,7 +589,7 @@ struct ContentView: View {
                 separatorLabel(L("OR"))
                     .modifier(PULSEEntrance(delay: 0.24))
 
-                passkeyButton(title: L("Create account with a passkey"), symbol: "person.badge.key.fill")
+                googleAuthButton(title: L("Create account with Google"))
 
                 HStack(spacing: 5) {
                     Text(L("Already have an account?"))
@@ -758,7 +760,7 @@ struct ContentView: View {
                 separatorLabel(L("OR"))
                     .modifier(PULSEEntrance(delay: 0.24))
 
-                passkeyButton(title: L("Continue with a passkey"), symbol: "person.badge.key.fill")
+                passkeyButton(title: L("Log in with a passkey"), symbol: "person.badge.key.fill")
 
                 HStack(spacing: 5) {
                     Text(L("New to PULSE?"))
@@ -813,6 +815,25 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 52)
                 .contentShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .buttonStyle(PULSESecondaryButtonStyle())
+        .modifier(PULSEEntrance(delay: 0.28))
+    }
+
+    private func googleAuthButton(title: String) -> some View {
+        Button {
+            showBackendNotice("Google authentication")
+        } label: {
+            HStack(spacing: 11) {
+                GoogleLogo()
+                    .frame(width: 22, height: 22)
+                Text(title)
+                    .font(.custom("PlusJakartaSans-SemiBold", size: 15))
+                    .foregroundStyle(.primary.opacity(0.92))
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 52)
+            .contentShape(RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(PULSESecondaryButtonStyle())
         .modifier(PULSEEntrance(delay: 0.28))
@@ -883,6 +904,28 @@ struct ContentView: View {
     private func showBackendNotice(_ feature: String) {
         message = L("This feature is designed in the interface, but it won’t work until PULSE is connected to an authentication backend. Passkeys also need server-generated challenges and a registered relying-party domain.")
         showMessage = true
+    }
+}
+
+private struct GoogleLogo: View {
+    var body: some View {
+        Text("G")
+            .font(.system(size: 23, weight: .bold, design: .rounded))
+            .foregroundStyle(
+                AngularGradient(
+                    colors: [
+                        Color(red: 0.26, green: 0.52, blue: 0.96),
+                        Color(red: 0.20, green: 0.66, blue: 0.33),
+                        Color(red: 0.98, green: 0.74, blue: 0.02),
+                        Color(red: 0.92, green: 0.26, blue: 0.21),
+                        Color(red: 0.26, green: 0.52, blue: 0.96)
+                    ],
+                    center: .center,
+                    startAngle: .degrees(-45),
+                    endAngle: .degrees(315)
+                )
+            )
+            .accessibilityHidden(true)
     }
 }
 
