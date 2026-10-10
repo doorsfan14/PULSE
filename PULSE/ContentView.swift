@@ -1082,7 +1082,6 @@ private struct PULSEEntrance: ViewModifier {
                     visible = true
                 }
             }
-            .onDisappear { visible = false }
     }
 }
 
