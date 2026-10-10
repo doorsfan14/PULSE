@@ -906,7 +906,7 @@ private extension Text {
 }
 
 private struct PULSEBackdrop: View {
-    let animate: Bool = true
+    let animate: Bool
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var drift = false
