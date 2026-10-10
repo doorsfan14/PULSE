@@ -922,13 +922,10 @@ private struct PULSEGoogleButtonStyle: ButtonStyle {
                         : Color.white.opacity(0.80))
             }
             .overlay {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(
-                        colorScheme == .dark
-                            ? Color.white.opacity(0.13)
-                            : Color.black.opacity(0.10),
-                        lineWidth: 0.8
-                    )
+                if colorScheme == .dark {
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(Color.white.opacity(0.13), lineWidth: 0.8)
+                }
             }
             .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
@@ -1223,17 +1220,17 @@ private struct PULSEPrimaryButtonStyle: ButtonStyle {
                     )
             }
             .overlay {
-                RoundedRectangle(cornerRadius: 17, style: .continuous)
-                    .stroke(
-                        LinearGradient(
-                            colors: colorScheme == .dark
-                                ? [Color.white.opacity(0.38), Color.white.opacity(0.07)]
-                                : [Color(red: 0.70, green: 0.88, blue: 1.0).opacity(0.95), Color.white.opacity(0.28)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 0.8
-                    )
+                if colorScheme == .dark {
+                    RoundedRectangle(cornerRadius: 17, style: .continuous)
+                        .stroke(
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.38), Color.white.opacity(0.07)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 0.8
+                        )
+                }
             }
             .shadow(
                 color: Color(red: 0.16, green: 0.42, blue: 0.98).opacity(configuration.isPressed ? 0.12 : 0.25),
@@ -1256,13 +1253,16 @@ private struct PULSESecondaryButtonStyle: ButtonStyle {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(colorScheme == .dark
                         ? Color.white.opacity(configuration.isPressed ? 0.085 : 0.04)
-                        : Color.white.opacity(configuration.isPressed ? 0.95 : 0.78))
+                        : Color.white.opacity(0.78))
             }
             .overlay {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(colorScheme == .dark
-                        ? Color.white.opacity(configuration.isPressed ? 0.24 : 0.13)
-                        : Color(red: 0.20, green: 0.40, blue: 0.80).opacity(configuration.isPressed ? 0.52 : 0.24), lineWidth: 0.8)
+                if colorScheme == .dark {
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(
+                            Color.white.opacity(configuration.isPressed ? 0.24 : 0.13),
+                            lineWidth: 0.8
+                        )
+                }
             }
             .scaleEffect(configuration.isPressed ? 0.98 : 1)
             .animation(.spring(response: 0.30, dampingFraction: 0.72), value: configuration.isPressed)
