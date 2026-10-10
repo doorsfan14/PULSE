@@ -67,6 +67,10 @@ private enum PULSELocalization {
  " is designed in the interface, but it won't work until PULSE is connected to an authentication backend. Passkeys also need server-generated challenges and a registered relying-party domain.": ["es":" está diseñado en la interfaz, pero no funcionará hasta que PULSE se conecte a un servicio de autenticación. Las llaves de acceso también necesitan desafíos generados por el servidor y un dominio de confianza registrado.","fr":" est prévu dans l’interface, mais ne fonctionnera pas tant que PULSE ne sera pas connecté à un service d’authentification. Les clés d’accès nécessitent également des défis générés par le serveur et un domaine de confiance enregistré.","pt":" está previsto na interface, mas não funcionará até que o PULSE seja conectado a um serviço de autenticação. As chaves de acesso também precisam de desafios gerados pelo servidor e de um domínio confiável registrado.","de":" ist in der Oberfläche vorgesehen, funktioniert aber erst, wenn PULSE mit einem Authentifizierungsdienst verbunden ist. Passkeys benötigen außerdem serverseitig erzeugte Challenges und eine registrierte vertrauende Partei-Domain.","zh":"已在界面中设计，但只有在 PULSE 接入身份验证后端后才能使用。通行密钥还需要由服务器生成的挑战以及已注册的信赖方域名。","ja":"は画面上に用意されていますが、PULSE が認証バックエンドに接続されるまで動作しません。パスキーにはサーバー生成のチャレンジと登録済みの信頼当事者ドメインも必要です。","ko":"은 인터페이스에 구현되어 있지만 PULSE가 인증 백엔드에 연결되기 전에는 작동하지 않습니다. 패스키에는 서버에서 생성한 챌린지와 등록된 신뢰 당사자 도메인도 필요합니다.","ar":"مصمم في الواجهة، لكنه لن يعمل حتى يتم ربط PULSE بخادم للمصادقة. كما تحتاج مفاتيح المرور إلى تحديات ينشئها الخادم ونطاق موثوق مسجل.","hi":"इंटरफ़ेस में उपलब्ध है, लेकिन PULSE को प्रमाणीकरण बैकएंड से जोड़ने तक काम नहीं करेगा। पासकी के लिए सर्वर द्वारा बनाए गए चैलेंज और पंजीकृत भरोसेमंद-पक्ष डोमेन की भी आवश्यकता होती है।"],
  "Pick up where you left off.": ["es":"Continúa donde lo dejaste.","fr":"Reprenez là où vous en étiez.","pt":"Continue de onde você parou.","de":"Mach dort weiter, wo du aufgehört hast.","zh":"继续上次的进度。","ja":"前回の続きから始めましょう。","ko":"이어서 계속하세요.","ar":"تابع من حيث توقفت.","hi":"जहाँ छोड़ा था, वहीं से आगे बढ़ें।"],
  "This feature is designed in the interface, but it won’t work until PULSE is connected to an authentication backend. Passkeys also need server-generated challenges and a registered relying-party domain.": ["es":"Esta función está diseñada en la interfaz, pero no funcionará hasta que PULSE se conecte a un servicio de autenticación. Las llaves de acceso también necesitan desafíos generados por el servidor y un dominio de confianza registrado.","fr":"Cette fonctionnalité est prévue dans l’interface, mais ne fonctionnera pas tant que PULSE ne sera pas connecté à un service d’authentification. Les clés d’accès nécessitent également des défis générés par le serveur et un domaine de confiance enregistré.","pt":"Este recurso está previsto na interface, mas não funcionará até que o PULSE seja conectado a um serviço de autenticação. As chaves de acesso também precisam de desafios gerados pelo servidor e de um domínio confiável registrado.","de":"Diese Funktion ist in der Oberfläche vorgesehen, funktioniert aber erst, wenn PULSE mit einem Authentifizierungsdienst verbunden ist. Passkeys benötigen außerdem serverseitig erzeugte Challenges und eine registrierte vertrauende Partei-Domain.","zh":"此功能已在界面中设计，但只有在 PULSE 接入身份验证后端后才能使用。通行密钥还需要由服务器生成的挑战以及已注册的信赖方域名。","ja":"この機能は画面上に用意されていますが、PULSE が認証バックエンドに接続されるまで動作しません。パスキーにはサーバー生成のチャレンジと登録済みの信頼当事者ドメインも必要です。","ko":"이 기능은 인터페이스에 구현되어 있지만 PULSE가 인증 백엔드에 연결되기 전에는 작동하지 않습니다. 패스키에는 서버에서 생성한 챌린지와 등록된 신뢰 당사자 도메인도 필요합니다.","ar":"هذه الميزة متاحة في الواجهة، لكنها لن تعمل حتى يتم ربط PULSE بخادم للمصادقة. كما تحتاج مفاتيح المرور إلى تحديات ينشئها الخادم ونطاق موثوق مسجل.","hi":"यह सुविधा इंटरफ़ेस में उपलब्ध है, लेकिन PULSE को प्रमाणीकरण बैकएंड से जोड़ने तक काम नहीं करेगी। पासकी के लिए सर्वर द्वारा बनाए गए चैलेंज और पंजीकृत भरोसेमंद-पक्ष डोमेन की भी आवश्यकता होती है।"],
+ "Your name": ["es":"Tu nombre","fr":"Votre nom","pt":"Seu nome","de":"Dein Name","zh":"你的姓名","ja":"氏名","ko":"이름","ar":"اسمك","hi":"आपका नाम"],
+ "Choose a username": ["es":"Elige un nombre de usuario","fr":"Choisissez un nom d’utilisateur","pt":"Escolha um nome de usuário","de":"Wähle einen Benutzernamen","zh":"选择用户名","ja":"ユーザー名を選択","ko":"사용자 이름 선택","ar":"اختر اسم مستخدم","hi":"उपयोगकर्ता नाम चुनें"],
+ "Welcome to PULSE. These Terms of Service govern your access to and use of PULSE. By using PULSE, you agree to these Terms. If you do not agree, do not use the service.": ["es":"Te damos la bienvenida a PULSE. Estas condiciones regulan tu acceso y uso de PULSE. Al usar PULSE, aceptas estas condiciones. Si no estás de acuerdo, no uses el servicio.","fr":"Bienvenue sur PULSE. Les présentes Conditions d’utilisation régissent votre accès à PULSE et son utilisation. En utilisant PULSE, vous acceptez ces conditions. Si vous n’êtes pas d’accord, n’utilisez pas le service.","pt":"Boas-vindas ao PULSE. Estes Termos de Serviço regem seu acesso e uso do PULSE. Ao usar o PULSE, você concorda com estes termos. Se não concordar, não use o serviço.","de":"Willkommen bei PULSE. Diese Nutzungsbedingungen regeln deinen Zugriff auf PULSE und dessen Nutzung. Mit der Nutzung von PULSE stimmst du diesen Bedingungen zu. Wenn du nicht einverstanden bist, nutze den Dienst nicht.","zh":"欢迎使用 PULSE。本服务条款规范你访问和使用 PULSE 的方式。使用 PULSE 即表示你同意这些条款。如不同意，请勿使用本服务。","ja":"PULSE へようこそ。本利用規約は、PULSE へのアクセスおよび利用を定めるものです。PULSE を利用することで本規約に同意したものとみなされます。同意できない場合は本サービスを利用しないでください。","ko":"PULSE에 오신 것을 환영합니다. 본 서비스 약관은 PULSE 이용 및 접근에 적용됩니다. PULSE를 사용하면 본 약관에 동의하는 것입니다. 동의하지 않으면 서비스를 이용하지 마세요.","ar":"مرحبًا بك في PULSE. تنظّم شروط الخدمة هذه وصولك إلى PULSE واستخدامك له. باستخدام PULSE، فإنك توافق على هذه الشروط. إذا لم توافق، فلا تستخدم الخدمة.","hi":"PULSE में आपका स्वागत है। ये सेवा शर्तें PULSE तक आपकी पहुँच और उसके उपयोग को नियंत्रित करती हैं। PULSE का उपयोग करके आप इन शर्तों से सहमत होते हैं। सहमत न हों, तो सेवा का उपयोग न करें।"],
+ "PULSE respects your privacy. This Privacy Policy explains how personal information is collected, used, stored, and shared when you use PULSE.": ["es":"PULSE respeta tu privacidad. Esta Política de privacidad explica cómo se recopila, utiliza, almacena y comparte la información personal cuando usas PULSE.","fr":"PULSE respecte votre vie privée. Cette Politique de confidentialité explique comment les informations personnelles sont collectées, utilisées, stockées et partagées lorsque vous utilisez PULSE.","pt":"O PULSE respeita sua privacidade. Esta Política de Privacidade explica como as informações pessoais são coletadas, usadas, armazenadas e compartilhadas quando você usa o PULSE.","de":"PULSE respektiert deine Privatsphäre. Diese Datenschutzerklärung erläutert, wie personenbezogene Daten bei der Nutzung von PULSE erhoben, verwendet, gespeichert und weitergegeben werden.","zh":"PULSE 尊重你的隐私。本隐私政策说明你使用 PULSE 时，个人信息如何被收集、使用、存储和共享。","ja":"PULSE はプライバシーを尊重します。このプライバシーポリシーでは、PULSE の利用時に個人情報がどのように収集、使用、保存、共有されるかを説明します。","ko":"PULSE는 개인정보를 소중히 여깁니다. 본 개인정보 처리방침은 PULSE 이용 시 개인정보가 어떻게 수집, 사용, 저장 및 공유되는지 설명합니다.","ar":"تحترم PULSE خصوصيتك. توضّح سياسة الخصوصية هذه كيفية جمع المعلومات الشخصية واستخدامها وتخزينها ومشاركتها عند استخدام PULSE.","hi":"PULSE आपकी गोपनीयता का सम्मान करता है। यह गोपनीयता नीति बताती है कि PULSE का उपयोग करते समय व्यक्तिगत जानकारी कैसे एकत्र, उपयोग, संग्रहीत और साझा की जाती है।"],
  ];
  
  static let legalMap: [String:[String:String]] = [
@@ -204,54 +208,7 @@ struct ContentView: View {
     private var welcomeScreen: some View {
         GeometryReader { geometry in
             ZStack {
-                Color(red: 0.012, green: 0.018, blue: 0.045)
-                    .ignoresSafeArea()
-
-                Canvas { context, size in
-                    var grid = Path()
-                    let step: CGFloat = 34
-                    stride(from: CGFloat(0), through: size.width, by: step).forEach { x in
-                        grid.move(to: CGPoint(x: x, y: 0))
-                        grid.addLine(to: CGPoint(x: x, y: size.height))
-                    }
-                    stride(from: CGFloat(0), through: size.height, by: step).forEach { y in
-                        grid.move(to: CGPoint(x: 0, y: y))
-                        grid.addLine(to: CGPoint(x: size.width, y: y))
-                    }
-                    context.stroke(grid, with: .color(.white.opacity(0.022)), lineWidth: 0.5)
-                    for index in 0..<34 {
-                        let x = CGFloat((index * 83 + 31) % 997) / 997 * size.width
-                        let y = CGFloat((index * 137 + 59) % 991) / 991 * size.height
-                        let diameter: CGFloat = index % 5 == 0 ? 2.4 : 1.2
-                        let dot = Path(ellipseIn: CGRect(x: x, y: y, width: diameter, height: diameter))
-                        context.fill(dot, with: .color(Color(red: 0.45, green: 0.68, blue: 1).opacity(index % 5 == 0 ? 0.30 : 0.12)))
-                    }
-                }
-                .ignoresSafeArea()
-                .accessibilityHidden(true)
-
-                // Soft ambient light fields drift with the device's motion.
-                Circle()
-                    .fill(Color(red: 0.10, green: 0.35, blue: 0.82).opacity(0.22))
-                    .frame(width: geometry.size.width * 0.88)
-                    .blur(radius: 78)
-                    .offset(
-                        x: -geometry.size.width * 0.34 + (ambientMotion ? 22 : -14),
-                        y: -geometry.size.height * 0.31 + (ambientMotion ? -18 : 16)
-                    )
-                    .scaleEffect(ambientMotion ? 1.08 : 0.94)
-                    .animation(.easeInOut(duration: 7.5).repeatForever(autoreverses: true), value: ambientMotion)
-
-                Circle()
-                    .fill(Color(red: 0.24, green: 0.58, blue: 0.98).opacity(0.13))
-                    .frame(width: geometry.size.width * 0.68)
-                    .blur(radius: 72)
-                    .offset(
-                        x: geometry.size.width * 0.40 + (ambientMotion ? -18 : 16),
-                        y: geometry.size.height * 0.22 + (ambientMotion ? 20 : -14)
-                    )
-                    .scaleEffect(ambientMotion ? 0.93 : 1.07)
-                    .animation(.easeInOut(duration: 9.0).repeatForever(autoreverses: true), value: ambientMotion)
+                PULSEBackdrop()
 
                 VStack(spacing: 0) {
                     Spacer(minLength: 0)
@@ -944,76 +901,100 @@ private extension Text {
 
 private struct PULSEBackdrop: View {
     @State private var drift = false
+    @State private var pulse = false
+    @State private var sceneIndex = Int.random(in: 0..<8)
+
+    private let sceneURLs = [
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=85",
+        "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1600&q=85",
+        "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=85",
+        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=85",
+        "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1600&q=85",
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=85",
+        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1600&q=85",
+        "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1600&q=85"
+    ]
 
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                LinearGradient(
-                    colors: [
-                        Color(red: 0.012, green: 0.018, blue: 0.045),
-                        Color(red: 0.018, green: 0.027, blue: 0.064),
-                        Color(red: 0.009, green: 0.014, blue: 0.034)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-
-                Canvas { context, size in
-                    var grid = Path()
-                    let step: CGFloat = 38
-                    stride(from: CGFloat(0), through: size.width, by: step).forEach { x in
-                        grid.move(to: CGPoint(x: x, y: 0))
-                        grid.addLine(to: CGPoint(x: x, y: size.height))
-                    }
-                    stride(from: CGFloat(0), through: size.height, by: step).forEach { y in
-                        grid.move(to: CGPoint(x: 0, y: y))
-                        grid.addLine(to: CGPoint(x: size.width, y: y))
-                    }
-                    context.stroke(grid, with: .color(.white.opacity(0.018)), lineWidth: 0.5)
-                    for index in 0..<26 {
-                        let x = CGFloat((index * 113 + 17) % 991) / 991 * size.width
-                        let y = CGFloat((index * 167 + 43) % 983) / 983 * size.height
-                        let sizeDot: CGFloat = index % 4 == 0 ? 2.2 : 1.1
-                        context.fill(
-                            Path(ellipseIn: CGRect(x: x, y: y, width: sizeDot, height: sizeDot)),
-                            with: .color(Color(red: 0.48, green: 0.70, blue: 1).opacity(index % 4 == 0 ? 0.22 : 0.09))
+                AsyncImage(url: URL(string: sceneURLs[sceneIndex])) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    default:
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.012, green: 0.018, blue: 0.045),
+                                Color(red: 0.025, green: 0.055, blue: 0.12),
+                                Color(red: 0.009, green: 0.014, blue: 0.034)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
                         )
                     }
                 }
-
-                Circle()
-                    .fill(Color(red: 0.10, green: 0.35, blue: 0.82).opacity(0.24))
-                    .frame(width: geometry.size.width * 0.94)
-                    .blur(radius: 78)
-                    .offset(
-                        x: -geometry.size.width * 0.36 + (drift ? 22 : -18),
-                        y: -geometry.size.height * 0.30 + (drift ? -18 : 16)
-                    )
-                    .scaleEffect(drift ? 1.07 : 0.94)
-                    .animation(.easeInOut(duration: 8.5).repeatForever(autoreverses: true), value: drift)
-
-                Circle()
-                    .fill(Color(red: 0.22, green: 0.53, blue: 0.98).opacity(0.15))
-                    .frame(width: geometry.size.width * 0.76)
-                    .blur(radius: 82)
-                    .offset(
-                        x: geometry.size.width * 0.42 + (drift ? -20 : 15),
-                        y: geometry.size.height * 0.29 + (drift ? 22 : -15)
-                    )
-                    .scaleEffect(drift ? 0.94 : 1.06)
-                    .animation(.easeInOut(duration: 10.5).repeatForever(autoreverses: true), value: drift)
+                .id(sceneIndex)
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .clipped()
+                .scaleEffect(pulse ? 1.10 : 1.0)
+                .animation(.easeInOut(duration: 1.8), value: sceneIndex)
+                .animation(.easeInOut(duration: 8.0).repeatForever(autoreverses: true), value: pulse)
 
                 LinearGradient(
-                    colors: [.clear, Color.black.opacity(0.14)],
+                    stops: [
+                        .init(color: Color(red: 0.008, green: 0.014, blue: 0.035).opacity(0.58), location: 0),
+                        .init(color: Color(red: 0.008, green: 0.014, blue: 0.035).opacity(0.42), location: 0.48),
+                        .init(color: Color(red: 0.008, green: 0.014, blue: 0.035).opacity(0.78), location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+
+                RadialGradient(
+                    colors: [
+                        Color(red: 0.22, green: 0.52, blue: 1.0).opacity(pulse ? 0.24 : 0.10),
+                        Color(red: 0.08, green: 0.22, blue: 0.60).opacity(pulse ? 0.08 : 0.03),
+                        .clear
+                    ],
+                    center: drift ? .topLeading : .bottomTrailing,
+                    startRadius: 8,
+                    endRadius: max(geometry.size.width, geometry.size.height) * 0.88
+                )
+                .animation(.easeInOut(duration: 8.0).repeatForever(autoreverses: true), value: drift)
+                .animation(.easeInOut(duration: 3.2).repeatForever(autoreverses: true), value: pulse)
+
+                LinearGradient(
+                    colors: [.clear, Color.black.opacity(0.12)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
+            .clipped()
         }
         .ignoresSafeArea()
-        .onAppear { drift = true }
-        .accessibilityHidden(true)
+        .onAppear {
+            drift = true
+            pulse = true
+        }
+        .task {
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(16))
+                guard !Task.isCancelled else { break }
+                var next = Int.random(in: 0..<sceneURLs.count)
+                if sceneURLs.count > 1 {
+                    while next == sceneIndex {
+                        next = Int.random(in: 0..<sceneURLs.count)
+                    }
+                }
+                withAnimation(.easeInOut(duration: 1.8)) {
+                    sceneIndex = next
+                }
+            }
+        }
     }
 }
 
