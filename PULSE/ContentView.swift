@@ -26,7 +26,9 @@ struct ContentView: View {
     @State private var signInPassword = ""
     @State private var showPassword = false
     @State private var showMessage = false
-    @State private var showTerms = false
+    @State private var activeLegalDocument: LegalDocument?
+    @State private var usernameAvailabilityMessage = ""
+    @State private var usernameAvailabilityIsError = false
     @State private var message = ""
     @State private var typedTitle = ""
     @State private var ambientMotion = false
@@ -79,10 +81,17 @@ struct ContentView: View {
             } message: {
                 Text(message)
             }
-            .sheet(isPresented: $showTerms) {
-                termsSheet
-                    .presentationDetents([.large])
-                    .presentationDragIndicator(.visible)
+            .sheet(item: $activeLegalDocument) { document in
+                Group {
+                    switch document {
+                    case .terms:
+                        termsSheet
+                    case .privacyPolicy:
+                        privacyPolicySheet
+                    }
+                }
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)
             }
         }
         .preferredColorScheme(.dark)
@@ -93,6 +102,29 @@ struct ContentView: View {
             ZStack {
                 Color(red: 0.012, green: 0.018, blue: 0.045)
                     .ignoresSafeArea()
+
+                Canvas { context, size in
+                    var grid = Path()
+                    let step: CGFloat = 34
+                    stride(from: CGFloat(0), through: size.width, by: step).forEach { x in
+                        grid.move(to: CGPoint(x: x, y: 0))
+                        grid.addLine(to: CGPoint(x: x, y: size.height))
+                    }
+                    stride(from: CGFloat(0), through: size.height, by: step).forEach { y in
+                        grid.move(to: CGPoint(x: 0, y: y))
+                        grid.addLine(to: CGPoint(x: size.width, y: y))
+                    }
+                    context.stroke(grid, with: .color(.white.opacity(0.022)), lineWidth: 0.5)
+                    for index in 0..<34 {
+                        let x = CGFloat((index * 83 + 31) % 997) / 997 * size.width
+                        let y = CGFloat((index * 137 + 59) % 991) / 991 * size.height
+                        let diameter: CGFloat = index % 5 == 0 ? 2.4 : 1.2
+                        let dot = Path(ellipseIn: CGRect(x: x, y: y, width: diameter, height: diameter))
+                        context.fill(dot, with: .color(Color(red: 0.45, green: 0.68, blue: 1).opacity(index % 5 == 0 ? 0.30 : 0.12)))
+                    }
+                }
+                .ignoresSafeArea()
+                .accessibilityHidden(true)
 
                 // Soft ambient light fields drift with the device's motion.
                 Circle()
@@ -130,6 +162,32 @@ struct ContentView: View {
                         .accessibilityLabel(welcomeTitle)
 
                     Spacer(minLength: 0)
+
+                    HStack(spacing: 9) {
+                        Button {
+                            activeLegalDocument = .terms
+                        } label: {
+                            Text("Terms Of Service")
+                                .font(.custom("PlusJakartaSans-Medium", size: 12))
+                                .foregroundStyle(.white.opacity(0.76))
+                        }
+                        .buttonStyle(.plain)
+
+                        Text("•")
+                            .font(.custom("PlusJakartaSans-Regular", size: 12))
+                            .foregroundStyle(.white.opacity(0.38))
+
+                        Button {
+                            activeLegalDocument = .privacyPolicy
+                        } label: {
+                            Text("Privacy Policy")
+                                .font(.custom("PlusJakartaSans-Medium", size: 12))
+                                .foregroundStyle(.white.opacity(0.76))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.bottom, 18)
+                    .modifier(PULSEEntrance(delay: 0.16))
 
                     VStack(spacing: 12) {
                         welcomeButton(title: "Create account", brighter: true) {
@@ -295,9 +353,21 @@ struct ContentView: View {
                         .textContentType(.username)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
+                        .onChange(of: username) { _, newValue in
+                            updateUsernameAvailabilityMessage(newValue)
+                        }
 
                     if !username.isEmpty && !isValidUsername(username) {
                         validationHint("Use 3–20 letters, numbers, or underscores.")
+                    } else if !username.isEmpty && !usernameAvailabilityMessage.isEmpty {
+                        HStack(spacing: 6) {
+                            Image(systemName: usernameAvailabilityIsError ? "info.circle" : "checkmark.circle")
+                            Text(usernameAvailabilityMessage)
+                        }
+                        .font(.custom("PlusJakartaSans-Regular", size: 12))
+                        .foregroundStyle(usernameAvailabilityIsError ? Color.orange : Color(red: 0.52, green: 0.78, blue: 1))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 2)
                     }
 
                     inputField("Email address", placeholder: "you@example.com", text: $email, symbol: "envelope")
@@ -411,6 +481,51 @@ struct ContentView: View {
 
 
     private var termsSheet: some View {
+        legalDocumentSheet(title: "Terms of Service", subtitle: "Effective October 9, 2026") {
+            Text("Welcome to PULSE. These Terms of Service govern your access to and use of PULSE. By using PULSE, you agree to these Terms. If you do not agree, do not use the service.")
+                .termsParagraph()
+            termsSection("1. Eligibility", "You must be at least 13 years old, or the higher minimum age required where you live. If you are under the age of legal majority, you must have any parent or guardian permission required by applicable law. You are responsible for using PULSE in compliance with the laws that apply to you.")
+            termsSection("2. Accounts and security", "Provide accurate information, keep your account credentials secure, and promptly notify us of suspected unauthorized access. Do not impersonate another person, use a username you have no right to use, or create accounts to evade a restriction. You are responsible for activity conducted through your account, except where applicable law provides otherwise.")
+            termsSection("3. Your content", "You retain ownership of content you create and submit, to the extent permitted by law. You grant PULSE a non-exclusive, worldwide, royalty-free license to host, store, reproduce, adapt for technical compatibility, and display that content only as reasonably necessary to operate, maintain, secure, and provide PULSE. This license ends when your content is deleted from active systems, except for limited retention in backups, security records, dispute resolution, or where law requires or permits retention. You represent that you have the rights needed to share your content.")
+            termsSection("4. Public content and interactions", "You are responsible for choosing what to share and for understanding the audience indicated by the relevant feature and settings. Content shared publicly may be viewed, copied, or redistributed by others. Removing content from PULSE cannot guarantee removal of copies already saved or shared by other users.")
+            termsSection("5. Acceptable use", "You may not use PULSE to harass, threaten, stalk, exploit or endanger minors, unlawfully disclose private information, infringe intellectual-property or other rights, distribute scams or spam, impersonate others, publish unlawful threats, attack or disrupt the service, access information without authorization, manipulate engagement deceptively, or use automation in ways that abuse or interfere with PULSE.")
+            termsSection("6. Safety and enforcement", "We may review reports and take proportionate action when content or conduct violates these Terms, threatens user safety, compromises security, or creates legal risk. Actions may include content removal, feature restrictions, account suspension, or termination. Where appropriate and required by law, we may provide notice and a way to appeal. We cannot guarantee that every item of content will be reviewed or that all harmful activity will be detected.")
+            termsSection("7. Privacy", "Our collection and use of personal information are described in the PULSE Privacy Policy, which explains how information is handled, shared, retained, and how you can exercise applicable privacy rights. PULSE does not sell users' personal information.")
+            termsSection("8. Availability and changes", "We may update, modify, suspend, or discontinue parts of PULSE for operational, security, legal, or product reasons. We aim to keep the service reliable but do not guarantee uninterrupted or error-free operation. We will provide notice or obtain consent for material changes where required by law.")
+            termsSection("9. Suspension and termination", "You may stop using PULSE at any time. We may restrict or terminate access for violations of these Terms, security concerns, safety risks, legal requirements, or conduct that threatens users or the service. Where account deletion is available, the applicable process and data-retention rules are described in the Privacy Policy. Provisions that by their nature should survive termination will continue to apply.")
+            termsSection("10. Disclaimers", "To the extent permitted by law, PULSE is provided on an 'as available' basis. We do not promise that the service will always meet every need, remain uninterrupted, or be free of errors. Nothing in these Terms excludes warranties, rights, or remedies that cannot legally be excluded.")
+            termsSection("11. Limitation of liability", "To the extent permitted by applicable law, PULSE and its operator will not be liable for indirect, incidental, special, consequential, or punitive losses arising from use of the service. Nothing in these Terms limits liability where doing so would be unlawful, including liability that cannot legally be limited.")
+            termsSection("12. Governing law and disputes", "The governing law and dispute-resolution process will be identified by the operator in the version applicable to your location, subject to mandatory consumer protections and other non-waivable rights under applicable law.")
+            termsSection("13. Contact", "For questions about these Terms, contact the PULSE team using the official contact details published by PULSE.")
+        }
+    }
+
+    private var privacyPolicySheet: some View {
+        legalDocumentSheet(title: "Privacy Policy", subtitle: "Effective October 9, 2026") {
+            Text("PULSE respects your privacy. This Privacy Policy explains how personal information is collected, used, stored, and shared when you use PULSE.")
+                .termsParagraph()
+            termsSection("1. Information you provide", "Depending on the features you use, information may include your name, username, email address, profile details, posts, comments, media, support requests, reports, and preferences. Avoid including sensitive personal information in public posts or profile fields.")
+            termsSection("2. Technical information", "When you access PULSE, we may process technical information needed to operate and secure the service, such as app and operating-system versions, device information, connection data, diagnostic events, and security logs. The information actually collected depends on the systems used to operate PULSE.")
+            termsSection("3. How we use information", "We use information to provide requested features, maintain accounts, display content to intended audiences, protect accounts and the platform, prevent spam and fraud, investigate reports, respond to support requests, troubleshoot problems, improve reliability, enforce our Terms, and comply with applicable law.")
+            termsSection("4. Public content", "Your username, profile details, posts, comments, and other interactions may be visible to the audiences permitted by the relevant features and settings. Other users may copy or share content they can access. Deleting a post cannot remove copies already made by other users.")
+            termsSection("5. How information is shared", "PULSE does not sell users' personal information. Information may be shared with service providers that help operate the service, with people you choose to share content with, when reasonably necessary to protect users or security, when required by valid legal process, or in connection with a business transfer subject to appropriate safeguards and applicable law.")
+            termsSection("6. Service providers", "Providers supporting hosting, storage, authentication, security, diagnostics, and support may process information on PULSE's behalf. Their access should be limited to what is necessary for their work and governed by appropriate agreements and safeguards.")
+            termsSection("7. Security", "We use reasonable administrative, technical, and organizational measures designed to protect personal information against unauthorized access, loss, alteration, and disclosure. No internet-based service can guarantee absolute security.")
+            termsSection("8. Retention and deletion", "We retain information for as long as reasonably necessary for the purposes described in this Policy, including security, dispute resolution, and legal compliance. When information is no longer needed, we delete it, anonymize it, or securely dispose of it as appropriate. Backup copies may remain until they are overwritten or removed.")
+            termsSection("9. Your choices and rights", "Depending on your location, you may have rights to request access to, correction of, or deletion of your information, withdraw consent, object to certain processing, request a portable copy, or complain to a data protection authority. Contact PULSE through its published privacy contact to submit a request. We may need to verify your identity and may apply lawful exceptions.")
+            termsSection("10. Children and teens", "PULSE is intended for people who meet the minimum age requirements in the Terms of Service and applicable law. We do not knowingly process children's personal information in circumstances where doing so is prohibited or required consent has not been obtained. Where applicable law provides additional protections for minors, those protections apply.")
+            termsSection("11. International processing", "Information may be processed or stored in countries other than where you live. Where required by law, appropriate safeguards will be used for international transfers.")
+            termsSection("12. Third-party services", "PULSE may link to or integrate with third-party services. Those services have their own privacy practices and policies, which we encourage you to review before sharing information with them.")
+            termsSection("13. Policy changes", "We may update this Policy as our service or legal obligations change. We will update the effective date and provide additional notice or obtain consent where required by law.")
+            termsSection("14. Contact", "For privacy questions or requests, use the official PULSE privacy contact published by the service.")
+        }
+    }
+
+    private func legalDocumentSheet<Content: View>(
+        title: String,
+        subtitle: String,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
@@ -419,43 +534,14 @@ struct ContentView: View {
                             .font(.custom("PlusJakartaSans-SemiBold", size: 12))
                             .tracking(2.5)
                             .foregroundStyle(Color(red: 0.48, green: 0.68, blue: 1))
-                        Text("Terms of Service")
+                        Text(title)
                             .font(.custom("PlusJakartaSans-Bold", size: 30))
                             .tracking(-0.7)
-                        Text("Effective October 9, 2026 · Draft for review")
+                        Text(subtitle)
                             .font(.custom("PlusJakartaSans-Regular", size: 12))
                             .foregroundStyle(.secondary)
                     }
-
-                    Text("Welcome to PULSE. These Terms explain the rules for using PULSE. By using the service, you agree to these Terms. If you do not agree, do not use PULSE.")
-                        .termsParagraph()
-
-                    termsSection("1. Eligibility", "You must be at least 13 years old, or the higher minimum age required where you live. If you are under the age of legal majority, you must have any parent or guardian permission required by law. PULSE is not intended for children under 13.")
-
-                    termsSection("2. Accounts", "Provide accurate information, keep your account details reasonably secure, and do not impersonate others or evade restrictions. Account creation, sign-in, and passkey features may not work while PULSE is a prototype; a screen for a feature does not mean it is operational.")
-
-                    termsSection("3. Your content", "You retain ownership of content you submit, to the extent permitted by law. You grant PULSE a non-exclusive, worldwide, royalty-free license to host, store, reproduce, and display that content only as reasonably necessary to operate, secure, maintain, and provide the service. You are responsible for having the rights to share your content.")
-
-                    termsSection("4. Prohibited conduct", "Do not harass, threaten, stalk, exploit or endanger minors, share private information unlawfully, infringe others’ rights, scam or spam people, impersonate others, post unlawful content, attack or disrupt the service, access data without permission, or use automation to abuse PULSE.")
-
-                    termsSection("5. Safety and enforcement", "We may investigate reports and restrict content or accounts for violations, safety risks, or legal reasons. PULSE is an early-stage project; reporting, moderation, appeals, and enforcement may not yet be available or fully operational. We do not promise pre-publication review or a response time.")
-
-                    termsSection("6. Privacy", "A separate Privacy Policy must explain how personal information is handled. These Terms do not replace that policy. PULSE should not launch or collect real user information until an accurate Privacy Policy and appropriate data-handling practices are in place.")
-
-                    termsSection("7. Availability and changes", "Features may change, pause, or be discontinued. We do not guarantee uninterrupted or error-free service. We may update these Terms and will provide notice or obtain consent for material changes where required by law.")
-
-                    termsSection("8. Suspension and termination", "You may stop using PULSE at any time. We may restrict or end access for violations, safety risks, legal requirements, or conduct that threatens the service. Account deletion and data retention must be explained in the Privacy Policy once implemented.")
-
-                    termsSection("9. Disclaimers and liability", "To the extent permitted by law, PULSE is provided on an available-as-is basis. Nothing here excludes rights or remedies that cannot legally be excluded or limits liability where doing so would be unlawful.")
-
-                    termsSection("10. Law and contact", "Applicable law and dispute procedures must be finalized before public launch. Mandatory legal protections remain unaffected. Before launch, the PULSE operator must replace the contact placeholder with a real support or legal contact.")
-
-                    Text("IMPORTANT: This is a starting-point draft, not a final legal document. Have it reviewed by a qualified lawyer before public release.")
-                        .font(.custom("PlusJakartaSans-Medium", size: 13))
-                        .foregroundStyle(Color(red: 1, green: 0.76, blue: 0.38))
-                        .padding(14)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.white.opacity(0.045), in: RoundedRectangle(cornerRadius: 14))
+                    content()
                 }
                 .padding(24)
                 .frame(maxWidth: 620, alignment: .leading)
@@ -465,22 +551,12 @@ struct ContentView: View {
             .background(PULSEBackdrop())
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { showTerms = false }
+                    Button("Done") { activeLegalDocument = nil }
                         .font(.custom("PlusJakartaSans-SemiBold", size: 14))
                 }
             }
         }
         .preferredColorScheme(.dark)
-    }
-
-    private func termsSection(_ title: String, _ body: String) -> some View {
-        VStack(alignment: .leading, spacing: 7) {
-            Text(title)
-                .font(.custom("PlusJakartaSans-SemiBold", size: 16))
-                .foregroundStyle(.white)
-            Text(body)
-                .termsParagraph()
-        }
     }
 
     private var signInScreen: some View {
@@ -646,6 +722,21 @@ struct ContentView: View {
         return value.count >= 3 && value.count <= 20 && value.unicodeScalars.allSatisfy { allowed.contains($0) }
     }
 
+    private func updateUsernameAvailabilityMessage(_ value: String) {
+        guard !value.isEmpty else {
+            usernameAvailabilityMessage = ""
+            usernameAvailabilityIsError = false
+            return
+        }
+        guard isValidUsername(value) else {
+            usernameAvailabilityMessage = ""
+            usernameAvailabilityIsError = true
+            return
+        }
+        usernameAvailabilityMessage = "Format looks good. Unique availability must be confirmed by the account service."
+        usernameAvailabilityIsError = true
+    }
+
     private func showBackendNotice(_ feature: String) {
         message = "\(feature) is designed in the interface, but it won't work until PULSE is connected to an authentication backend. Passkeys also need server-generated challenges and a registered relying-party domain."
         showMessage = true
@@ -749,6 +840,29 @@ private struct PULSEBackdrop: View {
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
+
+                Canvas { context, size in
+                    var grid = Path()
+                    let step: CGFloat = 38
+                    stride(from: CGFloat(0), through: size.width, by: step).forEach { x in
+                        grid.move(to: CGPoint(x: x, y: 0))
+                        grid.addLine(to: CGPoint(x: x, y: size.height))
+                    }
+                    stride(from: CGFloat(0), through: size.height, by: step).forEach { y in
+                        grid.move(to: CGPoint(x: 0, y: y))
+                        grid.addLine(to: CGPoint(x: size.width, y: y))
+                    }
+                    context.stroke(grid, with: .color(.white.opacity(0.018)), lineWidth: 0.5)
+                    for index in 0..<26 {
+                        let x = CGFloat((index * 113 + 17) % 991) / 991 * size.width
+                        let y = CGFloat((index * 167 + 43) % 983) / 983 * size.height
+                        let sizeDot: CGFloat = index % 4 == 0 ? 2.2 : 1.1
+                        context.fill(
+                            Path(ellipseIn: CGRect(x: x, y: y, width: sizeDot, height: sizeDot)),
+                            with: .color(Color(red: 0.48, green: 0.70, blue: 1).opacity(index % 4 == 0 ? 0.22 : 0.09))
+                        )
+                    }
+                }
 
                 Circle()
                     .fill(Color(red: 0.10, green: 0.35, blue: 0.82).opacity(0.24))
