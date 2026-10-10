@@ -902,102 +902,82 @@ private extension Text {
 private struct PULSEBackdrop: View {
     @State private var drift = false
     @State private var pulse = false
-    @State private var sceneIndex = Int.random(in: 0..<8)
-
-    private let sceneURLs = [
-        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=85",
-        "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1600&q=85",
-        "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=85",
-        "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=85",
-        "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1600&q=85",
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=85",
-        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1600&q=85",
-        "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1600&q=85"
-    ]
 
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                AsyncImage(url: URL(string: sceneURLs[sceneIndex])) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    default:
-                        LinearGradient(
-                            colors: [
-                                Color(red: 0.012, green: 0.018, blue: 0.045),
-                                Color(red: 0.025, green: 0.055, blue: 0.12),
-                                Color(red: 0.009, green: 0.014, blue: 0.034)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    }
-                }
-                .id(sceneIndex)
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .clipped()
-                .scaleEffect(pulse ? 1.10 : 1.0)
-                .animation(.easeInOut(duration: 1.8), value: sceneIndex)
-                .animation(.easeInOut(duration: 8.0).repeatForever(autoreverses: true), value: pulse)
-
                 LinearGradient(
-                    stops: [
-                        .init(color: Color(red: 0.008, green: 0.014, blue: 0.035).opacity(0.58), location: 0),
-                        .init(color: Color(red: 0.008, green: 0.014, blue: 0.035).opacity(0.42), location: 0.48),
-                        .init(color: Color(red: 0.008, green: 0.014, blue: 0.035).opacity(0.78), location: 1)
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-
-                RadialGradient(
                     colors: [
-                        Color(red: 0.22, green: 0.52, blue: 1.0).opacity(pulse ? 0.24 : 0.10),
-                        Color(red: 0.08, green: 0.22, blue: 0.60).opacity(pulse ? 0.08 : 0.03),
-                        .clear
+                        Color(red: 0.012, green: 0.018, blue: 0.045),
+                        Color(red: 0.018, green: 0.032, blue: 0.078),
+                        Color(red: 0.009, green: 0.014, blue: 0.034)
                     ],
-                    center: drift ? .topLeading : .bottomTrailing,
-                    startRadius: 8,
-                    endRadius: max(geometry.size.width, geometry.size.height) * 0.88
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
                 )
-                .animation(.easeInOut(duration: 8.0).repeatForever(autoreverses: true), value: drift)
-                .animation(.easeInOut(duration: 3.2).repeatForever(autoreverses: true), value: pulse)
+
+                Ellipse()
+                    .fill(
+                        RadialGradient(
+                            colors: [
+                                Color(red: 0.20, green: 0.43, blue: 1.0).opacity(pulse ? 0.30 : 0.13),
+                                Color(red: 0.10, green: 0.25, blue: 0.72).opacity(pulse ? 0.13 : 0.05),
+                                .clear
+                            ],
+                            center: .center,
+                            startRadius: 4,
+                            endRadius: geometry.size.width * 0.72
+                        )
+                    )
+                    .frame(width: geometry.size.width * 1.35, height: geometry.size.height * 0.72)
+                    .blur(radius: 34)
+                    .offset(
+                        x: drift ? -geometry.size.width * 0.18 : geometry.size.width * 0.16,
+                        y: drift ? -geometry.size.height * 0.24 : -geometry.size.height * 0.04
+                    )
+
+                Ellipse()
+                    .fill(
+                        RadialGradient(
+                            colors: [
+                                Color(red: 0.12, green: 0.30, blue: 0.82).opacity(pulse ? 0.18 : 0.07),
+                                Color(red: 0.08, green: 0.18, blue: 0.52).opacity(pulse ? 0.08 : 0.025),
+                                .clear
+                            ],
+                            center: .center,
+                            startRadius: 2,
+                            endRadius: geometry.size.width * 0.58
+                        )
+                    )
+                    .frame(width: geometry.size.width * 1.2, height: geometry.size.height * 0.64)
+                    .blur(radius: 42)
+                    .offset(
+                        x: drift ? geometry.size.width * 0.22 : -geometry.size.width * 0.20,
+                        y: drift ? geometry.size.height * 0.34 : geometry.size.height * 0.18
+                    )
 
                 LinearGradient(
-                    colors: [.clear, Color.black.opacity(0.12)],
+                    colors: [
+                        Color.black.opacity(0.02),
+                        Color.black.opacity(0.08),
+                        Color.black.opacity(0.28)
+                    ],
                     startPoint: .top,
                     endPoint: .bottom
                 )
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
             .clipped()
+            .animation(.easeInOut(duration: 10.0).repeatForever(autoreverses: true), value: drift)
+            .animation(.easeInOut(duration: 4.5).repeatForever(autoreverses: true), value: pulse)
         }
         .ignoresSafeArea()
         .onAppear {
             drift = true
             pulse = true
         }
-        .task {
-            while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(16))
-                guard !Task.isCancelled else { break }
-                var next = Int.random(in: 0..<sceneURLs.count)
-                if sceneURLs.count > 1 {
-                    while next == sceneIndex {
-                        next = Int.random(in: 0..<sceneURLs.count)
-                    }
-                }
-                withAnimation(.easeInOut(duration: 1.8)) {
-                    sceneIndex = next
-                }
-            }
-        }
     }
 }
-
 private struct PULSEEntrance: ViewModifier {
     let delay: Double
     @State private var visible = false
