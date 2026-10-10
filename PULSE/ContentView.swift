@@ -388,21 +388,37 @@ struct ContentView: View {
                         .strokeBorder(
                             LinearGradient(
                                 stops: [
-                                    .init(color: Color(red: 0.36, green: 0.48, blue: 0.68).opacity(0.18 + abs(motion.roll) * 0.12), location: 0.0),
-                                    .init(color: Color.white.opacity(0.92 + abs(motion.pitch) * 0.06), location: 0.38),
-                                    .init(color: Color(red: 0.52, green: 0.57, blue: 0.66).opacity(0.22), location: 0.68),
-                                    .init(color: Color(red: 0.30, green: 0.43, blue: 0.67).opacity(0.16 + abs(motion.roll) * 0.10), location: 1.0)
+                                    .init(
+                                        color: Color(red: 0.22, green: 0.39, blue: 0.68)
+                                            .opacity(0.30 + abs(motion.roll) * 0.34),
+                                        location: 0.0
+                                    ),
+                                    .init(
+                                        color: Color.white
+                                            .opacity(0.62 + abs(motion.pitch) * 0.22),
+                                        location: 0.34
+                                    ),
+                                    .init(
+                                        color: Color(red: 0.38, green: 0.47, blue: 0.63)
+                                            .opacity(0.32 + abs(motion.pitch) * 0.24),
+                                        location: 0.67
+                                    ),
+                                    .init(
+                                        color: Color(red: 0.20, green: 0.36, blue: 0.67)
+                                            .opacity(0.28 + abs(motion.roll) * 0.36),
+                                        location: 1.0
+                                    )
                                 ],
                                 startPoint: UnitPoint(
-                                    x: 0.5 + CGFloat(motion.roll) * 0.42,
-                                    y: 0.0 + CGFloat(motion.pitch) * 0.18
+                                    x: 0.5 + CGFloat(motion.roll) * 0.62,
+                                    y: 0.08 + CGFloat(motion.pitch) * 0.28
                                 ),
                                 endPoint: UnitPoint(
-                                    x: 0.5 - CGFloat(motion.roll) * 0.42,
-                                    y: 1.0 - CGFloat(motion.pitch) * 0.18
+                                    x: 0.5 - CGFloat(motion.roll) * 0.62,
+                                    y: 0.92 - CGFloat(motion.pitch) * 0.28
                                 )
                             ),
-                            lineWidth: 0.8
+                            lineWidth: 1.1
                         )
                     }
                 }
