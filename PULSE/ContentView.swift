@@ -1,3 +1,47 @@
+import SwiftUI
+import CoreMotion
+import UIKit
+
+private enum PULSELocalization {
+    static var lang: String {
+        let c = Locale.preferredLanguages.first.map { String($0.prefix(2)) } ?? "en"
+        return ["es","fr","pt","de","zh","ja","ko","ar","hi"].contains(c) ? c : "en"
+    }
+    static let map: [String:[String:String]] = [
+      "Welcome to PULSE":["es":"Bienvenido a PULSE","fr":"Bienvenue sur PULSE","pt":"Boas-vindas ao PULSE","de":"Willkommen bei PULSE","zh":"欢迎使用 PULSE","ja":"PULSEへようこそ","ko":"PULSE에 오신 것을 환영합니다","ar":"مرحبًا بك في PULSE","hi":"PULSE में आपका स्वागत है"],
+      "Terms Of Service":["es":"Términos del servicio","fr":"Conditions d’utilisation","pt":"Termos de serviço","de":"Nutzungsbedingungen","zh":"服务条款","ja":"利用規約","ko":"서비스 약관","ar":"شروط الخدمة","hi":"सेवा की शर्तें"],
+      "Privacy Policy":["es":"Política de privacidad","fr":"Politique de confidentialité","pt":"Política de privacidade","de":"Datenschutzerklärung","zh":"隐私政策","ja":"プライバシーポリシー","ko":"개인정보 처리방침","ar":"سياسة الخصوصية","hi":"गोपनीयता नीति"],
+      "Create account":["es":"Crear cuenta","fr":"Créer un compte","pt":"Criar conta","de":"Konto erstellen","zh":"创建账户","ja":"アカウントを作成","ko":"계정 만들기","ar":"إنشاء حساب","hi":"खाता बनाएँ"],
+      "Log in":["es":"Iniciar sesión","fr":"Se connecter","pt":"Entrar","de":"Anmelden","zh":"登录","ja":"ログイン","ko":"로그인","ar":"تسجيل الدخول","hi":"लॉग इन करें"],
+      "Create your account":["es":"Crea tu cuenta","fr":"Créez votre compte","pt":"Crie sua conta","de":"Erstelle dein Konto","zh":"创建你的账户","ja":"アカウントを作成","ko":"계정 만들기","ar":"أنشئ حسابك","hi":"अपना खाता बनाएँ"],
+      "A few details and you're ready to get started.":["es":"Completa unos datos y empieza.","fr":"Quelques informations et vous êtes prêt à commencer.","pt":"Preencha alguns dados e comece.","de":"Nur ein paar Angaben, dann kannst du loslegen.","zh":"填写几项信息即可开始。","ja":"いくつか入力すれば準備完了です。","ko":"몇 가지 정보를 입력하면 시작할 수 있습니다.","ar":"أدخل بعض التفاصيل لتبدأ.","hi":"कुछ विवरण भरें और शुरू करें।"],
+      "Full name":["es":"Nombre completo","fr":"Nom complet","pt":"Nome completo","de":"Vollständiger Name","zh":"姓名","ja":"氏名","ko":"이름","ar":"الاسم الكامل","hi":"पूरा नाम"],
+      "Your name":["es":"Tu nombre","fr":"Votre nom","pt":"Seu nome","de":"Dein Name","zh":"你的姓名","ja":"名前","ko":"이름","ar":"اسمك","hi":"आपका नाम"],
+      "Username":["es":"Nombre de usuario","fr":"Nom d’utilisateur","pt":"Nome de usuário","de":"Benutzername","zh":"用户名","ja":"ユーザー名","ko":"사용자 이름","ar":"اسم المستخدم","hi":"उपयोगकर्ता नाम"],
+      "Choose a username":["es":"Elige un nombre de usuario","fr":"Choisissez un nom d’utilisateur","pt":"Escolha um nome de usuário","de":"Wähle einen Benutzernamen","zh":"选择用户名","ja":"ユーザー名を選択","ko":"사용자 이름 선택","ar":"اختر اسم مستخدم","hi":"उपयोगकर्ता नाम चुनें"],
+      "Email address":["es":"Correo electrónico","fr":"Adresse e-mail","pt":"E-mail","de":"E-Mail-Adresse","zh":"电子邮件地址","ja":"メールアドレス","ko":"이메일 주소","ar":"البريد الإلكتروني","hi":"ईमेल पता"],
+      "Password":["es":"Contraseña","fr":"Mot de passe","pt":"Senha","de":"Passwort","zh":"密码","ja":"パスワード","ko":"비밀번호","ar":"كلمة المرور","hi":"पासवर्ड"],
+      "At least 8 characters":["es":"Al menos 8 caracteres","fr":"Au moins 8 caractères","pt":"Pelo menos 8 caracteres","de":"Mindestens 8 Zeichen","zh":"至少 8 个字符","ja":"8文字以上","ko":"8자 이상","ar":"8 أحرف على الأقل","hi":"कम से कम 8 अक्षर"],
+      "Confirm password":["es":"Confirmar contraseña","fr":"Confirmer le mot de passe","pt":"Confirmar senha","de":"Passwort bestätigen","zh":"确认密码","ja":"パスワードを確認","ko":"비밀번호 확인","ar":"تأكيد كلمة المرور","hi":"पासवर्ड की पुष्टि करें"],
+      "Passwords don't match.":["es":"Las contraseñas no coinciden.","fr":"Les mots de passe ne correspondent pas.","pt":"As senhas não coincidem.","de":"Die Passwörter stimmen nicht überein.","zh":"两次输入的密码不一致。","ja":"パスワードが一致しません。","ko":"비밀번호가 일치하지 않습니다.","ar":"كلمتا المرور غير متطابقتين.","hi":"पासवर्ड मेल नहीं खाते।"],
+      "Use at least 8 characters.":["es":"Usa al menos 8 caracteres.","fr":"Utilisez au moins 8 caractères.","pt":"Use pelo menos 8 caracteres.","de":"Verwende mindestens 8 Zeichen.","zh":"请至少使用 8 个字符。","ja":"8文字以上を使用してください。","ko":"8자 이상 사용하세요.","ar":"استخدم 8 أحرف على الأقل.","hi":"कम से कम 8 अक्षर इस्तेमाल करें।"],
+      "Welcome back":["es":"Bienvenido de nuevo","fr":"Heureux de vous revoir","pt":"Boas-vindas de volta","de":"Willkommen zurück","zh":"欢迎回来","ja":"おかえりなさい","ko":"다시 오신 것을 환영합니다","ar":"مرحبًا بعودتك","hi":"वापसी पर स्वागत है"],
+      "Pick up where you left off.":["es":"Continúa donde lo dejaste.","fr":"Reprenez là où vous en étiez.","pt":"Continue de onde parou.","de":"Mach dort weiter, wo du aufgehört hast.","zh":"从上次停下的地方继续。","ja":"前回の続きから始めましょう。","ko":"이어서 계속하세요.","ar":"تابع من حيث توقفت.","hi":"जहाँ छोड़ा था वहीं से शुरू करें।"],
+      "Sign in":["es":"Iniciar sesión","fr":"Se connecter","pt":"Entrar","de":"Anmelden","zh":"登录","ja":"サインイン","ko":"로그인","ar":"تسجيل الدخول","hi":"साइन इन करें"],
+      "Create an account":["es":"Crear una cuenta","fr":"Créer un compte","pt":"Criar uma conta","de":"Konto erstellen","zh":"创建账户","ja":"アカウントを作成","ko":"계정 만들기","ar":"إنشاء حساب","hi":"खाता बनाएँ"],
+      "Back":["es":"Atrás","fr":"Retour","pt":"Voltar","de":"Zurück","zh":"返回","ja":"戻る","ko":"뒤로","ar":"رجوع","hi":"वापस"],
+      "Done":["es":"Listo","fr":"Terminé","pt":"Concluído","de":"Fertig","zh":"完成","ja":"完了","ko":"완료","ar":"تم","hi":"हो गया"],
+      "OK":["es":"Aceptar","fr":"OK","pt":"OK","de":"OK","zh":"确定","ja":"OK","ko":"확인","ar":"حسنًا","hi":"ठीक है"],
+      "New to PULSE?":["es":"¿Nuevo en PULSE?","fr":"Nouveau sur PULSE ?","pt":"É novo no PULSE?","de":"Neu bei PULSE?","zh":"刚加入 PULSE？","ja":"PULSEは初めてですか？","ko":"PULSE가 처음인가요?","ar":"هل أنت جديد في PULSE؟","hi":"PULSE पर नए हैं?"],
+      "Show password":["es":"Mostrar contraseña","fr":"Afficher le mot de passe","pt":"Mostrar senha","de":"Passwort anzeigen","zh":"显示密码","ja":"パスワードを表示","ko":"비밀번호 표시","ar":"إظهار كلمة المرور","hi":"पासवर्ड दिखाएँ"],
+      "Hide password":["es":"Ocultar contraseña","fr":"Masquer le mot de passe","pt":"Ocultar senha","de":"Passwort ausblenden","zh":"隐藏密码","ja":"パスワードを隠す","ko":"비밀번호 숨기기","ar":"إخفاء كلمة المرور","hi":"पासवर्ड छिपाएँ"],
+      "Continue with a passkey":["es":"Continuar con una llave de acceso","fr":"Continuer avec une clé d’accès","pt":"Continuar com uma chave de acesso","de":"Mit einem Passkey fortfahren","zh":"使用通行密钥继续","ja":"パスキーで続行","ko":"패스키로 계속","ar":"المتابعة باستخدام مفتاح مرور","hi":"पासकी से जारी रखें"],
+      "OR":["es":"O","fr":"OU","pt":"OU","de":"ODER","zh":"或","ja":"または","ko":"또는","ar":"أو","hi":"या"]
+    ]
+    static func t(_ key: String) -> String { map[key]?[lang] ?? key }
+}
+private func L(_ key: String) -> String { PULSELocalization.t(key) }
+
 private enum AuthScreen {
     case welcome
     case createAccount
