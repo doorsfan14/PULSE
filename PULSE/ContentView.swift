@@ -480,6 +480,19 @@ struct ContentView: View {
     }
 
 
+    private func termsSection(_ heading: String, _ body: String) -> some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Text(heading)
+                .font(.custom("PlusJakartaSans-SemiBold", size: 16))
+                .foregroundStyle(.white)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text(body)
+                .termsParagraph()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
     private var termsSheet: some View {
         legalDocumentSheet(title: "Terms of Service", subtitle: "Effective October 9, 2026") {
             Text("Welcome to PULSE. These Terms of Service govern your access to and use of PULSE. By using PULSE, you agree to these Terms. If you do not agree, do not use the service.")
