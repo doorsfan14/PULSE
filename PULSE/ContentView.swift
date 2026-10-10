@@ -816,7 +816,7 @@ struct ContentView: View {
                 .frame(height: 52)
                 .contentShape(RoundedRectangle(cornerRadius: 16))
         }
-        .buttonStyle(PULSESecondaryButtonStyle())
+        .buttonStyle(PULSEGoogleButtonStyle())
         .modifier(PULSEEntrance(delay: 0.28))
     }
 
@@ -825,7 +825,7 @@ struct ContentView: View {
             showBackendNotice("Google authentication")
         } label: {
             HStack(spacing: 11) {
-                Image("GoogleG")
+                Image("GoogleG", bundle: .main)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 22, height: 22)
@@ -907,6 +907,30 @@ struct ContentView: View {
     private func showBackendNotice(_ feature: String) {
         message = L("This feature is designed in the interface, but it won’t work until PULSE is connected to an authentication backend. Passkeys also need server-generated challenges and a registered relying-party domain.")
         showMessage = true
+    }
+}
+
+private struct PULSEGoogleButtonStyle: ButtonStyle {
+    @Environment(\.colorScheme) private var colorScheme
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(colorScheme == .dark
+                        ? Color.white.opacity(0.045)
+                        : Color.white.opacity(0.80))
+            }
+            .overlay {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(
+                        colorScheme == .dark
+                            ? Color.white.opacity(0.13)
+                            : Color.black.opacity(0.10),
+                        lineWidth: 0.8
+                    )
+            }
+            .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 }
 
