@@ -65,6 +65,7 @@ struct ContentView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .toolbar(.hidden, for: .navigationBar)
+            .font(.custom("PlusJakartaSans-Regular", size: 17))
             .alert("PULSE", isPresented: $showMessage) {
                 Button("OK", role: .cancel) { }
             } message: {
@@ -106,7 +107,7 @@ struct ContentView: View {
                     Spacer(minLength: 0)
 
                     Text(typedTitle)
-                        .font(.system(size: 39, weight: .bold, design: .default))
+                        .font(.custom("PlusJakartaSans-Bold", size: 39))
                         .tracking(-1.35)
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -162,7 +163,7 @@ struct ContentView: View {
     ) -> some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 17, weight: .semibold, design: .default))
+                .font(.custom("PlusJakartaSans-SemiBold", size: 17))
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 50)
@@ -261,7 +262,7 @@ struct ContentView: View {
 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Create your account")
-                        .font(.largeTitle.bold())
+                        .font(.custom("PlusJakartaSans-Bold", size: 34))
                         .tracking(-0.5)
                     Text("A few details and you're ready to get started.")
                         .foregroundStyle(.secondary)
@@ -289,7 +290,7 @@ struct ContentView: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Password")
-                            .font(.subheadline.weight(.medium))
+                            .font(.custom("PlusJakartaSans-Medium", size: 15))
                         HStack(spacing: 12) {
                             Image(systemName: "lock")
                                 .foregroundStyle(.secondary)
@@ -338,7 +339,7 @@ struct ContentView: View {
                     showBackendNotice("Account registration")
                 } label: {
                     Text("Create account")
-                        .font(.headline)
+                        .font(.custom("PlusJakartaSans-SemiBold", size: 17))
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
                 }
@@ -439,7 +440,7 @@ struct ContentView: View {
             }
         } label: {
             Label("Back", systemImage: "chevron.left")
-                .font(.body.weight(.medium))
+                .font(.custom("PlusJakartaSans-Medium", size: 17))
         }
         .buttonStyle(.plain)
         .padding(.bottom, 4)
@@ -462,7 +463,7 @@ struct ContentView: View {
         HStack(spacing: 12) {
             Rectangle().fill(Color.secondary.opacity(0.22)).frame(height: 1)
             Text(title)
-                .font(.caption.weight(.medium))
+                .font(.custom("PlusJakartaSans-Medium", size: 12))
                 .foregroundStyle(.tertiary)
             Rectangle().fill(Color.secondary.opacity(0.22)).frame(height: 1)
         }
@@ -489,7 +490,7 @@ struct ContentView: View {
 
     private func validationHint(_ text: String, color: Color = .secondary) -> some View {
         Text(text)
-            .font(.caption)
+            .font(.custom("PlusJakartaSans-Regular", size: 12))
             .foregroundStyle(color)
     }
 
