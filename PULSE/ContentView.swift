@@ -1,30 +1,3 @@
-private enum PULSELocalization {
- static var lang: String { let c = Locale.preferredLanguages.first.map { String($0.prefix(2)) } ?? "en"; return ["es","fr","pt","de","zh","ja","ko","ar","hi"].contains(c) ? c : "en" }
- static let map: [String:[String:String]] = [
- "Terms Of Service":["es":"Términos del servicio","fr":"Conditions d’utilisation","pt":"Termos de serviço","de":"Nutzungsbedingungen","zh":"服务条款","ja":"利用規約","ko":"서비스 약관","ar":"شروط الخدمة","hi":"सेवा की शर्तें"],
- "Privacy Policy":["es":"Política de privacidad","fr":"Politique de confidentialité","pt":"Política de privacidade","de":"Datenschutzerklärung","zh":"隐私政策","ja":"プライバシーポリシー","ko":"개인정보 처리방침","ar":"سياسة الخصوصية","hi":"गोपनीयता नीति"],
- "Create account":["es":"Crear cuenta","fr":"Créer un compte","pt":"Criar conta","de":"Konto erstellen","zh":"创建账户","ja":"アカウントを作成","ko":"계정 만들기","ar":"إنشاء حساب","hi":"खाता बनाएँ"],
- "Log in":["es":"Iniciar sesión","fr":"Se connecter","pt":"Entrar","de":"Anmelden","zh":"登录","ja":"ログイン","ko":"로그인","ar":"تسجيل الدخول","hi":"लॉग इन करें"],
- "Full name":["es":"Nombre completo","fr":"Nom complet","pt":"Nome completo","de":"Vollständiger Name","zh":"姓名","ja":"氏名","ko":"이름","ar":"الاسم الكامل","hi":"पूरा नाम"],
- "Username":["es":"Nombre de usuario","fr":"Nom d’utilisateur","pt":"Nome de usuário","de":"Benutzername","zh":"用户名","ja":"ユーザー名","ko":"사용자 이름","ar":"اسم المستخدم","hi":"उपयोगकर्ता नाम"],
- "Email address":["es":"Correo electrónico","fr":"Adresse e-mail","pt":"E-mail","de":"E-Mail-Adresse","zh":"电子邮件地址","ja":"メールアドレス","ko":"이메일 주소","ar":"البريد الإلكتروني","hi":"ईमेल पता"],
- "Password":["es":"Contraseña","fr":"Mot de passe","pt":"Senha","de":"Passwort","zh":"密码","ja":"パスワード","ko":"비밀번호","ar":"كلمة المرور","hi":"पासवर्ड"],
- "Confirm password":["es":"Confirmar contraseña","fr":"Confirmer le mot de passe","pt":"Confirmar senha","de":"Passwort bestätigen","zh":"确认密码","ja":"パスワードを確認","ko":"비밀번호 확인","ar":"تأكيد كلمة المرور","hi":"पासवर्ड की पुष्टि करें"],
- "Welcome back":["es":"Bienvenido de nuevo","fr":"Heureux de vous revoir","pt":"Boas-vindas de volta","de":"Willkommen zurück","zh":"欢迎回来","ja":"おかえりなさい","ko":"다시 오신 것을 환영합니다","ar":"مرحبًا بعودتك","hi":"वापसी पर स्वागत है"],
- "Sign in":["es":"Iniciar sesión","fr":"Se connecter","pt":"Entrar","de":"Anmelden","zh":"登录","ja":"サインイン","ko":"로그인","ar":"تسجيل الدخول","hi":"साइन इन करें"],
- "Create an account":["es":"Crear una cuenta","fr":"Créer un compte","pt":"Criar uma conta","de":"Konto erstellen","zh":"创建账户","ja":"アカウントを作成","ko":"계정 만들기","ar":"إنشاء حساب","hi":"खाता बनाएँ"],
- "Back":["es":"Atrás","fr":"Retour","pt":"Voltar","de":"Zurück","zh":"返回","ja":"戻る","ko":"뒤로","ar":"رجوع","hi":"वापस"],
- "Done":["es":"Listo","fr":"Terminé","pt":"Concluído","de":"Fertig","zh":"完成","ja":"完了","ko":"완료","ar":"تم","hi":"हो गया"],
- "OK":["es":"Aceptar","fr":"OK","pt":"OK","de":"OK","zh":"确定","ja":"OK","ko":"확인","ar":"حسنًا","hi":"ठीक है"]
- ];
- static func t(_ key:String)->String { map[key]?[lang] ?? key }
-}
-private func L(_ key:String)->String { PULSELocalization.t(key) }
-
-import SwiftUI
-import CoreMotion
-import UIKit
-
 private enum AuthScreen {
     case welcome
     case createAccount
