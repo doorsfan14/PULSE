@@ -855,7 +855,7 @@ struct ContentView: View {
     }
 
     private func showBackendNotice(_ feature: String) {
-        message = "\(L(feature))\(L(" is designed in the interface, but it won\'t work until PULSE is connected to an authentication backend. Passkeys also need server-generated challenges and a registered relying-party domain."))"
+        message = "\(L(feature))\(L(" is designed in the interface, but it won’t work until PULSE is connected to an authentication backend. Passkeys also need server-generated challenges and a registered relying-party domain."))"
         showMessage = true
     }
 }
