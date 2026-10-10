@@ -38,7 +38,19 @@ private enum PULSELocalization {
       "Continue with a passkey":["es":"Continuar con una llave de acceso","fr":"Continuer avec une clé d’accès","pt":"Continuar com uma chave de acesso","de":"Mit einem Passkey fortfahren","zh":"使用通行密钥继续","ja":"パスキーで続行","ko":"패스키로 계속","ar":"المتابعة باستخدام مفتاح مرور","hi":"पासकी से जारी रखें"],
       "OR":["es":"O","fr":"OU","pt":"OU","de":"ODER","zh":"或","ja":"または","ko":"또는","ar":"أو","hi":"या"]
     ]
-    static func t(_ key: String) -> String { map[key]?[lang] ?? key }
+    "Create your account": ["es": "Crea tu cuenta", "fr": "Créez votre compte", "pt": "Crie sua conta", "de": "Erstelle dein Konto", "zh": "创建你的账户", "ja": "アカウントを作成", "ko": "계정 만들기", "ar": "أنشئ حسابك", "hi": "अपना खाता बनाएँ"],
+      "A few details and you’re ready to get started.": ["es": "Completa unos datos y empieza.", "fr": "Quelques informations et vous êtes prêt à commencer.", "pt": "Preencha alguns dados e comece.", "de": "Nur ein paar Angaben, dann kannst du loslegen.", "zh": "填写几项信息即可开始。", "ja": "いくつか入力すれば準備完了です。", "ko": "몇 가지 정보를 입력하면 시작할 수 있습니다.", "ar": "أدخل بعض التفاصيل لتبدأ.", "hi": "कुछ विवरण भरें और शुरू करें।"],
+      "Already have an account?": ["es": "¿Ya tienes una cuenta?", "fr": "Vous avez déjà un compte ?", "pt": "Já tem uma conta?", "de": "Hast du bereits ein Konto?", "zh": "已有账户？", "ja": "すでにアカウントをお持ちですか？", "ko": "이미 계정이 있나요?", "ar": "هل لديك حساب بالفعل؟", "hi": "क्या आपके पास पहले से खाता है؟"],
+      "By continuing, you agree to our": ["es": "Al continuar, aceptas nuestros", "fr": "En continuant, vous acceptez nos", "pt": "Ao continuar, você concorda com nossos", "de": "Wenn du fortfährst, stimmst du unseren", "zh": "继续即表示你同意我们的", "ja": "続行すると、以下に同意したものとみなされます：", "ko": "계속하면 다음에 동의하는 것입니다:", "ar": "بالمتابعة، فإنك توافق على", "hi": "जारी रखने पर आप हमारी"],
+      "Terms of Service": ["es": "Términos del servicio", "fr": "Conditions d’utilisation", "pt": "Termos de serviço", "de": "Nutzungsbedingungen", "zh": "服务条款", "ja": "利用規約", "ko": "서비스 약관", "ar": "شروط الخدمة", "hi": "सेवा की शर्तें"],
+      "Use 3–20 letters, numbers, or underscores.": ["es": "Usa entre 3 y 20 letras, números o guiones bajos.", "fr": "Utilisez 3 à 20 lettres, chiffres ou traits de soulignement.", "pt": "Use de 3 a 20 letras, números ou sublinhados.", "de": "Verwende 3–20 Buchstaben, Zahlen oder Unterstriche.", "zh": "使用 3–20 个字母、数字或下划线。", "ja": "3〜20文字の英字、数字、またはアンダースコアを使用してください。", "ko": "영문자, 숫자 또는 밑줄을 3~20자 사용하세요.", "ar": "استخدم من 3 إلى 20 حرفًا أو رقمًا أو شرطة سفلية.", "hi": "3–20 अक्षर, अंक या अंडरस्कोर इस्तेमाल करें।"],
+      "Enter your password again": ["es": "Vuelve a introducir tu contraseña", "fr": "Saisissez à nouveau votre mot de passe", "pt": "Digite sua senha novamente", "de": "Gib dein Passwort erneut ein", "zh": "再次输入密码", "ja": "パスワードをもう一度入力", "ko": "비밀번호를 다시 입력하세요", "ar": "أدخل كلمة المرور مرة أخرى", "hi": "अपना पासवर्ड फिर से दर्ज करें"],
+      "Passwords don’t match.": ["es": "Las contraseñas no coinciden.", "fr": "Les mots de passe ne correspondent pas.", "pt": "As senhas não coincidem.", "de": "Die Passwörter stimmen nicht überein.", "zh": "两次输入的密码不一致。", "ja": "パスワードが一致しません。", "ko": "비밀번호가 일치하지 않습니다.", "ar": "كلمتا المرور غير متطابقتين.", "hi": "पासवर्ड मेल नहीं खाते।"],
+      "Your password": ["es": "Tu contraseña", "fr": "Votre mot de passe", "pt": "Sua senha", "de": "Dein Passwort", "zh": "你的密码", "ja": "パスワード", "ko": "비밀번호", "ar": "كلمة المرور", "hi": "आपका पासवर्ड"],
+      "Create an account": ["es": "Crear una cuenta", "fr": "Créer un compte", "pt": "Criar uma conta", "de": "Konto erstellen", "zh": "创建账户", "ja": "アカウントを作成", "ko": "계정 만들기", "ar": "إنشاء حساب", "hi": "खाता बनाएँ"],
+      "Effective October 9, 2026": ["es": "Vigente desde el 9 de octubre de 2026", "fr": "En vigueur le 9 octobre 2026", "pt": "Em vigor em 9 de outubro de 2026", "de": "Gültig ab 9. Oktober 2026", "zh": "生效日期：2026年10月9日", "ja": "2026年10月9日発効", "ko": "2026년 10월 9일 시행", "ar": "ساري اعتبارًا من 9 أكتوبر 2026", "hi": "9 अक्टूबर 2026 से प्रभावी"],
+      "Done": ["es": "Listo", "fr": "Terminé", "pt": "Concluído", "de": "Fertig", "zh": "完成", "ja": "完了", "ko": "완료", "ar": "تم", "hi": "हो गया"],
+      static func t(_ key: String) -> String { map[key]?[lang] ?? key }
 }
 private func L(_ key: String) -> String { PULSELocalization.t(key) }
 
@@ -376,10 +388,10 @@ struct ContentView: View {
                     .padding(.top, 8)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Create your account")
+                    Text(L("Create your account"))
                         .font(.custom("PlusJakartaSans-Bold", size: 34))
                         .tracking(-0.5)
-                    Text("A few details and you're ready to get started.")
+                    Text(L("A few details and you're ready to get started."))
                         .foregroundStyle(.secondary)
                 }
                 .modifier(PULSEEntrance(delay: 0.06))
@@ -477,9 +489,9 @@ struct ContentView: View {
                 .modifier(PULSEEntrance(delay: 0.20))
 
                 HStack(spacing: 4) {
-                    Text("By continuing, you agree to our")
+                    Text(L("By continuing, you agree to our"))
                         .foregroundStyle(.secondary)
-                    Button("Terms of Service") {
+                    Button(L("Terms of Service")) {
                         activeLegalDocument = .terms
                     }
                     .font(.custom("PlusJakartaSans-SemiBold", size: 12))
@@ -496,7 +508,7 @@ struct ContentView: View {
                 passkeyButton(title: "Create account with a passkey", symbol: "person.badge.key.fill")
 
                 HStack(spacing: 5) {
-                    Text("Already have an account?")
+                    Text(L("Already have an account?"))
                         .foregroundStyle(.secondary)
                     Button(L("Sign in")) {
                         withAnimation(.spring(response: 0.78, dampingFraction: 0.90)) {
@@ -535,7 +547,7 @@ struct ContentView: View {
 
     private var termsSheet: some View {
         legalDocumentSheet(title: "Terms of Service", subtitle: "Effective October 9, 2026") {
-            Text("Welcome to PULSE. These Terms of Service govern your access to and use of PULSE. By using PULSE, you agree to these Terms. If you do not agree, do not use the service.")
+            Text(L("Welcome to PULSE. These Terms of Service govern your access to and use of PULSE. By using PULSE, you agree to these Terms. If you do not agree, do not use the service."))
                 .termsParagraph()
             termsSection("1. Eligibility", "You must be at least 13 years old, or the higher minimum age required where you live. If you are under the age of legal majority, you must have any parent or guardian permission required by applicable law. You are responsible for using PULSE in compliance with the laws that apply to you.")
             termsSection("2. Accounts and security", "Provide accurate information, keep your account credentials secure, and promptly notify us of suspected unauthorized access. Do not impersonate another person, use a username you have no right to use, or create accounts to evade a restriction. You are responsible for activity conducted through your account, except where applicable law provides otherwise.")
@@ -555,7 +567,7 @@ struct ContentView: View {
 
     private var privacyPolicySheet: some View {
         legalDocumentSheet(title: "Privacy Policy", subtitle: "Effective October 9, 2026") {
-            Text("PULSE respects your privacy. This Privacy Policy explains how personal information is collected, used, stored, and shared when you use PULSE.")
+            Text(L("PULSE respects your privacy. This Privacy Policy explains how personal information is collected, used, stored, and shared when you use PULSE."))
                 .termsParagraph()
             termsSection("1. Information you provide", "Depending on the features you use, information may include your name, username, email address, profile details, posts, comments, media, support requests, reports, and preferences. Avoid including sensitive personal information in public posts or profile fields.")
             termsSection("2. Technical information", "When you access PULSE, we may process technical information needed to operate and secure the service, such as app and operating-system versions, device information, connection data, diagnostic events, and security logs. The information actually collected depends on the systems used to operate PULSE.")
@@ -625,7 +637,7 @@ struct ContentView: View {
                     Text(L("Welcome back"))
                         .font(.custom("PlusJakartaSans-Bold", size: 34))
                         .tracking(-0.5)
-                    Text("Pick up where you left off.")
+                    Text(L("Pick up where you left off."))
                         .foregroundStyle(.secondary)
                 }
                 .modifier(PULSEEntrance(delay: 0.06))
@@ -644,7 +656,7 @@ struct ContentView: View {
                             Image(systemName: "lock")
                                 .foregroundStyle(.secondary)
                                 .frame(width: 20)
-                            SecureField("Your password", text: $signInPassword)
+                            SecureField(L("Your password"), text: $signInPassword)
                                 .textContentType(.password)
                         }
                         .inputSurface()
@@ -670,9 +682,9 @@ struct ContentView: View {
                 passkeyButton(title: "Continue with a passkey", symbol: "person.badge.key.fill")
 
                 HStack(spacing: 5) {
-                    Text("New to PULSE?")
+                    Text(L("New to PULSE?"))
                         .foregroundStyle(.secondary)
-                    Button("Create an account") {
+                    Button(L("Create an account")) {
                         withAnimation(.spring(response: 0.78, dampingFraction: 0.90)) {
                             screen = .createAccount
                         }
