@@ -382,67 +382,28 @@ struct ContentView: View {
                             x: CGFloat(motion.roll) * 2,
                             y: CGFloat(motion.pitch) * 2
                         )                    } else {
-                    // Light mode uses moving reflection and neutral refraction only—no shadows or colored rim.
-                    ZStack {
-                        Capsule()
-                            .fill(
-                                LinearGradient(
-                                    stops: [
-                                        .init(color: .clear, location: 0.0),
-                                        .init(color: Color.white.opacity(0.14 + abs(motion.roll) * 0.10), location: 0.24),
-                                        .init(color: Color.white.opacity(0.72 + abs(motion.pitch) * 0.10), location: 0.43),
-                                        .init(color: Color(red: 0.42, green: 0.46, blue: 0.53).opacity(0.055 + abs(motion.roll) * 0.045), location: 0.59),
-                                        .init(color: .clear, location: 1.0)
-                                    ],
-                                    startPoint: UnitPoint(
-                                        x: 0.5 + CGFloat(motion.roll) * 0.42,
-                                        y: 0.12 + CGFloat(motion.pitch) * 0.22
-                                    ),
-                                    endPoint: UnitPoint(
-                                        x: 0.5 - CGFloat(motion.roll) * 0.42,
-                                        y: 0.88 - CGFloat(motion.pitch) * 0.22
-                                    )
+                    // Light mode: keep only the gyro-reactive capsule outline.
+                    // No interior reflection/highlight layer.
+                    Capsule()
+                        .strokeBorder(
+                            LinearGradient(
+                                stops: [
+                                    .init(color: Color(red: 0.36, green: 0.48, blue: 0.68).opacity(0.18 + abs(motion.roll) * 0.12), location: 0.0),
+                                    .init(color: Color.white.opacity(0.92 + abs(motion.pitch) * 0.06), location: 0.38),
+                                    .init(color: Color(red: 0.52, green: 0.57, blue: 0.66).opacity(0.22), location: 0.68),
+                                    .init(color: Color(red: 0.30, green: 0.43, blue: 0.67).opacity(0.16 + abs(motion.roll) * 0.10), location: 1.0)
+                                ],
+                                startPoint: UnitPoint(
+                                    x: 0.5 + CGFloat(motion.roll) * 0.42,
+                                    y: 0.0 + CGFloat(motion.pitch) * 0.18
+                                ),
+                                endPoint: UnitPoint(
+                                    x: 0.5 - CGFloat(motion.roll) * 0.42,
+                                    y: 1.0 - CGFloat(motion.pitch) * 0.18
                                 )
-                            )
-                            .clipShape(Capsule())
-
-                        // Fine inner rim: bright along the top, gently neutral toward the bottom.
-                        Capsule()
-                            .strokeBorder(
-                                LinearGradient(
-                                    stops: [
-                                        .init(color: Color.white.opacity(0.92), location: 0.0),
-                                        .init(color: Color.white.opacity(0.52), location: 0.42),
-                                        .init(color: Color(red: 0.58, green: 0.62, blue: 0.69).opacity(0.20), location: 1.0)
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                ),
-                                lineWidth: 0.85
-                            )
-
-                        // A broad, soft reflection tracks tilt without adding another blur layer.
-                        Capsule()
-                            .strokeBorder(
-                                LinearGradient(
-                                    stops: [
-                                        .init(color: Color.white.opacity(0.10), location: 0.0),
-                                        .init(color: Color.white.opacity(0.62 + abs(motion.roll) * 0.12), location: 0.34),
-                                        .init(color: Color(red: 0.55, green: 0.59, blue: 0.66).opacity(0.13), location: 0.62),
-                                        .init(color: Color.white.opacity(0.16), location: 1.0)
-                                    ],
-                                    startPoint: UnitPoint(
-                                        x: 0.5 + CGFloat(motion.roll) * 0.36,
-                                        y: 0.0 + CGFloat(motion.pitch) * 0.16
-                                    ),
-                                    endPoint: UnitPoint(
-                                        x: 0.5 - CGFloat(motion.roll) * 0.36,
-                                        y: 1.0 - CGFloat(motion.pitch) * 0.16
-                                    )
-                                ),
-                                lineWidth: 0.55
-                            )
-                    }
+                            ),
+                            lineWidth: 0.8
+                        )
                     }
                 }
         }
