@@ -354,6 +354,7 @@ struct ContentView: View {
                 .modifier(PULSEEntrance(delay: 0.20))
 
                 separatorLabel("OR")
+                    .modifier(PULSEEntrance(delay: 0.24))
 
                 passkeyButton(title: "Create account with a passkey", symbol: "person.badge.key.fill")
 
@@ -367,9 +368,10 @@ struct ContentView: View {
                     }
                     .font(.custom("PlusJakartaSans-SemiBold", size: 14))
                 }
-                .font(.subheadline)
+                .font(.custom("PlusJakartaSans-Regular", size: 14))
                 .frame(maxWidth: .infinity)
                 .padding(.bottom, 24)
+                .modifier(PULSEEntrance(delay: 0.34))
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 20)
@@ -424,7 +426,7 @@ struct ContentView: View {
                     showBackendNotice("Sign in")
                 } label: {
                     Text("Sign in")
-                        .font(.headline)
+                        .font(.custom("PlusJakartaSans-SemiBold", size: 17))
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
                 }
@@ -433,6 +435,7 @@ struct ContentView: View {
                 .modifier(PULSEEntrance(delay: 0.18))
 
                 separatorLabel("OR")
+                    .modifier(PULSEEntrance(delay: 0.24))
 
                 passkeyButton(title: "Continue with a passkey", symbol: "person.badge.key.fill")
 
@@ -446,9 +449,10 @@ struct ContentView: View {
                     }
                     .font(.custom("PlusJakartaSans-SemiBold", size: 14))
                 }
-                .font(.subheadline)
+                .font(.custom("PlusJakartaSans-Regular", size: 14))
                 .frame(maxWidth: .infinity)
                 .padding(.top, 8)
+                .modifier(PULSEEntrance(delay: 0.34))
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 24)
