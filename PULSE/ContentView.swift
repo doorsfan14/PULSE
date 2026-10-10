@@ -252,12 +252,16 @@ struct ContentView: View {
 
                     VStack(spacing: 12) {
                         welcomeButton(title: L("Create account"), brighter: true) {
+                            // Stop sensor-driven redraws before animating the screen transition.
+                            motion.stop()
                             withAnimation(.spring(response: 0.78, dampingFraction: 0.90)) {
                                 screen = .createAccount
                             }
                         }
 
                         welcomeButton(title: L("Log in"), brighter: false) {
+                            // Keep device-motion updates from competing with the slide animation.
+                            motion.stop()
                             withAnimation(.spring(response: 0.78, dampingFraction: 0.90)) {
                                 screen = .signIn
                             }
@@ -829,8 +833,15 @@ private struct WelcomeBounceButtonStyle: ButtonStyle {
 }
 
 private final class WelcomeMotionManager: ObservableObject {
-    @Published var roll: Double = 0
-    @Published var pitch: Double = 0
+    private struct Attitude: Equatable {
+        var roll: Double = 0
+        var pitch: Double = 0
+    }
+
+    // Publish both axes together so one sensor sample causes at most one UI update.
+    @Published private var attitude = Attitude()
+    var roll: Double { attitude.roll }
+    var pitch: Double { attitude.pitch }
 
     private let manager = CMMotionManager()
     private let queue: OperationQueue = {
@@ -848,8 +859,11 @@ private final class WelcomeMotionManager: ObservableObject {
             let nextRoll = max(-1.0, min(1.0, motion.attitude.roll))
             let nextPitch = max(-1.0, min(1.0, motion.attitude.pitch))
             DispatchQueue.main.async {
-                self?.roll = nextRoll
-                self?.pitch = nextPitch
+                guard let self else { return }
+                // Ignore sensor noise that would redraw the UI without a visible change.
+                guard abs(self.attitude.roll - nextRoll) >= 0.018 ||
+                      abs(self.attitude.pitch - nextPitch) >= 0.018 else { return }
+                self.attitude = Attitude(roll: nextRoll, pitch: nextPitch)
             }
         }
     }
@@ -1009,6 +1023,8 @@ private struct PULSEBackdrop: View {
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
             .clipped()
+            // Flatten the layered gradients and blurred glows into one composited layer.
+            .drawingGroup()
         }
         .ignoresSafeArea()
         .onAppear {
