@@ -160,6 +160,10 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack {
+                // Share one animated backdrop across screens so transitions don't
+                // render multiple sets of blurred, continuously moving gradients.
+                PULSEBackdrop()
+
                 switch screen {
                 case .welcome:
                     welcomeScreen
@@ -208,8 +212,6 @@ struct ContentView: View {
     private var welcomeScreen: some View {
         GeometryReader { geometry in
             ZStack {
-                PULSEBackdrop()
-
                 VStack(spacing: 0) {
                     Spacer(minLength: 0)
 
@@ -389,8 +391,6 @@ struct ContentView: View {
 
     private var createAccountScreen: some View {
         ZStack {
-            PULSEBackdrop()
-
             ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 backButton
@@ -635,8 +635,6 @@ struct ContentView: View {
 
     private var signInScreen: some View {
         ZStack {
-            PULSEBackdrop()
-
             ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 backButton
