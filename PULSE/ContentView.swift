@@ -21,10 +21,11 @@ struct ContentView: View {
     @State private var showMessage = false
     @State private var message = ""
     @State private var typedTitle = ""
+    @State private var ambientMotion = false
     @State private var titleTask: Task<Void, Never>?
     @StateObject private var motion = WelcomeMotionManager()
 
-    private let welcomeTitle = "Connect in one place."
+    private let welcomeTitle = "Welcome to PULSE"
 
     private var passwordsMatch: Bool {
         !password.isEmpty && password == confirmPassword
@@ -84,18 +85,22 @@ struct ContentView: View {
                     .frame(width: geometry.size.width * 0.88)
                     .blur(radius: 78)
                     .offset(
-                        x: -geometry.size.width * 0.34,
-                        y: -geometry.size.height * 0.31
+                        x: -geometry.size.width * 0.34 + (ambientMotion ? 22 : -14),
+                        y: -geometry.size.height * 0.31 + (ambientMotion ? -18 : 16)
                     )
+                    .scaleEffect(ambientMotion ? 1.08 : 0.94)
+                    .animation(.easeInOut(duration: 7.5).repeatForever(autoreverses: true), value: ambientMotion)
 
                 Circle()
                     .fill(Color(red: 0.24, green: 0.58, blue: 0.98).opacity(0.13))
                     .frame(width: geometry.size.width * 0.68)
                     .blur(radius: 72)
                     .offset(
-                        x: geometry.size.width * 0.40,
-                        y: geometry.size.height * 0.22
+                        x: geometry.size.width * 0.40 + (ambientMotion ? -18 : 16),
+                        y: geometry.size.height * 0.22 + (ambientMotion ? 20 : -14)
                     )
+                    .scaleEffect(ambientMotion ? 0.93 : 1.07)
+                    .animation(.easeInOut(duration: 9.0).repeatForever(autoreverses: true), value: ambientMotion)
 
                 VStack(spacing: 0) {
                     Spacer(minLength: 0)
@@ -113,13 +118,13 @@ struct ContentView: View {
 
                     VStack(spacing: 12) {
                         welcomeButton(title: "Create account", brighter: true) {
-                            withAnimation(.spring(response: 0.38, dampingFraction: 0.76)) {
+                            withAnimation(.spring(response: 0.78, dampingFraction: 0.90)) {
                                 screen = .createAccount
                             }
                         }
 
                         welcomeButton(title: "Log in", brighter: false) {
-                            withAnimation(.spring(response: 0.38, dampingFraction: 0.76)) {
+                            withAnimation(.spring(response: 0.78, dampingFraction: 0.90)) {
                                 screen = .signIn
                             }
                         }
@@ -139,6 +144,7 @@ struct ContentView: View {
             .clipped()
             .onAppear {
                 motion.start()
+                ambientMotion = true
                 startTypewriter()
             }
             .onDisappear {
@@ -180,6 +186,26 @@ struct ContentView: View {
                         )
                 }
                 .overlay {
+                    // Layered edge highlights mimic subtle glass refraction.
+                    Capsule()
+                        .strokeBorder(Color.white.opacity(0.055), lineWidth: 2.4)
+                        .blur(radius: 2.2)
+                        .padding(-1.2)
+
+                    Capsule()
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.20),
+                                    Color(red: 0.62, green: 0.66, blue: 0.76).opacity(0.035),
+                                    Color.white.opacity(0.10)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 0.55
+                        )
+
                     // A restrained rim light that shifts with device tilt.
                     Capsule()
                         .strokeBorder(
@@ -408,7 +434,7 @@ struct ContentView: View {
 
     private var backButton: some View {
         Button {
-            withAnimation(.spring(response: 0.42, dampingFraction: 0.88)) {
+            withAnimation(.spring(response: 0.78, dampingFraction: 0.90)) {
                 screen = .welcome
             }
         } label: {
