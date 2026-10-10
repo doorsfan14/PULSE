@@ -900,8 +900,11 @@ private extension Text {
 }
 
 private struct PULSEBackdrop: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var drift = false
-    @State private var pulse = false
+    @State private var counterDrift = false
+    @State private var breathe = false
+    @State private var violetDrift = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -916,51 +919,89 @@ private struct PULSEBackdrop: View {
                     endPoint: .bottomTrailing
                 )
 
+                // Large, feathered pools of color create the ambient-light effect.
+                // Each layer moves at its own pace so the motion feels organic.
                 Ellipse()
                     .fill(
                         RadialGradient(
                             colors: [
-                                Color(red: 0.20, green: 0.43, blue: 1.0).opacity(pulse ? 0.30 : 0.13),
-                                Color(red: 0.10, green: 0.25, blue: 0.72).opacity(pulse ? 0.13 : 0.05),
+                                Color(red: 0.18, green: 0.40, blue: 1.0)
+                                    .opacity(breathe ? 0.27 : 0.14),
+                                Color(red: 0.10, green: 0.25, blue: 0.72)
+                                    .opacity(breathe ? 0.12 : 0.055),
                                 .clear
                             ],
                             center: .center,
                             startRadius: 4,
-                            endRadius: geometry.size.width * 0.72
+                            endRadius: geometry.size.width * 0.68
                         )
                     )
-                    .frame(width: geometry.size.width * 1.35, height: geometry.size.height * 0.72)
-                    .blur(radius: 34)
+                    .frame(
+                        width: geometry.size.width * 1.32,
+                        height: geometry.size.height * 0.76
+                    )
+                    .blur(radius: 38)
                     .offset(
-                        x: drift ? -geometry.size.width * 0.18 : geometry.size.width * 0.16,
-                        y: drift ? -geometry.size.height * 0.24 : -geometry.size.height * 0.04
+                        x: drift ? -geometry.size.width * 0.19 : geometry.size.width * 0.16,
+                        y: drift ? -geometry.size.height * 0.22 : -geometry.size.height * 0.035
                     )
 
                 Ellipse()
                     .fill(
                         RadialGradient(
                             colors: [
-                                Color(red: 0.12, green: 0.30, blue: 0.82).opacity(pulse ? 0.18 : 0.07),
-                                Color(red: 0.08, green: 0.18, blue: 0.52).opacity(pulse ? 0.08 : 0.025),
+                                Color(red: 0.08, green: 0.34, blue: 0.82)
+                                    .opacity(breathe ? 0.17 : 0.075),
+                                Color(red: 0.06, green: 0.19, blue: 0.52)
+                                    .opacity(breathe ? 0.075 : 0.03),
                                 .clear
                             ],
                             center: .center,
                             startRadius: 2,
-                            endRadius: geometry.size.width * 0.58
+                            endRadius: geometry.size.width * 0.56
                         )
                     )
-                    .frame(width: geometry.size.width * 1.2, height: geometry.size.height * 0.64)
-                    .blur(radius: 42)
+                    .frame(
+                        width: geometry.size.width * 1.16,
+                        height: geometry.size.height * 0.62
+                    )
+                    .blur(radius: 46)
                     .offset(
-                        x: drift ? geometry.size.width * 0.22 : -geometry.size.width * 0.20,
-                        y: drift ? geometry.size.height * 0.34 : geometry.size.height * 0.18
+                        x: counterDrift ? geometry.size.width * 0.23 : -geometry.size.width * 0.19,
+                        y: counterDrift ? geometry.size.height * 0.31 : geometry.size.height * 0.17
                     )
 
+                Ellipse()
+                    .fill(
+                        RadialGradient(
+                            colors: [
+                                Color(red: 0.28, green: 0.22, blue: 0.78)
+                                    .opacity(breathe ? 0.095 : 0.045),
+                                Color(red: 0.12, green: 0.16, blue: 0.48)
+                                    .opacity(breathe ? 0.04 : 0.018),
+                                .clear
+                            ],
+                            center: .center,
+                            startRadius: 2,
+                            endRadius: geometry.size.width * 0.48
+                        )
+                    )
+                    .frame(
+                        width: geometry.size.width * 0.98,
+                        height: geometry.size.height * 0.55
+                    )
+                    .blur(radius: 44)
+                    .offset(
+                        x: violetDrift ? geometry.size.width * 0.24 : -geometry.size.width * 0.17,
+                        y: violetDrift ? -geometry.size.height * 0.13 : geometry.size.height * 0.08
+                    )
+
+                // Keep foreground content readable over the glow.
                 LinearGradient(
                     colors: [
                         Color.black.opacity(0.02),
                         Color.black.opacity(0.08),
-                        Color.black.opacity(0.28)
+                        Color.black.opacity(0.30)
                     ],
                     startPoint: .top,
                     endPoint: .bottom
@@ -968,13 +1009,25 @@ private struct PULSEBackdrop: View {
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
             .clipped()
-            .animation(.easeInOut(duration: 10.0).repeatForever(autoreverses: true), value: drift)
-            .animation(.easeInOut(duration: 4.5).repeatForever(autoreverses: true), value: pulse)
         }
         .ignoresSafeArea()
         .onAppear {
-            drift = true
-            pulse = true
+            // Respect the system accessibility setting instead of animating
+            // large background shapes when Reduce Motion is enabled.
+            guard !reduceMotion else { return }
+
+            withAnimation(.easeInOut(duration: 18).repeatForever(autoreverses: true)) {
+                drift = true
+            }
+            withAnimation(.easeInOut(duration: 23).repeatForever(autoreverses: true)) {
+                counterDrift = true
+            }
+            withAnimation(.easeInOut(duration: 7.5).repeatForever(autoreverses: true)) {
+                breathe = true
+            }
+            withAnimation(.easeInOut(duration: 27).repeatForever(autoreverses: true)) {
+                violetDrift = true
+            }
         }
     }
 }
