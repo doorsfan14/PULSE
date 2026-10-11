@@ -11,6 +11,7 @@
 		C10000000000000000000003 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C40000000000000000000001 /* FirebaseAuth */; };
 		C10000000000000000000004 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C40000000000000000000002 /* FirebaseCore */; };
 		C10000000000000000000005 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C40000000000000000000003 /* FirebaseFirestore */; };
+		C10000000000000000000006 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = C40000000000000000000004 /* FirebaseStorage */; };
 		B10000000000000000000001 /* PlusJakartaSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* PlusJakartaSans-Bold.ttf */; };
 		B10000000000000000000002 /* PlusJakartaSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* PlusJakartaSans-BoldItalic.ttf */; };
 		B10000000000000000000003 /* PlusJakartaSans-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000003 /* PlusJakartaSans-ExtraBold.ttf */; };
@@ -119,6 +120,7 @@
 				C40000000000000000000001 /* FirebaseAuth */,
 				C40000000000000000000002 /* FirebaseCore */,
 				C40000000000000000000003 /* FirebaseFirestore */,
+				C40000000000000000000004 /* FirebaseStorage */,
 			);
 			name = PULSE;
 			productName = PULSE;
@@ -140,6 +142,7 @@
 				C10000000000000000000003 /* FirebaseAuth in Frameworks */,
 				C10000000000000000000004 /* FirebaseCore in Frameworks */,
 				C10000000000000000000005 /* FirebaseFirestore in Frameworks */,
+				C10000000000000000000006 /* FirebaseStorage in Frameworks */,
 			); runOnlyForDeploymentPostprocessing = 0; };
 		A60000000000000000000003 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (
 				B10000000000000000000001 /* PlusJakartaSans-Bold.ttf in Resources */,
@@ -198,6 +201,7 @@
 		C40000000000000000000001 /* FirebaseAuth */ = {isa = XCSwiftPackageProductDependency; package = C30000000000000000000001 /* XCRemoteSwiftPackageReference \"firebase-ios-sdk\" */; productName = FirebaseAuth; };
 		C40000000000000000000002 /* FirebaseCore */ = {isa = XCSwiftPackageProductDependency; package = C30000000000000000000001 /* XCRemoteSwiftPackageReference \"firebase-ios-sdk\" */; productName = FirebaseCore; };
 		C40000000000000000000003 /* FirebaseFirestore */ = {isa = XCSwiftPackageProductDependency; package = C30000000000000000000001 /* XCRemoteSwiftPackageReference \"firebase-ios-sdk\" */; productName = FirebaseFirestore; };
+		C40000000000000000000004 /* FirebaseStorage */ = {isa = XCSwiftPackageProductDependency; package = C30000000000000000000001 /* XCRemoteSwiftPackageReference \"firebase-ios-sdk\" */; productName = FirebaseStorage; };
 	};
 	rootObject = A70000000000000000000001 /* Project object */;
 }
