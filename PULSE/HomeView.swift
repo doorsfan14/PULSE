@@ -208,7 +208,7 @@ struct PULSEHomeView: View {
                                         .foregroundStyle(PULSEStyle.blue)
                                         .accessibilityLabel("Verified account")
                                 }
-                                Text("@\\(username.isEmpty ? "habib" : username)")
+                                Text("@\(username.isEmpty ? "habib" : username)")
                                     .font(.custom("PlusJakartaSans-Regular", size: 14))
                                     .foregroundStyle(Color(uiColor: .secondaryLabel))
                                     .lineLimit(1)
@@ -634,7 +634,7 @@ private struct PULSEPostRow: View {
                     .accessibilityLabel(isLiked ? "Unlike post" : "Like post")
 
                     Button(action: onReply) {
-                        Label("\\(replyCount)", systemImage: "bubble")
+                        Label("\(replyCount)", systemImage: "bubble")
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -786,7 +786,7 @@ private struct PULSEReplyComposer: View {
     let displayName: String
     let username: String
 
-    @Environment(\\.dismiss) private var dismiss
+    @Environment(\.dismiss) private var dismiss
     @State private var text = ""
     @State private var errorMessage = ""
     @State private var isSending = false
@@ -808,7 +808,7 @@ private struct PULSEReplyComposer: View {
                                         .font(.system(size: 12, weight: .semibold))
                                         .foregroundStyle(PULSEStyle.blue)
                                 }
-                                Text("@\\(post.username)")
+                                Text("@\(post.username)")
                                     .font(.custom("PlusJakartaSans-Regular", size: 12))
                                     .foregroundStyle(.secondary)
                                 Spacer(minLength: 0)
@@ -819,7 +819,7 @@ private struct PULSEReplyComposer: View {
                             Text(post.text)
                                 .font(.custom("PlusJakartaSans-Regular", size: 15))
                                 .fixedSize(horizontal: false, vertical: true)
-                            Text("\\(replies.count) \\(replies.count == 1 ? "reply" : "replies")")
+                            Text("\(replies.count) \(replies.count == 1 ? "reply" : "replies")")
                                 .font(.custom("PlusJakartaSans-Medium", size: 12))
                                 .foregroundStyle(.secondary)
                                 .padding(.top, 4)
@@ -849,7 +849,7 @@ private struct PULSEReplyComposer: View {
                                                 .font(.system(size: 11, weight: .semibold))
                                                 .foregroundStyle(PULSEStyle.blue)
                                         }
-                                        Text("@\\(reply.username)")
+                                        Text("@\(reply.username)")
                                             .font(.custom("PlusJakartaSans-Regular", size: 12))
                                             .foregroundStyle(.secondary)
                                         Text("·").foregroundStyle(.tertiary)
