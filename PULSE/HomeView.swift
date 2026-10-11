@@ -109,7 +109,8 @@ struct PULSEHomeView: View {
             PULSEComposerView(
                 user: user,
                 displayName: displayName.isEmpty ? (user.displayName ?? "PULSE user") : displayName,
-                username: username
+                username: username,
+                avatarURL: avatarURL
             )
         }
     }
@@ -148,7 +149,7 @@ struct PULSEHomeView: View {
                     ScrollView {
                         LazyVStack(spacing: 0) {
                             ForEach(posts) { post in
-                                PULSEPostRow(post: post, currentUserID: user.uid, currentDisplayName: resolvedDisplayName, currentUsername: username.isEmpty ? "habib" : username, onPostChanged: refreshPostLists, onReply: { openReplies(for: post) })
+                                PULSEPostRow(post: post, currentUserID: user.uid, currentDisplayName: resolvedDisplayName, currentUsername: username.isEmpty ? "habib" : username, currentAvatarURL: avatarURL, onPostChanged: refreshPostLists, onReply: { openReplies(for: post) })
                                 Rectangle()
                                     .fill(PULSEStyle.divider)
                                     .frame(height: 1)
@@ -345,7 +346,7 @@ struct PULSEHomeView: View {
                             .padding(.vertical, 18)
                         } else {
                             ForEach(ownPosts) { post in
-                                PULSEPostRow(post: post, currentUserID: user.uid, currentDisplayName: resolvedDisplayName, currentUsername: username.isEmpty ? "habib" : username, isOwnPost: true, onPostChanged: refreshPostLists, onReply: { openReplies(for: post) })
+                                PULSEPostRow(post: post, currentUserID: user.uid, currentDisplayName: resolvedDisplayName, currentUsername: username.isEmpty ? "habib" : username, currentAvatarURL: avatarURL, isOwnPost: true, onPostChanged: refreshPostLists, onReply: { openReplies(for: post) })
                                 Rectangle()
                                     .fill(PULSEStyle.divider)
                                     .frame(height: 1)
@@ -406,7 +407,7 @@ struct PULSEHomeView: View {
         NavigationStack {
             VStack(spacing: 12) {
                 HStack(spacing: 12) {
-                    PULSEAvatar(name: resolvedDisplayName, size: 48)
+                    PULSEAvatar(name: resolvedDisplayName, size: 48, imageURL: avatarURL)
                     VStack(alignment: .leading, spacing: 3) {
                         Text(resolvedDisplayName)
                             .font(.custom("PlusJakartaSans-SemiBold", size: 16))
@@ -659,6 +660,7 @@ private struct PULSEPostRow: View {
     let currentUserID: String
     var currentDisplayName = ""
     var currentUsername = ""
+    var currentAvatarURL: String? = nil
     var isOwnPost = false
     var onPostChanged: () -> Void = {}
     var onReply: () -> Void = {}
@@ -683,7 +685,7 @@ private struct PULSEPostRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            PULSEAvatar(name: post.authorName, size: 42, imageURL: post.avatarURL)
+            PULSEAvatar(name: post.authorName, size: 42, imageURL: post.avatarURL ?? (post.authorID == currentUserID ? currentAvatarURL : nil))
 
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .firstTextBaseline, spacing: 5) {
@@ -914,6 +916,7 @@ private struct PULSEReplyComposer: View {
     let user: User
     let displayName: String
     let username: String
+    let avatarURL: String?
 
     @Environment(\.dismiss) private var dismiss
     @State private var text = ""
@@ -1250,7 +1253,7 @@ private struct PULSEComposerView: View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(spacing: 12) {
-                    PULSEAvatar(name: displayName, size: 44)
+                    PULSEAvatar(name: displayName, size: 44, imageURL: avatarURL)
                     VStack(alignment: .leading, spacing: 3) {
                         Text(displayName)
                             .font(.custom("PlusJakartaSans-SemiBold", size: 14))
