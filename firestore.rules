@@ -19,7 +19,7 @@ service cloud.firestore {
       allow create: if signedIn()
         && request.auth.uid == userId
         && request.resource.data.keys().hasOnly([
-          'displayName', 'username', 'usernameLowercase', 'createdAt'
+          'displayName', 'username', 'usernameLowercase', 'createdAt', 'bio', 'isPrivate'
         ])
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() >= 1
@@ -28,15 +28,20 @@ service cloud.firestore {
         && request.resource.data.username.matches('^[A-Za-z0-9_]{3,20}$')
         && request.resource.data.usernameLowercase is string
         && request.resource.data.usernameLowercase == request.resource.data.username.lower()
-        && request.resource.data.createdAt is timestamp;
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.get('bio', '') is string
+        && request.resource.data.get('bio', '').size() <= 160
+        && request.resource.data.get('isPrivate', false) is bool;
 
-      // For now, users may edit only their display name.
       allow update: if signedIn()
         && request.auth.uid == userId
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'bio', 'isPrivate'])
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() >= 1
-        && request.resource.data.displayName.size() <= 60;
+        && request.resource.data.displayName.size() <= 60
+        && request.resource.data.get('bio', '') is string
+        && request.resource.data.get('bio', '').size() <= 160
+        && request.resource.data.get('isPrivate', false) is bool;
 
       allow delete: if signedIn() && request.auth.uid == userId;
     }
