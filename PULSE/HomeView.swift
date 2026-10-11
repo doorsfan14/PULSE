@@ -9,6 +9,7 @@ private struct PULSEPost: Identifiable {
     let username: String
     let text: String
     let createdAt: Date
+    let isPrivate: Bool
 
     init?(document: QueryDocumentSnapshot) {
         let data = document.data()
@@ -25,6 +26,7 @@ private struct PULSEPost: Identifiable {
         self.username = username
         self.text = text
         self.createdAt = (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
+        self.isPrivate = data["isPrivate"] as? Bool ?? false
     }
 }
 
@@ -40,30 +42,55 @@ struct PULSEHomeView: View {
     @State private var posts: [PULSEPost] = []
     @State private var displayName = ""
     @State private var username = ""
+    @State private var bio = ""
+    @State private var isAccountPrivate = false
+    @State private var showEditProfile = false
+    @State private var showDeleteAccountConfirmation = false
     @State private var isLoading = true
     @State private var loadError = ""
     @State private var showComposer = false
     @State private var selectedTab = 0
-    @State private var feedListener: ListenerRegistration?
+    @State private var feedListeners: [ListenerRegistration] = []
+    @State private var publicPosts: [PULSEPost] = []
+    @State private var ownPrivatePosts: [PULSEPost] = []
 
     private let db = Firestore.firestore()
 
     var body: some View {
         TabView(selection: $selectedTab) {
             feedScreen
-                .tabItem { Label("Home", systemImage: "house") }
+                .tabItem { Image(systemName: "house") }
                 .tag(0)
 
             profileScreen
-                .tabItem { Label("Profile", systemImage: "person.crop.circle") }
+                .tabItem { Image(systemName: "person.crop.circle") }
                 .tag(1)
         }
         .tint(PULSEStyle.blue)
         .task { await loadProfile() }
         .onAppear(perform: startFeedListener)
         .onDisappear {
-            feedListener?.remove()
-            feedListener = nil
+            feedListeners.forEach { $0.remove() }
+            feedListeners.removeAll()
+        }
+        .sheet(isPresented: $showEditProfile) {
+            PULSEEditProfileView(
+                user: user,
+                displayName: displayName,
+                bio: bio,
+                isPrivate: isAccountPrivate,
+                onSave: { newName, newBio, makePrivate in
+                    Task { await saveProfile(name: newName, bio: newBio, isPrivate: makePrivate) }
+                },
+                onDeleteAccount: { showDeleteAccountConfirmation = true }
+            )
+        }
+        .confirmationDialog("Delete your PULSE account?", isPresented: $showDeleteAccountConfirmation, titleVisibility: .visible) {
+            Button("Delete account permanently", role: .destructive) {
+                Task { await deleteAccount() }
+            }
+        } message: {
+            Text("Your profile and posts will be deleted. This cannot be undone.")
         }
         .sheet(isPresented: $showComposer) {
             PULSEComposerView(
