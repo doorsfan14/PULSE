@@ -169,7 +169,10 @@
             tx.set(profileRef,{displayName:name,username,usernameLowercase:usernameKey,createdAt:serverTimestamp(),bio:"",isPrivate:false});
           });
           await updateProfile(credential.user,{displayName:name});
-        }catch(error){try{await deleteUser(credential.user)}catch{}throw error}
+          state.setupUID=credential.user.uid;
+          await activateUser(credential.user);
+          setAuthMode(false);
+        }catch(error){state.setupUID=null;try{await deleteUser(credential.user)}catch{}throw error}
       }catch(error){setError("authError",friendlyError(error));setBusy(false)}
     });
     $("signOut").addEventListener("click",async()=>{try{await firebaseSignOut(auth)}catch(error){toast(friendlyError(error))}});
@@ -302,11 +305,15 @@
       try{await addDoc(collection(db,"posts",post.id,"replies"),{authorID:state.user.uid,authorName:state.profile.displayName,username:state.profile.username,text,createdAt:serverTimestamp()});$("replyInput").value=""}
       catch(error){setError("replyError",friendlyError(error))}finally{submit.disabled=false}
     });
-    onAuthStateChanged(auth,async user=>{
+    async function activateUser(user){
       stopFeed();state.user=user;state.profile=null;
-      if(!user){showAuth();setBusy(false);return}
+      if(!user){state.setupUID=null;showAuth();setBusy(false);return}
       showMain();setView("home");$("loadingFeed").hidden=false;$("emptyFeed").hidden=true;
       try{await loadProfile();startFeed()}catch(error){$("loadingFeed").hidden=true;toast(friendlyError(error))}
+    }
+    onAuthStateChanged(auth,async user=>{
+      if(user&&((state.signup&&state.busy)||state.setupUID===user.uid))return;
+      await activateUser(user);
     });
     setAuthMode(false);
   </script>
