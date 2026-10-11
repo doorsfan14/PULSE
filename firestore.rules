@@ -1,0 +1,101 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function validPostText(value) {
+      return value is string
+        && value.size() > 0
+        && value.size() <= 280;
+    }
+
+    match /users/{userId} {
+      // Signed-in users can see public profile fields, never private auth credentials.
+      allow read: if signedIn();
+
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly([
+          'displayName', 'username', 'usernameLowercase', 'createdAt'
+        ])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() >= 1
+        && request.resource.data.displayName.size() <= 60
+        && request.resource.data.username is string
+        && request.resource.data.username.matches('^[A-Za-z0-9_]{3,20}$')
+        && request.resource.data.usernameLowercase is string
+        && request.resource.data.usernameLowercase == request.resource.data.username.lower()
+        && request.resource.data.createdAt is timestamp;
+
+      // For now, users may edit only their display name.
+      allow update: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName'])
+        && request.resource.data.displayName is string
+        && request.resource.data.displayName.size() >= 1
+        && request.resource.data.displayName.size() <= 60;
+
+      allow delete: if signedIn() && request.auth.uid == userId;
+    }
+
+    match /usernames/{username} {
+      allow read: if signedIn();
+
+      // A username reservation is immutable and tied to the authenticated account.
+      allow create: if signedIn()
+        && username.matches('^[a-z0-9_]{3,20}$')
+        && request.resource.data.keys().hasOnly(['uid', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.createdAt is timestamp;
+
+      allow update: if false;
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    match /posts/{postId} {
+      allow read: if signedIn();
+
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly([
+          'authorID', 'authorName', 'username', 'text', 'createdAt'
+        ])
+        && request.resource.data.authorID == request.auth.uid
+        && request.resource.data.authorName is string
+        && request.resource.data.authorName.size() >= 1
+        && request.resource.data.authorName.size() <= 60
+        && request.resource.data.username is string
+        && request.resource.data.username.matches('^[A-Za-z0-9_]{3,20}$')
+        && validPostText(request.resource.data.text)
+        && request.resource.data.createdAt is timestamp;
+
+      // Authors may edit only their post text; identity and timestamp are immutable.
+      allow update: if signedIn()
+        && resource.data.authorID == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text'])
+        && validPostText(request.resource.data.text);
+
+      allow delete: if signedIn() && resource.data.authorID == request.auth.uid;
+
+      match /likes/{userId} {
+        allow read: if signedIn();
+
+        allow create: if signedIn()
+          && userId == request.auth.uid
+          && request.resource.data.keys().hasOnly(['uid', 'createdAt'])
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.createdAt is timestamp;
+
+        allow update: if false;
+        allow delete: if signedIn() && userId == request.auth.uid;
+      }
+    }
+
+    // Everything not explicitly allowed above is denied.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
