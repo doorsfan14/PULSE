@@ -246,10 +246,10 @@
       stopFeed();state.posts=[];
       const publicQuery=query(collection(db,"posts"),where("isPrivate","==",false),limit(100));
       const ownQuery=query(collection(db,"posts"),where("authorID","==",state.user.uid),limit(100));
-      const merged=new Map();
-      const apply=docs=>{for(const post of docs){const d=post.data();merged.set(post.id,{id:post.id,...d})}state.posts=[...merged.values()];renderPosts()};
-      state.feedUnsubs.push(onSnapshot(publicQuery,snap=>apply(snap.docs),error=>{ $("loadingFeed").hidden=true;toast(friendlyError(error)) }));
-      state.feedUnsubs.push(onSnapshot(ownQuery,snap=>apply(snap.docs),error=>{ $("loadingFeed").hidden=true;toast(friendlyError(error)) }));
+      const publicPosts=new Map(),ownPosts=new Map();
+      const apply=()=>{state.posts=[...new Map([...publicPosts,...ownPosts]).values()];renderPosts()};
+      state.feedUnsubs.push(onSnapshot(publicQuery,snap=>{publicPosts.clear();snap.docs.forEach(post=>publicPosts.set(post.id,{id:post.id,...post.data()}));apply()},error=>{ $("loadingFeed").hidden=true;toast(friendlyError(error)) }));
+      state.feedUnsubs.push(onSnapshot(ownQuery,snap=>{ownPosts.clear();snap.docs.forEach(post=>ownPosts.set(post.id,{id:post.id,...post.data()}));apply()},error=>{ $("loadingFeed").hidden=true;toast(friendlyError(error)) }));
     }
     function setView(view){state.view=view;const profile=view==="profile";$("feedView").hidden=profile;$("profileView").style.display=profile?"block":"none";$("wordmark").hidden=profile;$("pageTitle").hidden=!profile;$("pageTitle").textContent="Profile";document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));window.scrollTo({top:0,behavior:"smooth"})}
     document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.view)));
@@ -305,7 +305,7 @@
     onAuthStateChanged(auth,async user=>{
       stopFeed();state.user=user;state.profile=null;
       if(!user){showAuth();setBusy(false);return}
-      showMain();$("loadingFeed").hidden=false;$("emptyFeed").hidden=true;
+      showMain();setView("home");$("loadingFeed").hidden=false;$("emptyFeed").hidden=true;
       try{await loadProfile();startFeed()}catch(error){$("loadingFeed").hidden=true;toast(friendlyError(error))}
     });
     setAuthMode(false);
