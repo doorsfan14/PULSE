@@ -207,7 +207,7 @@ struct PULSEHomeView: View {
                                         .foregroundStyle(PULSEStyle.blue)
                                         .accessibilityLabel("Verified account")
                                 }
-                                Text("@\(username.isEmpty ? "habib" : username)")
+                                Text("@\(accountSwitcherUsername)")
                                     .font(.custom("PlusJakartaSans-Regular", size: 14))
                                     .foregroundStyle(bannerForegroundColor.opacity(0.78))
                                     .lineLimit(1)
@@ -380,6 +380,10 @@ struct PULSEHomeView: View {
                 .presentationDragIndicator(.visible)
                 .presentationCornerRadius(28)
         }
+    }
+
+    private var accountSwitcherUsername: String {
+        username.isEmpty ? "habib" : username
     }
 
     private var accountSwitcherModal: some View {
