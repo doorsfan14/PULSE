@@ -14,6 +14,15 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      # Reuse Xcode's compiled products and Swift Package checkouts between runs.
+      - name: Cache Xcode build data
+        uses: actions/cache@v4
+        with:
+          path: build
+          key: ${{ runner.os }}-xcode-${{ hashFiles('PULSE.xcodeproj/project.pbxproj', '**/Package.resolved') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-xcode-${{ hashFiles('PULSE.xcodeproj/project.pbxproj', '**/Package.resolved') }}-
+
       - name: Build PULSE for the iOS Simulator
         run: |
           xcodebuild \
@@ -22,6 +31,7 @@ jobs:
             -sdk iphonesimulator \
             -configuration Debug \
             -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             build
 
