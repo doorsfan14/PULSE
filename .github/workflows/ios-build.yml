@@ -37,19 +37,16 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build
 
-      - name: Restore Firebase configuration
-        env:
-          GOOGLE_SERVICE_INFO_PLIST: ${{ secrets.GOOGLE_SERVICE_INFO_PLIST }}
+      - name: Add Firebase configuration from repository
         run: |
-          if [ -z "$GOOGLE_SERVICE_INFO_PLIST" ]; then
-            echo "Firebase plist secret is not configured; skipping plist injection."
-            exit 0
-          fi
-
-          PLIST_PATH="$RUNNER_TEMP/GoogleService-Info.plist"
+          PLIST_PATH="Firebase/GoogleService-Info.plist"
           APP_PATH="build/Build/Products/Debug-iphoneos/PULSE.app"
 
-          printf '%s' "$GOOGLE_SERVICE_INFO_PLIST" > "$PLIST_PATH"
+          if [ ! -f "$PLIST_PATH" ]; then
+            echo "::error::Missing $PLIST_PATH. Add GoogleService-Info.plist to the Firebase directory."
+            exit 1
+          fi
+
           plutil -lint "$PLIST_PATH"
           test -d "$APP_PATH"
           cp "$PLIST_PATH" "$APP_PATH/GoogleService-Info.plist"
