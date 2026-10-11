@@ -89,6 +89,75 @@ service cloud.firestore {
         allow update: if false;
         allow delete: if signedIn() && userId == request.auth.uid;
       }
+
+      match /reposts/{userId} {
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && userId == request.auth.uid
+          && get(/databases/$(database)/documents/posts/$(postId)).data.get('isPrivate', false) == false
+          && request.resource.data.keys().hasOnly(['uid', 'authorName', 'username', 'createdAt'])
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.createdAt is timestamp;
+        allow update: if false;
+        allow delete: if signedIn() && userId == request.auth.uid;
+      }
+
+      match /replies/{replyId} {
+        allow read: if signedIn()
+          && (get(/databases/$(database)/documents/posts/$(postId)).data.get('isPrivate', false) == false
+            || get(/databases/$(database)/documents/posts/$(postId)).data.authorID == request.auth.uid);
+        allow create: if signedIn()
+          && get(/databases/$(database)/documents/posts/$(postId)).data.get('isPrivate', false) == false
+          && request.resource.data.keys().hasOnly(['authorID', 'authorName', 'username', 'text', 'createdAt'])
+          && request.resource.data.authorID == request.auth.uid
+          && request.resource.data.authorName is string
+          && request.resource.data.username.matches('^[A-Za-z0-9_]{3,20}
+
+    // Everything not explicitly allowed above is denied.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+)
+        && validPostText(request.resource.data.text)
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.isPrivate is bool;
+
+      allow update: if signedIn()
+        && resource.data.authorID == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'isPrivate'])
+        && validPostText(request.resource.data.text)
+        && request.resource.data.get('isPrivate', false) is bool;
+
+      allow delete: if signedIn() && resource.data.authorID == request.auth.uid;
+
+      match /likes/{userId} {
+        allow read: if signedIn();
+
+        allow create: if signedIn()
+          && userId == request.auth.uid
+          && request.resource.data.keys().hasOnly(['uid', 'createdAt'])
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.createdAt is timestamp;
+
+        allow update: if false;
+        allow delete: if signedIn() && userId == request.auth.uid;
+      }
+    }
+
+    // Everything not explicitly allowed above is denied.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+)
+          && validPostText(request.resource.data.text)
+          && request.resource.data.createdAt is timestamp;
+        allow update: if false;
+        allow delete: if signedIn() && resource.data.authorID == request.auth.uid;
+      }
     }
 
     // Everything not explicitly allowed above is denied.
