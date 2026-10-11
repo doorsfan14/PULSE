@@ -222,8 +222,36 @@ struct PULSEHomeView: View {
                     .padding(.bottom, 35)
 
                     VStack(alignment: .leading, spacing: 0) {
-                        HStack {
-                            Spacer()
+                        HStack(alignment: .center, spacing: 8) {
+                            HStack(spacing: 10) {
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text("\(posts.filter { $0.authorID == user.uid }.count)")
+                                        .font(.custom("PlusJakartaSans-Bold", size: 15))
+                                        .foregroundStyle(.primary)
+                                    Text("Posts")
+                                        .font(.custom("PlusJakartaSans-Regular", size: 10))
+                                        .foregroundStyle(.secondary)
+                                }
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text("0")
+                                        .font(.custom("PlusJakartaSans-Bold", size: 15))
+                                        .foregroundStyle(.primary)
+                                    Text("Followers")
+                                        .font(.custom("PlusJakartaSans-Regular", size: 10))
+                                        .foregroundStyle(.secondary)
+                                }
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text("0")
+                                        .font(.custom("PlusJakartaSans-Bold", size: 15))
+                                        .foregroundStyle(.primary)
+                                    Text("Following")
+                                        .font(.custom("PlusJakartaSans-Regular", size: 10))
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+
+                            Spacer(minLength: 2)
+
                             HStack(spacing: 8) {
                                 Button {
                                     showEditProfile = true
@@ -269,36 +297,6 @@ struct PULSEHomeView: View {
                                 .foregroundStyle(.secondary)
                                 .padding(.top, 10)
                         }
-
-                        HStack(spacing: 22) {
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text("\(posts.filter { $0.authorID == user.uid }.count)")
-                                    .font(.custom("PlusJakartaSans-Bold", size: 18))
-                                    .foregroundStyle(.primary)
-                                Text("Posts")
-                                    .font(.custom("PlusJakartaSans-Regular", size: 12))
-                                    .foregroundStyle(.secondary)
-                            }
-
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text("0")
-                                    .font(.custom("PlusJakartaSans-Bold", size: 18))
-                                    .foregroundStyle(.primary)
-                                Text("Followers")
-                                    .font(.custom("PlusJakartaSans-Regular", size: 12))
-                                    .foregroundStyle(.secondary)
-                            }
-
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text("0")
-                                    .font(.custom("PlusJakartaSans-Bold", size: 18))
-                                    .foregroundStyle(.primary)
-                                Text("Following")
-                                    .font(.custom("PlusJakartaSans-Regular", size: 12))
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        .padding(.top, 22)
 
                         Rectangle()
                             .fill(PULSEStyle.divider)
