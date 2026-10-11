@@ -343,8 +343,9 @@ struct PULSEHomeView: View {
     }
 
     private func startFeedListener() {
-        guard feedListener == nil else { return }
-        feedListener = db.collection("posts")
+        guard feedListeners.isEmpty else { return }
+        let publicListener = db.collection("posts")
+            .whereField("isPrivate", isEqualTo: false)
             .order(by: "createdAt", descending: true)
             .limit(to: 50)
             .addSnapshotListener { snapshot, error in
@@ -353,22 +354,104 @@ struct PULSEHomeView: View {
                     isLoading = false
                     return
                 }
-                posts = snapshot?.documents.compactMap(PULSEPost.init(document:)) ?? []
+                publicPosts = snapshot?.documents.compactMap(PULSEPost.init(document:)) ?? []
+                refreshPostLists()
                 loadError = ""
                 isLoading = false
             }
+        let ownListener = db.collection("posts")
+            .whereField("authorID", isEqualTo: user.uid)
+            .order(by: "createdAt", descending: true)
+            .limit(to: 50)
+            .addSnapshotListener { snapshot, error in
+                if let error {
+                    loadError = error.localizedDescription
+                    isLoading = false
+                    return
+                }
+                ownPrivatePosts = snapshot?.documents.compactMap(PULSEPost.init(document:)) ?? []
+                refreshPostLists()
+                loadError = ""
+                isLoading = false
+            }
+        feedListeners = [publicListener, ownListener]
+    }
+
+    private func refreshPostLists() {
+        var unique: [String: PULSEPost] = [:]
+        (publicPosts + ownPrivatePosts).forEach { unique[$0.id] = $0 }
+        posts = unique.values.sorted { $0.createdAt > $1.createdAt }
     }
 
     private func refreshFeed() async {
         do {
-            let snapshot = try await db.collection("posts")
+            async let publicSnapshot = db.collection("posts")
+                .whereField("isPrivate", isEqualTo: false)
                 .order(by: "createdAt", descending: true)
                 .limit(to: 50)
                 .getDocuments()
-            posts = snapshot.documents.compactMap(PULSEPost.init(document:))
+            async let ownSnapshot = db.collection("posts")
+                .whereField("authorID", isEqualTo: user.uid)
+                .order(by: "createdAt", descending: true)
+                .limit(to: 50)
+                .getDocuments()
+            let (publicDocs, ownDocs) = try await (publicSnapshot, ownSnapshot)
+            publicPosts = publicDocs.documents.compactMap(PULSEPost.init(document:))
+            ownPrivatePosts = ownDocs.documents.compactMap(PULSEPost.init(document:))
+            refreshPostLists()
             loadError = ""
         } catch {
             loadError = error.localizedDescription
+        }
+    }
+
+    private func saveProfile(name: String, bio newBio: String, isPrivate: Bool) async {
+        let cleanName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        let cleanBio = newBio.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanName.isEmpty, cleanName.count <= 60, cleanBio.count <= 160 else { return }
+        do {
+            try await db.collection("users").document(user.uid).updateData([
+                "displayName": cleanName,
+                "bio": cleanBio,
+                "isPrivate": isPrivate
+            ])
+            let profileChange = user.createProfileChangeRequest()
+            profileChange.displayName = cleanName
+            try await profileChange.commitChanges()
+            if isPrivate != isAccountPrivate {
+                let own = try await db.collection("posts").whereField("authorID", isEqualTo: user.uid).getDocuments()
+                for chunkStart in stride(from: 0, to: own.documents.count, by: 400) {
+                    let batch = db.batch()
+                    for document in own.documents.dropFirst(chunkStart).prefix(400) {
+                        batch.updateData(["isPrivate": isPrivate], forDocument: document.reference)
+                    }
+                    try await batch.commit()
+                }
+            }
+            displayName = cleanName
+            bio = cleanBio
+            isAccountPrivate = isPrivate
+            showEditProfile = false
+        } catch {
+            loadError = error.localizedDescription
+        }
+    }
+
+    private func deleteAccount() async {
+        do {
+            let own = try await db.collection("posts").whereField("authorID", isEqualTo: user.uid).getDocuments()
+            for document in own.documents {
+                try await document.reference.delete()
+            }
+            let profileRef = db.collection("users").document(user.uid)
+            let profile = try await profileRef.getDocument()
+            if let usernameKey = profile.data()?["usernameLowercase"] as? String {
+                try await db.collection("usernames").document(usernameKey).delete()
+            }
+            try await profileRef.delete()
+            try await user.delete()
+        } catch {
+            loadError = "Could not delete the account. You may need to sign in again first. " + error.localizedDescription
         }
     }
 }
