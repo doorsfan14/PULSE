@@ -201,11 +201,7 @@ struct PULSEHomeView: View {
                                 .offset(y: 35)
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack(spacing: 6) {
-                                    Text(resolvedDisplayName)
-                                        .font(.custom("PlusJakartaSans-Bold", size: 25))
-                                        .foregroundStyle(bannerForegroundColor)
-                                        .lineLimit(1)
-                                        .minimumScaleFactor(0.72)
+                                    accountSwitcherTrigger
                                     Image(systemName: "checkmark.seal.fill")
                                         .font(.system(size: 17, weight: .semibold))
                                         .foregroundStyle(PULSEStyle.blue)
@@ -352,73 +348,88 @@ struct PULSEHomeView: View {
                 }
             }
             .background(Color(uiColor: .systemBackground))
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                accountSwitcherBar
-            }
             .ignoresSafeArea(edges: .top)
             .toolbar(.hidden, for: .navigationBar)
         }
     }
 
-    private var accountSwitcherBar: some View {
-        Menu {
-            Button {
-            } label: {
-                Label("Current account · @\(username.isEmpty ? "habib" : username)", systemImage: "checkmark.circle.fill")
-            }
-            .disabled(true)
+    @State private var showAccountSwitcher = false
 
-            Button {
-                do {
-                    try PULSEBackend.shared.signOut()
-                } catch {
-                    loadError = error.localizedDescription
-                }
-            } label: {
-                Label("Add an account", systemImage: "person.badge.plus")
-            }
-
-            Button(role: .destructive) {
-                do {
-                    try PULSEBackend.shared.signOut()
-                } catch {
-                    loadError = error.localizedDescription
-                }
-            } label: {
-                Label("Sign out", systemImage: "rectangle.portrait.and.arrow.right")
-            }
+    private var accountSwitcherTrigger: some View {
+        Button {
+            showAccountSwitcher = true
         } label: {
-            HStack(spacing: 11) {
-                PULSEAvatar(name: resolvedDisplayName, size: 38)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(resolvedDisplayName)
-                        .font(.custom("PlusJakartaSans-SemiBold", size: 13))
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
-                    Text("@\(username.isEmpty ? "habib" : username)")
-                        .font(.custom("PlusJakartaSans-Regular", size: 11))
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                }
-                Spacer(minLength: 0)
-                Image(systemName: "chevron.up.chevron.down")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(.secondary)
+            HStack(spacing: 7) {
+                Text(resolvedDisplayName)
+                    .font(.custom("PlusJakartaSans-Bold", size: 25))
+                    .foregroundStyle(bannerForegroundColor)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(bannerForegroundColor)
+                    .padding(.top, 3)
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
-            .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .stroke(PULSEStyle.divider, lineWidth: 1)
-            }
-            .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .padding(.horizontal, 16)
-        .padding(.top, 9)
-        .padding(.bottom, 6)
-        .background(.bar)
+        .accessibilityLabel("Switch account")
+        .sheet(isPresented: $showAccountSwitcher) {
+            accountSwitcherModal
+                .presentationDetents([.height(250)])
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(28)
+        }
+    }
+
+    private var accountSwitcherModal: some View {
+        NavigationStack {
+            VStack(spacing: 12) {
+                HStack(spacing: 12) {
+                    PULSEAvatar(name: resolvedDisplayName, size: 48)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(resolvedDisplayName)
+                            .font(.custom("PlusJakartaSans-SemiBold", size: 16))
+                            .foregroundStyle(.primary)
+                        Text("@\\(username.isEmpty ? "habib" : username)")
+                            .font(.custom("PlusJakartaSans-Regular", size: 13))
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 21))
+                        .foregroundStyle(PULSEStyle.blue)
+                }
+                .padding(14)
+                .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+
+                Button {
+                    showAccountSwitcher = false
+                    do {
+                        try PULSEBackend.shared.signOut()
+                    } catch {
+                        loadError = error.localizedDescription
+                    }
+                } label: {
+                    Label("Add or switch account", systemImage: "person.crop.circle.badge.plus")
+                        .font(.custom("PlusJakartaSans-SemiBold", size: 14))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(PULSEStyle.blue, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+                        .foregroundStyle(.white)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(20)
+            .navigationTitle("Accounts")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { showAccountSwitcher = false }
+                        .font(.custom("PlusJakartaSans-SemiBold", size: 14))
+                }
+            }
+        }
     }
 
     private var bannerBottomColor: Color {
