@@ -395,7 +395,7 @@ struct PULSEHomeView: View {
                         Text(resolvedDisplayName)
                             .font(.custom("PlusJakartaSans-SemiBold", size: 16))
                             .foregroundStyle(.primary)
-                        Text("@\\(username.isEmpty ? "habib" : username)")
+                        Text("@\(accountSwitcherUsername)")
                             .font(.custom("PlusJakartaSans-Regular", size: 13))
                             .foregroundStyle(.secondary)
                     }
