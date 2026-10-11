@@ -6,6 +6,11 @@
 	objects = {
 		A10000000000000000000001 /* PULSEApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* PULSEApp.swift */; };
 		A10000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* ContentView.swift */; };
+		C10000000000000000000001 /* FirebaseBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20000000000000000000001 /* FirebaseBackend.swift */; };
+		C10000000000000000000002 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C20000000000000000000002 /* HomeView.swift */; };
+		C10000000000000000000003 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C40000000000000000000001 /* FirebaseAuth */; };
+		C10000000000000000000004 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = C40000000000000000000002 /* FirebaseCore */; };
+		C10000000000000000000005 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C40000000000000000000003 /* FirebaseFirestore */; };
 		B10000000000000000000001 /* PlusJakartaSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000001 /* PlusJakartaSans-Bold.ttf */; };
 		B10000000000000000000002 /* PlusJakartaSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000002 /* PlusJakartaSans-BoldItalic.ttf */; };
 		B10000000000000000000003 /* PlusJakartaSans-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000003 /* PlusJakartaSans-ExtraBold.ttf */; };
@@ -24,6 +29,8 @@
 		B10000000000000000000016 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000016 /* Assets.xcassets */; };
 		A20000000000000000000001 /* PULSEApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PULSEApp.swift; sourceTree = "<group>"; };
 		A20000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C20000000000000000000001 /* FirebaseBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseBackend.swift; sourceTree = "<group>"; };
+		C20000000000000000000002 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		B20000000000000000000001 /* PlusJakartaSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PlusJakartaSans-Bold.ttf"; sourceTree = "<group>"; };
 		B20000000000000000000002 /* PlusJakartaSans-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PlusJakartaSans-BoldItalic.ttf"; sourceTree = "<group>"; };
 		B20000000000000000000003 /* PlusJakartaSans-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PlusJakartaSans-ExtraBold.ttf"; sourceTree = "<group>"; };
@@ -54,6 +61,8 @@
 			children = (
 				A20000000000000000000001 /* PULSEApp.swift */,
 				A20000000000000000000002 /* ContentView.swift */,
+				C20000000000000000000001 /* FirebaseBackend.swift */,
+				C20000000000000000000002 /* HomeView.swift */,
 				B30000000000000000000001 /* Resources */,
 			);
 			path = PULSE;
@@ -106,6 +115,11 @@
 			);
 			buildRules = ();
 			dependencies = ();
+			packageProductDependencies = (
+				C40000000000000000000001 /* FirebaseAuth */,
+				C40000000000000000000002 /* FirebaseCore */,
+				C40000000000000000000003 /* FirebaseFirestore */,
+			);
 			name = PULSE;
 			productName = PULSE;
 			productReference = A20000000000000000000003 /* PULSE.app */;
@@ -117,10 +131,16 @@
 			files = (
 				A10000000000000000000001 /* PULSEApp.swift in Sources */,
 				A10000000000000000000002 /* ContentView.swift in Sources */,
+				C10000000000000000000001 /* FirebaseBackend.swift in Sources */,
+				C10000000000000000000002 /* HomeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A60000000000000000000002 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		A60000000000000000000002 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (
+				C10000000000000000000003 /* FirebaseAuth in Frameworks */,
+				C10000000000000000000004 /* FirebaseCore in Frameworks */,
+				C10000000000000000000005 /* FirebaseFirestore in Frameworks */,
+			); runOnlyForDeploymentPostprocessing = 0; };
 		A60000000000000000000003 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (
 				B10000000000000000000001 /* PlusJakartaSans-Bold.ttf in Resources */,
 				B10000000000000000000002 /* PlusJakartaSans-BoldItalic.ttf in Resources */,
@@ -149,6 +169,9 @@
 			knownRegions = (en, Base);
 			mainGroup = A30000000000000000000001;
 			productRefGroup = A30000000000000000000003 /* Products */;
+			packageReferences = (
+				C30000000000000000000001 /* XCRemoteSwiftPackageReference \"firebase-ios-sdk\" */,
+			);
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (A40000000000000000000001 /* PULSE */);
@@ -167,6 +190,14 @@
 		A80000000000000000000004 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; CLANG_ENABLE_OBJC_ARC = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; };
 			name = Release;
 		};
+		C30000000000000000000001 /* XCRemoteSwiftPackageReference \"firebase-ios-sdk\" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = { kind = upToNextMajorVersion; minimumVersion = 11.0.0; };
+		};
+		C40000000000000000000001 /* FirebaseAuth */ = {isa = XCSwiftPackageProductDependency; package = C30000000000000000000001 /* XCRemoteSwiftPackageReference \"firebase-ios-sdk\" */; productName = FirebaseAuth; };
+		C40000000000000000000002 /* FirebaseCore */ = {isa = XCSwiftPackageProductDependency; package = C30000000000000000000001 /* XCRemoteSwiftPackageReference \"firebase-ios-sdk\" */; productName = FirebaseCore; };
+		C40000000000000000000003 /* FirebaseFirestore */ = {isa = XCSwiftPackageProductDependency; package = C30000000000000000000001 /* XCRemoteSwiftPackageReference \"firebase-ios-sdk\" */; productName = FirebaseFirestore; };
 	};
 	rootObject = A70000000000000000000001 /* Project object */;
 }
