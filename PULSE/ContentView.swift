@@ -928,7 +928,11 @@ struct ContentView: View {
     }
 
     private func showBackendNotice(_ feature: String) {
-        message = L("This feature is designed in the interface, but it won’t work until PULSE is connected to an authentication backend. Passkeys also need server-generated challenges and a registered relying-party domain.")
+        if feature == "Passkeys" {
+            message = L("Passkey sign-in is not configured yet. It needs a registered relying-party domain and server endpoints to create and verify WebAuthn challenges. PULSE currently signs in with Firebase email and password.")
+        } else {
+            message = L("Google sign-in is not configured yet. Email and password sign-in are currently available.")
+        }
         showMessage = true
     }
 }
