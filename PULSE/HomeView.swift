@@ -195,30 +195,29 @@ struct PULSEHomeView: View {
                             startPoint: .top,
                             endPoint: .bottom
                         )
-                        HStack(alignment: .bottom, spacing: 14) {
-                            PULSEAvatar(name: resolvedDisplayName, size: 70)
+                        HStack(alignment: .bottom, spacing: 12) {
+                            PULSEAvatar(name: resolvedDisplayName, size: 92)
                                 .overlay(Circle().stroke(bannerBottomColor, lineWidth: 3))
-                                .offset(y: 35)
-                            VStack(alignment: .leading, spacing: 4) {
+                                .offset(y: 36)
+                            VStack(alignment: .leading, spacing: 5) {
                                 HStack(spacing: 6) {
                                     accountSwitcherTrigger
                                     Image(systemName: "checkmark.seal.fill")
-                                        .font(.system(size: 17, weight: .semibold))
+                                        .font(.system(size: 19, weight: .semibold))
                                         .foregroundStyle(PULSEStyle.blue)
                                         .accessibilityLabel("Verified account")
                                 }
                                 Text("@\(accountSwitcherUsername)")
-                                    .font(.custom("PlusJakartaSans-Regular", size: 14))
-                                    .foregroundStyle(bannerForegroundColor.opacity(0.78))
+                                    .font(.custom("PlusJakartaSans-Regular", size: 15))
+                                    .foregroundStyle(bannerForegroundColor.opacity(0.82))
                                     .lineLimit(1)
                             }
-                            .padding(.bottom, 21)
+                            .offset(y: 19)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .padding(.horizontal, 18)
-                        .padding(.bottom, 12)
                     }
-                    .frame(height: 176)
+                    .frame(height: 190)
                     .frame(maxWidth: .infinity)
                     .padding(.bottom, 35)
 
@@ -361,7 +360,7 @@ struct PULSEHomeView: View {
         } label: {
             HStack(spacing: 7) {
                 Text(resolvedDisplayName)
-                    .font(.custom("PlusJakartaSans-Bold", size: 25))
+                    .font(.custom("PlusJakartaSans-Bold", size: 33))
                     .foregroundStyle(bannerForegroundColor)
                     .lineLimit(1)
                     .minimumScaleFactor(0.72)
