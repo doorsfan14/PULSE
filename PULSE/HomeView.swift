@@ -456,26 +456,36 @@ struct PULSEHomeView: View {
     }
 }
 
+private enum PULSEAvatarPalette {
+    static let colors: [Color] = [
+        Color(red: 0.20, green: 0.39, blue: 0.82),
+        Color(red: 0.44, green: 0.30, blue: 0.78),
+        Color(red: 0.08, green: 0.52, blue: 0.48),
+        Color(red: 0.76, green: 0.35, blue: 0.24),
+        Color(red: 0.70, green: 0.34, blue: 0.53),
+        Color(red: 0.36, green: 0.45, blue: 0.30)
+    ]
+
+    static func color(for name: String) -> Color {
+        let scalar = name.trimmingCharacters(in: .whitespacesAndNewlines).unicodeScalars.first?.value ?? 0
+        return colors[Int(scalar % UInt32(colors.count))]
+    }
+}
+
 private struct PULSEAvatar: View {
     let name: String
     var size: CGFloat = 42
 
     var body: some View {
         Circle()
-            .fill(
-                LinearGradient(
-                    colors: [PULSEStyle.blue.opacity(0.20), PULSEStyle.violet.opacity(0.18)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-            )
+            .fill(PULSEAvatarPalette.color(for: name))
             .frame(width: size, height: size)
             .overlay {
                 Text(String(name.trimmingCharacters(in: .whitespacesAndNewlines).prefix(1)).uppercased().isEmpty
                      ? "P"
                      : String(name.trimmingCharacters(in: .whitespacesAndNewlines).prefix(1)).uppercased())
                     .font(.system(size: size * 0.38, weight: .bold, design: .rounded))
-                    .foregroundStyle(PULSEStyle.blue)
+                    .foregroundStyle(.white)
             }
             .accessibilityLabel("\(name) avatar")
     }
