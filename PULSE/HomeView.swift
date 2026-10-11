@@ -346,8 +346,7 @@ struct PULSEHomeView: View {
         guard feedListeners.isEmpty else { return }
         let publicListener = db.collection("posts")
             .whereField("isPrivate", isEqualTo: false)
-            .order(by: "createdAt", descending: true)
-            .limit(to: 50)
+            .limit(to: 100)
             .addSnapshotListener { snapshot, error in
                 if let error {
                     loadError = error.localizedDescription
@@ -361,8 +360,7 @@ struct PULSEHomeView: View {
             }
         let ownListener = db.collection("posts")
             .whereField("authorID", isEqualTo: user.uid)
-            .order(by: "createdAt", descending: true)
-            .limit(to: 50)
+            .limit(to: 100)
             .addSnapshotListener { snapshot, error in
                 if let error {
                     loadError = error.localizedDescription
@@ -387,13 +385,11 @@ struct PULSEHomeView: View {
         do {
             async let publicSnapshot = db.collection("posts")
                 .whereField("isPrivate", isEqualTo: false)
-                .order(by: "createdAt", descending: true)
-                .limit(to: 50)
+                .limit(to: 100)
                 .getDocuments()
             async let ownSnapshot = db.collection("posts")
                 .whereField("authorID", isEqualTo: user.uid)
-                .order(by: "createdAt", descending: true)
-                .limit(to: 50)
+                .limit(to: 100)
                 .getDocuments()
             let (publicDocs, ownDocs) = try await (publicSnapshot, ownSnapshot)
             publicPosts = publicDocs.documents.compactMap(PULSEPost.init(document:))
@@ -606,7 +602,7 @@ private struct PULSEPostRow: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .buttonStyle(.plain)
-                    .disabled(post.isPrivate && !isOwnPost)
+                    .disabled(post.isPrivate)
                     .accessibilityLabel(isReposted ? "Undo repost" : "Repost")
 
                     ShareLink(item: post.text) {
@@ -943,6 +939,7 @@ private struct PULSEComposerView: View {
                 .trimmingCharacters(in: .whitespacesAndNewlines)
             let currentUsername = (profileData["username"] as? String ?? username)
                 .trimmingCharacters(in: .whitespacesAndNewlines)
+            let accountIsPrivate = profileData["isPrivate"] as? Bool ?? false
 
             guard !currentName.isEmpty,
                   currentUsername.range(of: "^[A-Za-z0-9_]{3,20}$", options: .regularExpression) != nil else {
@@ -955,7 +952,8 @@ private struct PULSEComposerView: View {
                 "authorName": currentName,
                 "username": currentUsername,
                 "text": body,
-                "createdAt": FieldValue.serverTimestamp()
+                "createdAt": FieldValue.serverTimestamp(),
+                "isPrivate": accountIsPrivate
             ])
             dismiss()
         } catch {
