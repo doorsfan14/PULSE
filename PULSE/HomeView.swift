@@ -763,6 +763,7 @@ private struct PULSEPostRow: View {
 
 private struct PULSEReply: Identifiable {
     let id: String
+    let authorID: String
     let authorName: String
     let username: String
     let text: String
@@ -774,6 +775,7 @@ private struct PULSEReply: Identifiable {
               let username = data["username"] as? String,
               let text = data["text"] as? String else { return nil }
         id = document.documentID
+        authorID = data["authorID"] as? String ?? ""
         self.authorName = authorName
         self.username = username
         self.text = text
@@ -809,6 +811,12 @@ private struct PULSEReplyComposer: View {
                                     HStack(spacing: 5) {
                                         Text(reply.authorName)
                                             .font(.custom("PlusJakartaSans-SemiBold", size: 13))
+                                        if reply.authorID == Auth.auth().currentUser?.uid {
+                                            Image(systemName: "checkmark.seal.fill")
+                                                .font(.system(size: 11, weight: .semibold))
+                                                .foregroundStyle(PULSEStyle.blue)
+                                                .accessibilityLabel("Verified account")
+                                        }
                                         Text("@\(reply.username)")
                                             .font(.custom("PlusJakartaSans-Regular", size: 12))
                                             .foregroundStyle(.secondary)
