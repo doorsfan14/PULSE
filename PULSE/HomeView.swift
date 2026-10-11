@@ -28,6 +28,12 @@ private struct PULSEPost: Identifiable {
     }
 }
 
+private enum PULSEStyle {
+    static let blue = Color(red: 0.25, green: 0.48, blue: 0.96)
+    static let violet = Color(red: 0.48, green: 0.32, blue: 0.92)
+    static let divider = Color.primary.opacity(0.09)
+}
+
 struct PULSEHomeView: View {
     let user: User
 
@@ -52,7 +58,7 @@ struct PULSEHomeView: View {
                 .tabItem { Label("Profile", systemImage: "person.crop.circle") }
                 .tag(1)
         }
-        .tint(Color(red: 0.25, green: 0.48, blue: 0.96))
+        .tint(PULSEStyle.blue)
         .task { await loadProfile() }
         .onAppear(perform: startFeedListener)
         .onDisappear {
@@ -100,19 +106,22 @@ struct PULSEHomeView: View {
                     }
                 } else {
                     ScrollView {
-                        LazyVStack(spacing: 12) {
+                        LazyVStack(spacing: 0) {
                             ForEach(posts) { post in
-                                PULSEPostCard(post: post, currentUserID: user.uid)
+                                PULSEPostRow(post: post, currentUserID: user.uid)
+                                Rectangle()
+                                    .fill(PULSEStyle.divider)
+                                    .frame(height: 1)
+                                    .padding(.leading, 72)
                             }
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 12)
+                        .padding(.top, 4)
                         .padding(.bottom, 24)
                     }
                     .refreshable { await refreshFeed() }
                 }
             }
-            .background(Color(uiColor: .systemGroupedBackground))
+            .background(Color(uiColor: .systemBackground))
             .navigationTitle("PULSE")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
@@ -131,49 +140,170 @@ struct PULSEHomeView: View {
 
     private var profileScreen: some View {
         NavigationStack {
-            List {
-                Section {
-                    HStack(spacing: 14) {
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 0) {
+                    // Profile cover banner: edge-to-edge, not a card.
+                    ZStack(alignment: .bottomLeading) {
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.16, green: 0.34, blue: 0.78),
+                                Color(red: 0.31, green: 0.38, blue: 0.91),
+                                Color(red: 0.53, green: 0.31, blue: 0.82)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+
                         Circle()
-                            .fill(Color(red: 0.22, green: 0.42, blue: 0.86).opacity(0.14))
-                            .frame(width: 62, height: 62)
-                            .overlay {
-                                Text(String((displayName.isEmpty ? (user.displayName ?? "P") : displayName).prefix(1)).uppercased())
-                                    .font(.system(size: 25, weight: .bold, design: .rounded))
-                                    .foregroundStyle(Color(red: 0.25, green: 0.48, blue: 0.96))
+                            .fill(Color.white.opacity(0.10))
+                            .frame(width: 190, height: 190)
+                            .offset(x: 220, y: -18)
+
+                        Circle()
+                            .stroke(Color.white.opacity(0.16), lineWidth: 1)
+                            .frame(width: 240, height: 240)
+                            .offset(x: 180, y: 70)
+
+                        Text("PULSE")
+                            .font(.system(size: 42, weight: .black, design: .rounded))
+                            .tracking(4)
+                            .foregroundStyle(.white.opacity(0.13))
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                            .padding(.top, 18)
+                            .padding(.trailing, 18)
+
+                        Text("YOUR SPACE. YOUR PULSE.")
+                            .font(.custom("PlusJakartaSans-SemiBold", size: 10))
+                            .tracking(2)
+                            .foregroundStyle(.white.opacity(0.82))
+                            .padding(.leading, 20)
+                            .padding(.bottom, 18)
+                    }
+                    .frame(height: 176)
+                    .clipped()
+
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack(alignment: .bottom) {
+                            PULSEAvatar(name: resolvedDisplayName, size: 88)
+                                .overlay(Circle().stroke(Color(uiColor: .systemBackground), lineWidth: 5))
+                                .offset(y: -34)
+                                .padding(.bottom, -34)
+
+                            Spacer()
+
+                            Button {
+                                do {
+                                    try PULSEBackend.shared.signOut()
+                                } catch {
+                                    loadError = error.localizedDescription
+                                }
+                            } label: {
+                                Label("Sign out", systemImage: "rectangle.portrait.and.arrow.right")
+                                    .font(.custom("PlusJakartaSans-SemiBold", size: 12))
+                                    .padding(.horizontal, 13)
+                                    .padding(.vertical, 9)
+                                    .overlay(Capsule().stroke(PULSEStyle.divider, lineWidth: 1))
                             }
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(displayName.isEmpty ? (user.displayName ?? "Your profile") : displayName)
-                                .font(.custom("PlusJakartaSans-SemiBold", size: 17))
-                            Text(username.isEmpty ? user.email ?? "" : "@\(username)")
-                                .font(.custom("PlusJakartaSans-Regular", size: 14))
+                            .buttonStyle(.plain)
+                            .padding(.top, 12)
+                        }
+
+                        Text(resolvedDisplayName)
+                            .font(.custom("PlusJakartaSans-Bold", size: 23))
+                            .foregroundStyle(.primary)
+                            .padding(.top, 12)
+
+                        Text(username.isEmpty ? (user.email ?? "") : "@\(username)")
+                            .font(.custom("PlusJakartaSans-Regular", size: 14))
+                            .foregroundStyle(.secondary)
+                            .padding(.top, 3)
+
+                        HStack(spacing: 22) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("\(posts.filter { $0.authorID == user.uid }.count)")
+                                    .font(.custom("PlusJakartaSans-Bold", size: 18))
+                                    .foregroundStyle(.primary)
+                                Text("Posts")
+                                    .font(.custom("PlusJakartaSans-Regular", size: 12))
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("—")
+                                    .font(.custom("PlusJakartaSans-Bold", size: 18))
+                                    .foregroundStyle(.primary)
+                                Text("Followers")
+                                    .font(.custom("PlusJakartaSans-Regular", size: 12))
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("—")
+                                    .font(.custom("PlusJakartaSans-Bold", size: 18))
+                                    .foregroundStyle(.primary)
+                                Text("Following")
+                                    .font(.custom("PlusJakartaSans-Regular", size: 12))
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .padding(.top, 22)
+
+                        Rectangle()
+                            .fill(PULSEStyle.divider)
+                            .frame(height: 1)
+                            .padding(.top, 24)
+
+                        HStack {
+                            Text("YOUR POSTS")
+                                .font(.custom("PlusJakartaSans-SemiBold", size: 11))
+                                .tracking(1.8)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Image(systemName: "text.alignleft")
                                 .foregroundStyle(.secondary)
                         }
-                    }
-                    .padding(.vertical, 8)
-                }
+                        .padding(.vertical, 16)
 
-                Section {
-                    LabeledContent("Posts", value: "\(posts.filter { $0.authorID == user.uid }.count)")
-                } header: {
-                    Text("Your activity")
-                }
-
-                Section {
-                    Button(role: .destructive) {
-                        do {
-                            try PULSEBackend.shared.signOut()
-                        } catch {
-                            loadError = error.localizedDescription
+                        let ownPosts = posts.filter { $0.authorID == user.uid }
+                        if ownPosts.isEmpty {
+                            VStack(alignment: .leading, spacing: 7) {
+                                Text("Your story starts here.")
+                                    .font(.custom("PlusJakartaSans-SemiBold", size: 16))
+                                Text("The posts you publish will appear here.")
+                                    .font(.custom("PlusJakartaSans-Regular", size: 13))
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.vertical, 18)
+                        } else {
+                            ForEach(ownPosts) { post in
+                                PULSEPostRow(post: post, currentUserID: user.uid, showsAvatar: false)
+                                Rectangle()
+                                    .fill(PULSEStyle.divider)
+                                    .frame(height: 1)
+                            }
                         }
-                    } label: {
-                        Label("Sign out", systemImage: "rectangle.portrait.and.arrow.right")
+
+                        if !loadError.isEmpty {
+                            Text(loadError)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .padding(.top, 12)
+                        }
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 32)
                 }
             }
-            .navigationTitle("Profile")
-            .background(Color(uiColor: .systemGroupedBackground))
+            .background(Color(uiColor: .systemBackground))
+            .ignoresSafeArea(edges: .top)
+            .toolbar(.hidden, for: .navigationBar)
         }
+    }
+
+    private var resolvedDisplayName: String {
+        let name = displayName.isEmpty ? (user.displayName ?? "") : displayName
+        return name.isEmpty ? "Your profile" : name
     }
 
     private func loadProfile() async {
@@ -218,9 +348,35 @@ struct PULSEHomeView: View {
     }
 }
 
-private struct PULSEPostCard: View {
+private struct PULSEAvatar: View {
+    let name: String
+    var size: CGFloat = 42
+
+    var body: some View {
+        Circle()
+            .fill(
+                LinearGradient(
+                    colors: [PULSEStyle.blue.opacity(0.20), PULSEStyle.violet.opacity(0.18)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .frame(width: size, height: size)
+            .overlay {
+                Text(String(name.trimmingCharacters(in: .whitespacesAndNewlines).prefix(1)).uppercased().isEmpty
+                     ? "P"
+                     : String(name.trimmingCharacters(in: .whitespacesAndNewlines).prefix(1)).uppercased())
+                    .font(.system(size: size * 0.38, weight: .bold, design: .rounded))
+                    .foregroundStyle(PULSEStyle.blue)
+            }
+            .accessibilityLabel("\(name) avatar")
+    }
+}
+
+private struct PULSEPostRow: View {
     let post: PULSEPost
     let currentUserID: String
+    var showsAvatar = true
 
     @State private var isLiked = false
     @State private var likeCount = 0
@@ -232,62 +388,78 @@ private struct PULSEPostCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 10) {
-                Circle()
-                    .fill(Color(red: 0.24, green: 0.43, blue: 0.85).opacity(0.14))
-                    .frame(width: 42, height: 42)
-                    .overlay {
-                        Text(String(post.authorName.prefix(1)).uppercased())
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(Color(red: 0.25, green: 0.48, blue: 0.96))
-                    }
-                VStack(alignment: .leading, spacing: 2) {
+        HStack(alignment: .top, spacing: 12) {
+            if showsAvatar {
+                PULSEAvatar(name: post.authorName, size: 42)
+            }
+
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .firstTextBaseline, spacing: 5) {
                     Text(post.authorName)
                         .font(.custom("PlusJakartaSans-SemiBold", size: 14))
                         .foregroundStyle(.primary)
-                    Text("@\(post.username) · \(post.createdAt, style: .relative)")
+                        .lineLimit(1)
+
+                    Text("@\(post.username)")
                         .font(.custom("PlusJakartaSans-Regular", size: 12))
                         .foregroundStyle(.secondary)
+                        .lineLimit(1)
+
+                    Text("·")
+                        .foregroundStyle(.tertiary)
+
+                    Text(post.createdAt, style: .relative)
+                        .font(.custom("PlusJakartaSans-Regular", size: 12))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+
+                    Spacer(minLength: 0)
+
+                    Button {} label: {
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 15, weight: .medium))
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Post options")
                 }
-                Spacer()
-            }
 
-            Text(post.text)
-                .font(.custom("PlusJakartaSans-Regular", size: 15))
-                .foregroundStyle(.primary)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .textSelection(.enabled)
+                Text(post.text)
+                    .font(.custom("PlusJakartaSans-Regular", size: 15))
+                    .foregroundStyle(.primary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .textSelection(.enabled)
 
-            HStack(spacing: 6) {
-                Button(action: toggleLike) {
-                    Label(isLiked ? "Liked" : "Like", systemImage: isLiked ? "heart.fill" : "heart")
-                        .foregroundStyle(isLiked ? Color.pink : Color.secondary)
+                HStack(spacing: 24) {
+                    Button(action: toggleLike) {
+                        HStack(spacing: 6) {
+                            Image(systemName: isLiked ? "heart.fill" : "heart")
+                                .foregroundStyle(isLiked ? Color.pink : Color.secondary)
+                            Text("\(likeCount)")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(isLiked ? "Unlike post" : "Like post")
+
+                    Label("Reply", systemImage: "bubble")
+                        .foregroundStyle(.secondary)
+
+                    Spacer()
                 }
-                .buttonStyle(.plain)
-                .disabled(!likeError.isEmpty && isLiked == false)
+                .font(.custom("PlusJakartaSans-Medium", size: 12))
 
-                Text("\(likeCount)")
-                    .font(.custom("PlusJakartaSans-Regular", size: 12))
-                    .foregroundStyle(.secondary)
-
-                Spacer()
                 if !likeError.isEmpty {
                     Text(likeError)
                         .font(.caption2)
                         .foregroundStyle(.secondary)
-                        .lineLimit(1)
                 }
             }
-            .font(.custom("PlusJakartaSans-Medium", size: 13))
         }
-        .padding(16)
-        .background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(Color.primary.opacity(0.045), lineWidth: 1)
-        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 15)
+        .contentShape(Rectangle())
         .onAppear(perform: startLikesListener)
         .onDisappear {
             likesListener?.remove()
@@ -341,6 +513,17 @@ private struct PULSEComposerView: View {
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 16) {
+                HStack(spacing: 12) {
+                    PULSEAvatar(name: displayName, size: 44)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(displayName)
+                            .font(.custom("PlusJakartaSans-SemiBold", size: 14))
+                        Text(username.isEmpty ? "Posting to PULSE" : "@\(username)")
+                            .font(.custom("PlusJakartaSans-Regular", size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
                 TextEditor(text: $text)
                     .font(.custom("PlusJakartaSans-Regular", size: 17))
                     .scrollContentBackground(.hidden)
@@ -406,8 +589,6 @@ private struct PULSEComposerView: View {
         defer { isPublishing = false }
 
         do {
-            // Fetch the authoritative profile at publish time. The composer can open
-            // before the Home screen's asynchronous profile load has finished.
             let profile = try await db.collection("users").document(user.uid).getDocument()
             let profileData = profile.data() ?? [:]
             let currentName = (profileData["displayName"] as? String ?? displayName)
