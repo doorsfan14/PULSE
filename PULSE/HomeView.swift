@@ -39,6 +39,7 @@ private enum PULSEStyle {
 struct PULSEHomeView: View {
     let user: User
 
+    @Environment(\.colorScheme) private var colorScheme
     @State private var posts: [PULSEPost] = []
     @State private var displayName = ""
     @State private var username = ""
@@ -182,43 +183,44 @@ struct PULSEHomeView: View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    // The avatar intentionally overlaps the bottom edge of the cover.
+                    // The avatar breaks past the cover edge; the fade matches the system appearance.
                     ZStack(alignment: .bottomLeading) {
                         PULSEAvatarPalette.color(for: resolvedDisplayName)
                         LinearGradient(
                             colors: [
                                 Color.clear,
-                                Color.black.opacity(0.55),
-                                Color.black
+                                bannerBottomColor.opacity(0.55),
+                                bannerBottomColor
                             ],
                             startPoint: .top,
                             endPoint: .bottom
                         )
-                        HStack(alignment: .center, spacing: 14) {
+                        HStack(alignment: .bottom, spacing: 14) {
                             PULSEAvatar(name: resolvedDisplayName, size: 70)
-                                .overlay(Circle().stroke(Color.black, lineWidth: 3))
+                                .overlay(Circle().stroke(bannerBottomColor, lineWidth: 3))
                                 .offset(y: 35)
-                            VStack(alignment: .leading, spacing: 5) {
-                                HStack(spacing: 5) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(spacing: 6) {
                                     Text(resolvedDisplayName)
-                                        .font(.custom("PlusJakartaSans-Bold", size: 21))
-                                        .foregroundStyle(Color.white)
+                                        .font(.custom("PlusJakartaSans-Bold", size: 25))
+                                        .foregroundStyle(bannerForegroundColor)
                                         .lineLimit(1)
-                                        .minimumScaleFactor(0.8)
+                                        .minimumScaleFactor(0.72)
                                     Image(systemName: "checkmark.seal.fill")
-                                        .font(.system(size: 16, weight: .semibold))
+                                        .font(.system(size: 17, weight: .semibold))
                                         .foregroundStyle(PULSEStyle.blue)
                                         .accessibilityLabel("Verified account")
                                 }
                                 Text("@\(username.isEmpty ? "habib" : username)")
                                     .font(.custom("PlusJakartaSans-Regular", size: 14))
-                                    .foregroundStyle(Color.white.opacity(0.78))
+                                    .foregroundStyle(bannerForegroundColor.opacity(0.78))
                                     .lineLimit(1)
                             }
-                            Spacer(minLength: 0)
+                            .padding(.bottom, 21)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .padding(.horizontal, 18)
-                        .padding(.bottom, 18)
+                        .padding(.bottom, 12)
                     }
                     .frame(height: 176)
                     .frame(maxWidth: .infinity)
@@ -350,9 +352,81 @@ struct PULSEHomeView: View {
                 }
             }
             .background(Color(uiColor: .systemBackground))
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                accountSwitcherBar
+            }
             .ignoresSafeArea(edges: .top)
             .toolbar(.hidden, for: .navigationBar)
         }
+    }
+
+    private var accountSwitcherBar: some View {
+        Menu {
+            Button {
+            } label: {
+                Label("Current account · @\(username.isEmpty ? "habib" : username)", systemImage: "checkmark.circle.fill")
+            }
+            .disabled(true)
+
+            Button {
+                do {
+                    try PULSEBackend.shared.signOut()
+                } catch {
+                    loadError = error.localizedDescription
+                }
+            } label: {
+                Label("Add an account", systemImage: "person.badge.plus")
+            }
+
+            Button(role: .destructive) {
+                do {
+                    try PULSEBackend.shared.signOut()
+                } catch {
+                    loadError = error.localizedDescription
+                }
+            } label: {
+                Label("Sign out", systemImage: "rectangle.portrait.and.arrow.right")
+            }
+        } label: {
+            HStack(spacing: 11) {
+                PULSEAvatar(name: resolvedDisplayName, size: 38)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(resolvedDisplayName)
+                        .font(.custom("PlusJakartaSans-SemiBold", size: 13))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                    Text("@\(username.isEmpty ? "habib" : username)")
+                        .font(.custom("PlusJakartaSans-Regular", size: 11))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.up.chevron.down")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(PULSEStyle.divider, lineWidth: 1)
+            }
+            .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 16)
+        .padding(.top, 9)
+        .padding(.bottom, 6)
+        .background(.bar)
+    }
+
+    private var bannerBottomColor: Color {
+        colorScheme == .dark ? .black : .white
+    }
+
+    private var bannerForegroundColor: Color {
+        colorScheme == .dark ? .white : .black
     }
 
     private var resolvedDisplayName: String {
