@@ -406,14 +406,6 @@ struct PULSEHomeView: View {
         let cleanBio = newBio.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleanName.isEmpty, cleanName.count <= 60, cleanBio.count <= 160 else { return }
         do {
-            try await db.collection("users").document(user.uid).updateData([
-                "displayName": cleanName,
-                "bio": cleanBio,
-                "isPrivate": isPrivate
-            ])
-            let profileChange = user.createProfileChangeRequest()
-            profileChange.displayName = cleanName
-            try await profileChange.commitChanges()
             if isPrivate != isAccountPrivate {
                 let own = try await db.collection("posts").whereField("authorID", isEqualTo: user.uid).getDocuments()
                 for chunkStart in stride(from: 0, to: own.documents.count, by: 400) {
@@ -424,6 +416,14 @@ struct PULSEHomeView: View {
                     try await batch.commit()
                 }
             }
+            try await db.collection("users").document(user.uid).updateData([
+                "displayName": cleanName,
+                "bio": cleanBio,
+                "isPrivate": isPrivate
+            ])
+            let profileChange = user.createProfileChangeRequest()
+            profileChange.displayName = cleanName
+            try await profileChange.commitChanges()
             displayName = cleanName
             bio = cleanBio
             isAccountPrivate = isPrivate
@@ -434,6 +434,11 @@ struct PULSEHomeView: View {
     }
 
     private func deleteAccount() async {
+        guard let lastSignIn = user.metadata.lastSignInDate,
+              Date().timeIntervalSince(lastSignIn) < 300 else {
+            loadError = "For security, sign out and sign back in, then try deleting your account again."
+            return
+        }
         do {
             let own = try await db.collection("posts").whereField("authorID", isEqualTo: user.uid).getDocuments()
             for document in own.documents {
