@@ -61,26 +61,52 @@ service cloud.firestore {
     }
 
     match /posts/{postId} {
-      allow read: if signedIn();
+      // Public feed queries must filter isPrivate == false; owners may query their own posts.
+      allow read: if signedIn()
+        && (resource.data.get('isPrivate', false) == false
+          || resource.data.authorID == request.auth.uid);
 
       allow create: if signedIn()
         && request.resource.data.keys().hasOnly([
-          'authorID', 'authorName', 'username', 'text', 'createdAt'
+          'authorID', 'authorName', 'username', 'text', 'createdAt', 'isPrivate'
         ])
         && request.resource.data.authorID == request.auth.uid
         && request.resource.data.authorName is string
         && request.resource.data.authorName.size() >= 1
         && request.resource.data.authorName.size() <= 60
         && request.resource.data.username is string
-        && request.resource.data.username.matches('^[A-Za-z0-9_]{3,20}$')
-        && validPostText(request.resource.data.text)
-        && request.resource.data.createdAt is timestamp;
+        && request.resource.data.username.matches('^[A-Za-z0-9_]{3,20}
 
-      // Authors may edit only their post text; identity and timestamp are immutable.
+      match /likes/{userId} {
+        allow read: if signedIn();
+
+        allow create: if signedIn()
+          && userId == request.auth.uid
+          && request.resource.data.keys().hasOnly(['uid', 'createdAt'])
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.createdAt is timestamp;
+
+        allow update: if false;
+        allow delete: if signedIn() && userId == request.auth.uid;
+      }
+    }
+
+    // Everything not explicitly allowed above is denied.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+)
+        && validPostText(request.resource.data.text)
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.isPrivate is bool;
+
       allow update: if signedIn()
         && resource.data.authorID == request.auth.uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text'])
-        && validPostText(request.resource.data.text);
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'isPrivate'])
+        && validPostText(request.resource.data.text)
+        && request.resource.data.get('isPrivate', false) is bool;
 
       allow delete: if signedIn() && resource.data.authorID == request.auth.uid;
 
