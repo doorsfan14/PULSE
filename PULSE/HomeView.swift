@@ -182,26 +182,27 @@ struct PULSEHomeView: View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    // Keep the avatar and identity anchored to the bottom of the cover.
+                    // The avatar intentionally overlaps the bottom edge of the cover.
                     ZStack(alignment: .bottomLeading) {
                         PULSEAvatarPalette.color(for: resolvedDisplayName)
                         LinearGradient(
                             colors: [
-                                Color(uiColor: .systemBackground).opacity(0),
-                                Color(uiColor: .systemBackground).opacity(0.52),
-                                Color(uiColor: .systemBackground).opacity(0.88)
+                                Color.clear,
+                                Color.black.opacity(0.55),
+                                Color.black
                             ],
                             startPoint: .top,
                             endPoint: .bottom
                         )
                         HStack(alignment: .center, spacing: 14) {
                             PULSEAvatar(name: resolvedDisplayName, size: 70)
-                                .overlay(Circle().stroke(Color(uiColor: .systemBackground).opacity(0.9), lineWidth: 3))
+                                .overlay(Circle().stroke(Color.black, lineWidth: 3))
+                                .offset(y: 35)
                             VStack(alignment: .leading, spacing: 5) {
                                 HStack(spacing: 5) {
                                     Text(resolvedDisplayName)
                                         .font(.custom("PlusJakartaSans-Bold", size: 21))
-                                        .foregroundStyle(Color(uiColor: .label))
+                                        .foregroundStyle(Color.white)
                                         .lineLimit(1)
                                         .minimumScaleFactor(0.8)
                                     Image(systemName: "checkmark.seal.fill")
@@ -211,7 +212,7 @@ struct PULSEHomeView: View {
                                 }
                                 Text("@\(username.isEmpty ? "habib" : username)")
                                     .font(.custom("PlusJakartaSans-Regular", size: 14))
-                                    .foregroundStyle(Color(uiColor: .secondaryLabel))
+                                    .foregroundStyle(Color.white.opacity(0.78))
                                     .lineLimit(1)
                             }
                             Spacer(minLength: 0)
@@ -221,7 +222,7 @@ struct PULSEHomeView: View {
                     }
                     .frame(height: 176)
                     .frame(maxWidth: .infinity)
-                    .clipped()
+                    .padding(.bottom, 35)
 
                     VStack(alignment: .leading, spacing: 0) {
                         HStack {
