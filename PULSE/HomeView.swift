@@ -50,6 +50,7 @@ struct PULSEHomeView: View {
     @State private var loadError = ""
     @State private var showComposer = false
     @State private var selectedTab = 0
+    @State private var selectedReplyPost: PULSEPost?
     @State private var feedListeners: [ListenerRegistration] = []
     @State private var publicPosts: [PULSEPost] = []
     @State private var ownPrivatePosts: [PULSEPost] = []
@@ -65,6 +66,10 @@ struct PULSEHomeView: View {
             profileScreen
                 .tabItem { Image(systemName: "person.crop.circle") }
                 .tag(1)
+
+            repliesScreen
+                .tabItem { Image(systemName: "bubble.left.and.bubble.right") }
+                .tag(2)
         }
         .tint(PULSEStyle.blue)
         .task { await loadProfile() }
@@ -135,7 +140,7 @@ struct PULSEHomeView: View {
                     ScrollView {
                         LazyVStack(spacing: 0) {
                             ForEach(posts) { post in
-                                PULSEPostRow(post: post, currentUserID: user.uid, currentDisplayName: resolvedDisplayName, currentUsername: username, onPostChanged: refreshPostLists)
+                                PULSEPostRow(post: post, currentUserID: user.uid, currentDisplayName: resolvedDisplayName, currentUsername: username.isEmpty ? "habib" : username, onPostChanged: refreshPostLists, onReply: { openReplies(for: post) })
                                 Rectangle()
                                     .fill(PULSEStyle.divider)
                                     .frame(height: 1)
@@ -217,12 +222,18 @@ struct PULSEHomeView: View {
                             .padding(.top, 12)
                         }
 
-                        Text(resolvedDisplayName)
-                            .font(.custom("PlusJakartaSans-Bold", size: 23))
-                            .foregroundStyle(.primary)
-                            .padding(.top, 12)
+                        HStack(spacing: 6) {
+                            Text(resolvedDisplayName)
+                                .font(.custom("PlusJakartaSans-Bold", size: 23))
+                                .foregroundStyle(.primary)
+                            Image(systemName: "checkmark.seal.fill")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundStyle(PULSEStyle.blue)
+                                .accessibilityLabel("Verified account")
+                        }
+                        .padding(.top, 12)
 
-                        Text(username.isEmpty ? (user.email ?? "") : "@\(username)")
+                        Text("@\(username.isEmpty ? "habib" : username)")
                             .font(.custom("PlusJakartaSans-Regular", size: 14))
                             .foregroundStyle(.secondary)
                             .padding(.top, 3)
@@ -253,7 +264,7 @@ struct PULSEHomeView: View {
                             }
 
                             VStack(alignment: .leading, spacing: 3) {
-                                Text("—")
+                                Text("0")
                                     .font(.custom("PlusJakartaSans-Bold", size: 18))
                                     .foregroundStyle(.primary)
                                 Text("Followers")
@@ -262,7 +273,7 @@ struct PULSEHomeView: View {
                             }
 
                             VStack(alignment: .leading, spacing: 3) {
-                                Text("—")
+                                Text("0")
                                     .font(.custom("PlusJakartaSans-Bold", size: 18))
                                     .foregroundStyle(.primary)
                                 Text("Following")
@@ -300,7 +311,7 @@ struct PULSEHomeView: View {
                             .padding(.vertical, 18)
                         } else {
                             ForEach(ownPosts) { post in
-                                PULSEPostRow(post: post, currentUserID: user.uid, currentDisplayName: resolvedDisplayName, currentUsername: username, isOwnPost: true, onPostChanged: refreshPostLists)
+                                PULSEPostRow(post: post, currentUserID: user.uid, currentDisplayName: resolvedDisplayName, currentUsername: username.isEmpty ? "habib" : username, isOwnPost: true, onPostChanged: refreshPostLists, onReply: { openReplies(for: post) })
                                 Rectangle()
                                     .fill(PULSEStyle.divider)
                                     .frame(height: 1)
@@ -329,11 +340,42 @@ struct PULSEHomeView: View {
         return name.isEmpty ? "Your profile" : name
     }
 
+    private var repliesScreen: some View {
+        Group {
+            if let post = selectedReplyPost {
+                PULSEReplyComposer(
+                    postID: post.id,
+                    user: user,
+                    displayName: resolvedDisplayName,
+                    username: username.isEmpty ? "habib" : username,
+                    onClose: {
+                        selectedReplyPost = nil
+                        selectedTab = 0
+                    }
+                )
+            } else {
+                NavigationStack {
+                    ContentUnavailableView(
+                        "Replies",
+                        systemImage: "bubble.left.and.bubble.right",
+                        description: Text("Choose the reply button on a post to open its conversation here.")
+                    )
+                    .navigationTitle("Replies")
+                }
+            }
+        }
+    }
+
+    private func openReplies(for post: PULSEPost) {
+        selectedReplyPost = post
+        selectedTab = 2
+    }
+
     private func loadProfile() async {
         do {
             let snapshot = try await db.collection("users").document(user.uid).getDocument()
             displayName = snapshot.data()?["displayName"] as? String ?? user.displayName ?? ""
-            username = snapshot.data()?["username"] as? String ?? ""
+            username = snapshot.data()?["username"] as? String ?? "habib"
             bio = snapshot.data()?["bio"] as? String ?? ""
             isAccountPrivate = snapshot.data()?["isPrivate"] as? Bool ?? false
         } catch {
@@ -499,6 +541,7 @@ private struct PULSEPostRow: View {
     var currentUsername = ""
     var isOwnPost = false
     var onPostChanged: () -> Void = {}
+    var onReply: () -> Void = {}
 
     @State private var isLiked = false
     @State private var likeCount = 0
@@ -508,7 +551,6 @@ private struct PULSEPostRow: View {
     @State private var repostsListener: ListenerRegistration?
     @State private var ownRepostListener: ListenerRegistration?
     @State private var likeError = ""
-    @State private var showReplyComposer = false
 
     private var postRef: DocumentReference {
         Firestore.firestore().collection("posts").document(post.id)
@@ -527,6 +569,13 @@ private struct PULSEPostRow: View {
                         .font(.custom("PlusJakartaSans-SemiBold", size: 14))
                         .foregroundStyle(.primary)
                         .lineLimit(1)
+
+                    if post.authorID == currentUserID {
+                        Image(systemName: "checkmark.seal.fill")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(PULSEStyle.blue)
+                            .accessibilityLabel("Verified account")
+                    }
 
                     Text("@\(post.username)")
                         .font(.custom("PlusJakartaSans-Regular", size: 12))
@@ -592,7 +641,7 @@ private struct PULSEPostRow: View {
                     .accessibilityLabel(isLiked ? "Unlike post" : "Like post")
 
                     Button {
-                        showReplyComposer = true
+                        onReply()
                     } label: {
                         Image(systemName: "bubble")
                             .foregroundStyle(.secondary)
@@ -641,15 +690,7 @@ private struct PULSEPostRow: View {
             repostsListener = nil
             ownRepostListener = nil
         }
-        .sheet(isPresented: $showReplyComposer) {
-            PULSEReplyComposer(
-                postID: post.id,
-                user: Auth.auth().currentUser,
-                displayName: currentDisplayName.isEmpty ? post.authorName : currentDisplayName,
-                username: currentUsername
-            )
-        }
-    }
+     }
 
     private func startLikesListener() {
         guard likesListener == nil else { return }
@@ -745,8 +786,7 @@ private struct PULSEReplyComposer: View {
     let user: User?
     let displayName: String
     let username: String
-
-    @Environment(\.dismiss) private var dismiss
+    let onClose: () -> Void
     @State private var text = ""
     @State private var errorMessage = ""
     @State private var isSending = false
@@ -816,7 +856,7 @@ private struct PULSEReplyComposer: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Done") { dismiss() }
+                    Button("Done", action: onClose)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Reply") { Task { await sendReply() } }
@@ -851,7 +891,7 @@ private struct PULSEReplyComposer: View {
                     "text": body,
                     "createdAt": FieldValue.serverTimestamp()
                 ])
-            dismiss()
+            text = ""
         } catch { errorMessage = error.localizedDescription }
     }
 }
