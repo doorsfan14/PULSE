@@ -171,40 +171,7 @@ struct PULSEHomeView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     // Profile cover banner: edge-to-edge, not a card.
                     ZStack(alignment: .bottomLeading) {
-                        LinearGradient(
-                            colors: [
-                                Color(red: 0.16, green: 0.34, blue: 0.78),
-                                Color(red: 0.31, green: 0.38, blue: 0.91),
-                                Color(red: 0.53, green: 0.31, blue: 0.82)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-
-                        Circle()
-                            .fill(Color.white.opacity(0.10))
-                            .frame(width: 190, height: 190)
-                            .offset(x: 220, y: -18)
-
-                        Circle()
-                            .stroke(Color.white.opacity(0.16), lineWidth: 1)
-                            .frame(width: 240, height: 240)
-                            .offset(x: 180, y: 70)
-
-                        Text("PULSE")
-                            .font(.system(size: 42, weight: .black, design: .rounded))
-                            .tracking(4)
-                            .foregroundStyle(.white.opacity(0.13))
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                            .padding(.top, 18)
-                            .padding(.trailing, 18)
-
-                        Text("YOUR SPACE. YOUR PULSE.")
-                            .font(.custom("PlusJakartaSans-SemiBold", size: 10))
-                            .tracking(2)
-                            .foregroundStyle(.white.opacity(0.82))
-                            .padding(.leading, 20)
-                            .padding(.bottom, 18)
+                        PULSEAvatarPalette.color(for: resolvedDisplayName)
                     }
                     .frame(height: 176)
                     .clipped()
@@ -218,20 +185,35 @@ struct PULSEHomeView: View {
 
                             Spacer()
 
-                            Button {
-                                do {
-                                    try PULSEBackend.shared.signOut()
-                                } catch {
-                                    loadError = error.localizedDescription
+                            HStack(spacing: 8) {
+                                Button {
+                                    showEditProfile = true
+                                } label: {
+                                    Text("Edit profile")
+                                        .font(.custom("PlusJakartaSans-SemiBold", size: 12))
+                                        .padding(.horizontal, 13)
+                                        .padding(.vertical, 9)
+                                        .overlay(Capsule().stroke(PULSEStyle.divider, lineWidth: 1))
                                 }
-                            } label: {
-                                Label("Sign out", systemImage: "rectangle.portrait.and.arrow.right")
-                                    .font(.custom("PlusJakartaSans-SemiBold", size: 12))
-                                    .padding(.horizontal, 13)
-                                    .padding(.vertical, 9)
-                                    .overlay(Capsule().stroke(PULSEStyle.divider, lineWidth: 1))
+                                .buttonStyle(.plain)
+
+                                Menu {
+                                    Button(role: .destructive) {
+                                        do {
+                                            try PULSEBackend.shared.signOut()
+                                        } catch {
+                                            loadError = error.localizedDescription
+                                        }
+                                    } label: {
+                                        Label("Sign out", systemImage: "rectangle.portrait.and.arrow.right")
+                                    }
+                                } label: {
+                                    Image(systemName: "ellipsis")
+                                        .font(.system(size: 15, weight: .semibold))
+                                        .frame(width: 36, height: 36)
+                                        .overlay(Circle().stroke(PULSEStyle.divider, lineWidth: 1))
+                                }
                             }
-                            .buttonStyle(.plain)
                             .padding(.top, 12)
                         }
 
@@ -244,6 +226,21 @@ struct PULSEHomeView: View {
                             .font(.custom("PlusJakartaSans-Regular", size: 14))
                             .foregroundStyle(.secondary)
                             .padding(.top, 3)
+
+                        if !bio.isEmpty {
+                            Text(bio)
+                                .font(.custom("PlusJakartaSans-Regular", size: 14))
+                                .foregroundStyle(.primary.opacity(0.85))
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding(.top, 10)
+                        }
+
+                        if isAccountPrivate {
+                            Label("Private account", systemImage: "lock.fill")
+                                .font(.custom("PlusJakartaSans-Medium", size: 12))
+                                .foregroundStyle(.secondary)
+                                .padding(.top, 10)
+                        }
 
                         HStack(spacing: 22) {
                             VStack(alignment: .leading, spacing: 3) {
@@ -281,9 +278,8 @@ struct PULSEHomeView: View {
                             .padding(.top, 24)
 
                         HStack {
-                            Text("YOUR POSTS")
-                                .font(.custom("PlusJakartaSans-SemiBold", size: 11))
-                                .tracking(1.8)
+                            Text("Posts")
+                                .font(.custom("PlusJakartaSans-SemiBold", size: 15))
                                 .foregroundStyle(.secondary)
                             Spacer()
                             Image(systemName: "text.alignleft")
@@ -304,7 +300,7 @@ struct PULSEHomeView: View {
                             .padding(.vertical, 18)
                         } else {
                             ForEach(ownPosts) { post in
-                                PULSEPostRow(post: post, currentUserID: user.uid, showsAvatar: false)
+                                PULSEPostRow(post: post, currentUserID: user.uid, isOwnPost: true, onPostChanged: refreshPostLists)
                                 Rectangle()
                                     .fill(PULSEStyle.divider)
                                     .frame(height: 1)
@@ -338,6 +334,8 @@ struct PULSEHomeView: View {
             let snapshot = try await db.collection("users").document(user.uid).getDocument()
             displayName = snapshot.data()?["displayName"] as? String ?? user.displayName ?? ""
             username = snapshot.data()?["username"] as? String ?? ""
+            bio = snapshot.data()?["bio"] as? String ?? ""
+            isAccountPrivate = snapshot.data()?["isPrivate"] as? Bool ?? false
         } catch {
             displayName = user.displayName ?? ""
             loadError = error.localizedDescription
