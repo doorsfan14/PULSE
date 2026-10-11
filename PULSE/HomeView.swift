@@ -135,7 +135,7 @@ struct PULSEHomeView: View {
                     ScrollView {
                         LazyVStack(spacing: 0) {
                             ForEach(posts) { post in
-                                PULSEPostRow(post: post, currentUserID: user.uid)
+                                PULSEPostRow(post: post, currentUserID: user.uid, currentDisplayName: resolvedDisplayName, currentUsername: username, onPostChanged: refreshPostLists)
                                 Rectangle()
                                     .fill(PULSEStyle.divider)
                                     .frame(height: 1)
@@ -300,7 +300,7 @@ struct PULSEHomeView: View {
                             .padding(.vertical, 18)
                         } else {
                             ForEach(ownPosts) { post in
-                                PULSEPostRow(post: post, currentUserID: user.uid, isOwnPost: true, onPostChanged: refreshPostLists)
+                                PULSEPostRow(post: post, currentUserID: user.uid, currentDisplayName: resolvedDisplayName, currentUsername: username, isOwnPost: true, onPostChanged: refreshPostLists)
                                 Rectangle()
                                     .fill(PULSEStyle.divider)
                                     .frame(height: 1)
@@ -494,22 +494,31 @@ private struct PULSEAvatar: View {
 private struct PULSEPostRow: View {
     let post: PULSEPost
     let currentUserID: String
-    var showsAvatar = true
+    var currentDisplayName = ""
+    var currentUsername = ""
+    var isOwnPost = false
+    var onPostChanged: () -> Void = {}
 
     @State private var isLiked = false
     @State private var likeCount = 0
+    @State private var repostCount = 0
+    @State private var isReposted = false
     @State private var likesListener: ListenerRegistration?
+    @State private var repostsListener: ListenerRegistration?
+    @State private var ownRepostListener: ListenerRegistration?
     @State private var likeError = ""
+    @State private var showReplyComposer = false
 
-    private var likesRef: CollectionReference {
-        Firestore.firestore().collection("posts").document(post.id).collection("likes")
+    private var postRef: DocumentReference {
+        Firestore.firestore().collection("posts").document(post.id)
     }
+
+    private var likesRef: CollectionReference { postRef.collection("likes") }
+    private var repostsRef: CollectionReference { postRef.collection("reposts") }
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            if showsAvatar {
-                PULSEAvatar(name: post.authorName, size: 42)
-            }
+            PULSEAvatar(name: post.authorName, size: 42)
 
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .firstTextBaseline, spacing: 5) {
@@ -523,8 +532,7 @@ private struct PULSEPostRow: View {
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
 
-                    Text("·")
-                        .foregroundStyle(.tertiary)
+                    Text("·").foregroundStyle(.tertiary)
 
                     Text(post.createdAt, style: .relative)
                         .font(.custom("PlusJakartaSans-Regular", size: 12))
@@ -533,13 +541,37 @@ private struct PULSEPostRow: View {
 
                     Spacer(minLength: 0)
 
-                    Button {} label: {
+                    Menu {
+                        if isOwnPost {
+                            Button {
+                                Task { await togglePostPrivacy() }
+                            } label: {
+                                Label(post.isPrivate ? "Make post public" : "Make post private",
+                                      systemImage: post.isPrivate ? "globe" : "lock")
+                            }
+                            Button(role: .destructive) {
+                                Task { await deletePost() }
+                            } label: {
+                                Label("Delete post", systemImage: "trash")
+                            }
+                        }
+                        ShareLink(item: post.text) {
+                            Label("Share post", systemImage: "square.and.arrow.up")
+                        }
+                    } label: {
                         Image(systemName: "ellipsis")
                             .font(.system(size: 15, weight: .medium))
                             .foregroundStyle(.secondary)
+                            .frame(width: 28, height: 28)
+                            .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
                     .accessibilityLabel("Post options")
+                }
+
+                if post.isPrivate {
+                    Label("Only you can see this", systemImage: "lock.fill")
+                        .font(.custom("PlusJakartaSans-Regular", size: 11))
+                        .foregroundStyle(.secondary)
                 }
 
                 Text(post.text)
@@ -549,22 +581,40 @@ private struct PULSEPostRow: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .textSelection(.enabled)
 
-                HStack(spacing: 24) {
+                HStack(spacing: 0) {
                     Button(action: toggleLike) {
-                        HStack(spacing: 6) {
-                            Image(systemName: isLiked ? "heart.fill" : "heart")
-                                .foregroundStyle(isLiked ? Color.pink : Color.secondary)
-                            Text("\(likeCount)")
-                                .foregroundStyle(.secondary)
-                        }
+                        Label("\(likeCount)", systemImage: isLiked ? "heart.fill" : "heart")
+                            .foregroundStyle(isLiked ? Color.pink : Color.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel(isLiked ? "Unlike post" : "Like post")
 
-                    Label("Reply", systemImage: "bubble")
-                        .foregroundStyle(.secondary)
+                    Button {
+                        showReplyComposer = true
+                    } label: {
+                        Image(systemName: "bubble")
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Reply to post")
 
-                    Spacer()
+                    Button(action: toggleRepost) {
+                        Label("\(repostCount)", systemImage: "arrow.2.squarepath")
+                            .foregroundStyle(isReposted ? Color.green : Color.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(post.isPrivate && !isOwnPost)
+                    .accessibilityLabel(isReposted ? "Undo repost" : "Repost")
+
+                    ShareLink(item: post.text) {
+                        Image(systemName: "square.and.arrow.up")
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                    .accessibilityLabel("Share post")
                 }
                 .font(.custom("PlusJakartaSans-Medium", size: 12))
 
@@ -578,24 +628,48 @@ private struct PULSEPostRow: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 15)
         .contentShape(Rectangle())
-        .onAppear(perform: startLikesListener)
+        .onAppear {
+            startLikesListener()
+            startRepostsListeners()
+        }
         .onDisappear {
             likesListener?.remove()
+            repostsListener?.remove()
+            ownRepostListener?.remove()
             likesListener = nil
+            repostsListener = nil
+            ownRepostListener = nil
+        }
+        .sheet(isPresented: $showReplyComposer) {
+            PULSEReplyComposer(
+                postID: post.id,
+                user: Auth.auth().currentUser,
+                displayName: currentDisplayName.isEmpty ? post.authorName : currentDisplayName,
+                username: currentUsername
+            )
         }
     }
 
     private func startLikesListener() {
         guard likesListener == nil else { return }
         likesListener = likesRef.addSnapshotListener { snapshot, error in
-            if let error {
-                likeError = error.localizedDescription
-                return
-            }
+            if let error { likeError = error.localizedDescription; return }
             let documents = snapshot?.documents ?? []
             likeCount = documents.count
             isLiked = documents.contains { $0.documentID == currentUserID }
             likeError = ""
+        }
+    }
+
+    private func startRepostsListeners() {
+        guard repostsListener == nil else { return }
+        repostsListener = repostsRef.addSnapshotListener { snapshot, error in
+            if let error { likeError = error.localizedDescription; return }
+            repostCount = snapshot?.documents.count ?? 0
+        }
+        ownRepostListener = repostsRef.document(currentUserID).addSnapshotListener { snapshot, error in
+            if let error { likeError = error.localizedDescription; return }
+            isReposted = snapshot?.exists ?? false
         }
     }
 
@@ -608,8 +682,164 @@ private struct PULSEPostRow: View {
                 } else {
                     try await likeRef.setData(["uid": currentUserID, "createdAt": FieldValue.serverTimestamp()])
                 }
-            } catch {
-                likeError = error.localizedDescription
+            } catch { likeError = error.localizedDescription }
+        }
+    }
+
+    private func toggleRepost() {
+        let repostRef = repostsRef.document(currentUserID)
+        Task {
+            do {
+                if isReposted {
+                    try await repostRef.delete()
+                } else {
+                    try await repostRef.setData([
+                        "uid": currentUserID,
+                        "authorName": currentDisplayName,
+                        "username": currentUsername,
+                        "createdAt": FieldValue.serverTimestamp()
+                    ])
+                }
+            } catch { likeError = error.localizedDescription }
+        }
+    }
+
+    private func togglePostPrivacy() async {
+        do {
+            try await postRef.updateData(["isPrivate": !post.isPrivate])
+            onPostChanged()
+        } catch { likeError = error.localizedDescription }
+    }
+
+    private func deletePost() async {
+        do {
+            try await postRef.delete()
+            onPostChanged()
+        } catch { likeError = error.localizedDescription }
+    }
+}
+
+private struct PULSEReplyComposer: View {
+    let postID: String
+    let user: User?
+    let displayName: String
+    let username: String
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var text = ""
+    @State private var errorMessage = ""
+    @State private var isSending = false
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 14) {
+                Text("Replying to a post")
+                    .font(.custom("PlusJakartaSans-SemiBold", size: 14))
+                    .foregroundStyle(.secondary)
+                TextEditor(text: $text)
+                    .font(.custom("PlusJakartaSans-Regular", size: 16))
+                    .frame(minHeight: 130)
+                    .overlay(alignment: .topLeading) {
+                        if text.isEmpty {
+                            Text("Write a reply…")
+                                .foregroundStyle(.tertiary)
+                                .padding(.top, 8)
+                                .padding(.leading, 5)
+                                .allowsHitTesting(false)
+                        }
+                    }
+                if !errorMessage.isEmpty {
+                    Text(errorMessage).font(.caption).foregroundStyle(.red)
+                }
+                Spacer()
+            }
+            .padding(18)
+            .navigationTitle("Reply")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Reply") { Task { await sendReply() } }
+                        .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSending)
+                }
+            }
+        }
+    }
+
+    private func sendReply() async {
+        guard let user else { errorMessage = "Sign in to reply."; return }
+        let body = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !body.isEmpty, body.count <= 280 else { return }
+        isSending = true
+        defer { isSending = false }
+        do {
+            try await Firestore.firestore().collection("posts").document(postID)
+                .collection("replies").addDocument(data: [
+                    "authorID": user.uid,
+                    "authorName": displayName,
+                    "username": username,
+                    "text": body,
+                    "createdAt": FieldValue.serverTimestamp()
+                ])
+            dismiss()
+        } catch { errorMessage = error.localizedDescription }
+    }
+}
+
+private struct PULSEEditProfileView: View {
+    let user: User
+    let onSave: (String, String, Bool) -> Void
+    let onDeleteAccount: () -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var name: String
+    @State private var bio: String
+    @State private var isPrivate: Bool
+
+    init(user: User, displayName: String, bio: String, isPrivate: Bool,
+         onSave: @escaping (String, String, Bool) -> Void,
+         onDeleteAccount: @escaping () -> Void) {
+        self.user = user
+        self.onSave = onSave
+        self.onDeleteAccount = onDeleteAccount
+        _name = State(initialValue: displayName)
+        _bio = State(initialValue: bio)
+        _isPrivate = State(initialValue: isPrivate)
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Profile") {
+                    TextField("Display name", text: $name)
+                        .textInputAutocapitalization(.words)
+                        .onChange(of: name) { _, value in if value.count > 60 { name = String(value.prefix(60)) } }
+                    TextField("Bio", text: $bio, axis: .vertical)
+                        .lineLimit(2...4)
+                        .onChange(of: bio) { _, value in if value.count > 160 { bio = String(value.prefix(160)) } }
+                }
+                Section("Privacy") {
+                    Toggle("Private account", isOn: $isPrivate)
+                    Text("When enabled, your existing posts and new posts are visible only to you. Followers are not implemented yet.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                Section {
+                    Button("Delete account", role: .destructive, action: onDeleteAccount)
+                } footer: {
+                    Text("Deleting your account is permanent. You may need to sign in again before deleting it.")
+                }
+            }
+            .navigationTitle("Edit profile")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Save") { onSave(name, bio, isPrivate) }
+                        .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
             }
         }
     }
