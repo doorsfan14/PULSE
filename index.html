@@ -3,240 +3,133 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#080b18">
-  <meta name="description" content="PULSE — a social space for expressive conversations. Preview the PULSE web experience.">
-  <title>PULSE — Web Preview</title>
+  <meta name="theme-color" content="#ffffff">
+  <title>PULSE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root{color-scheme:dark;--bg:#080b18;--panel:rgba(17,22,42,.78);--panel-solid:#11162a;--line:rgba(184,198,255,.12);--text:#f4f6ff;--muted:#919bb9;--blue:#6688ff;--violet:#9b72ff;--good:#76e3c0;--radius:22px}
-    *{box-sizing:border-box}
-    body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 15% -10%,rgba(73,103,255,.23),transparent 43%),radial-gradient(ellipse at 92% 20%,rgba(126,71,220,.15),transparent 35%),var(--bg);color:var(--text);font-family:"Plus Jakarta Sans",sans-serif;letter-spacing:-.025em}
-    button,input,textarea{font:inherit}button{color:inherit;cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
-    .shell{max-width:1180px;margin:auto;padding:28px 24px 50px;display:grid;grid-template-columns:220px minmax(0,650px) 230px;gap:24px}
-    .sidebar{position:sticky;top:24px;height:calc(100vh - 48px);display:flex;flex-direction:column}
-    .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:23px;letter-spacing:-.06em;padding:8px 10px 28px}
-    .brand-mark{width:35px;height:35px;border-radius:12px;background:linear-gradient(140deg,#6d8cff,#a66dff);display:grid;place-items:center;box-shadow:0 7px 26px #6e75ff45}
-    .brand-mark svg{width:22px}
-    .nav{display:grid;gap:7px}
-    .nav button{display:flex;align-items:center;gap:14px;border:1px solid transparent;background:transparent;padding:13px 14px;border-radius:15px;color:#aab3ce;text-align:left;font-size:14px;font-weight:600;transition:background .2s,border .2s,color .2s}
-    .nav button:hover,.nav button.active{background:linear-gradient(100deg,#6688ff1e,#9b72ff12);border-color:#8b9cff1c;color:var(--text)}
-    .nav svg{width:19px;height:19px;flex:none}
-    .nav .active svg{color:#9eb0ff}
-    .new-post{margin:20px 2px 0;border:0;border-radius:15px;padding:13px 16px;background:linear-gradient(110deg,#5f83ff,#9069f4);font-size:13px;font-weight:800;box-shadow:0 9px 25px #6688ff2c;transition:transform .18s,filter .18s}
-    .new-post:hover{filter:brightness(1.1);transform:translateY(-1px)}.new-post:active{transform:scale(.98)}
-    .side-note{margin-top:auto;padding:15px;border:1px solid var(--line);border-radius:17px;background:#ffffff04;color:var(--muted);font-size:11px;line-height:1.7}
-    .side-note strong{display:block;color:#dce2ff;font-size:12px;margin-bottom:3px}
-    main{min-width:0}
-    .topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 2px 20px}
-    .topbar h1{font-size:24px;letter-spacing:-.06em;margin:0;font-weight:800}
-    .preview-chip{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid #a78bfa35;border-radius:999px;background:#9b72ff12;color:#c8b9ff;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
-    .preview-chip i{width:6px;height:6px;border-radius:50%;background:#b49aff;box-shadow:0 0 12px #b49aff;display:block}
-    .notice{padding:12px 14px;border:1px solid #7890ff2b;background:linear-gradient(100deg,#6688ff10,#9b72ff09);border-radius:15px;color:#b5c0e2;font-size:11px;line-height:1.65;margin-bottom:16px}
-    .notice strong{color:#e2e7ff}
-    .composer,.post,.profile-card,.right-card{background:linear-gradient(145deg,rgba(21,27,51,.91),rgba(13,17,34,.84));border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 18px 50px #00000012;backdrop-filter:blur(18px)}
-    .composer{padding:17px;margin-bottom:16px}
-    .composer-top{display:flex;gap:12px;align-items:flex-start}
-    .avatar{width:43px;height:43px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:800;color:#fff;background:linear-gradient(145deg,#6688ff,#a36aff);box-shadow:inset 0 0 0 1px #ffffff35}
-    .avatar.green{background:linear-gradient(145deg,#25b99a,#4c8cff)}.avatar.orange{background:linear-gradient(145deg,#ffad71,#d16dff)}.avatar.pink{background:linear-gradient(145deg,#fa79b8,#8b76ff)}
-    textarea{width:100%;resize:vertical;min-height:55px;max-height:180px;border:0;background:transparent;color:var(--text);outline:none;padding:10px 0;font-size:13px;line-height:1.65;letter-spacing:-.02em}
-    textarea::placeholder{color:#7883a5}
-    .composer-bottom{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:12px;margin-top:8px;gap:10px}
-    .char-count{font-size:10px;color:var(--muted)}.char-count.over{color:#ff8b9d}
-    .primary{border:0;border-radius:12px;padding:10px 16px;background:linear-gradient(110deg,#6386ff,#956cf3);font-size:11px;font-weight:800;box-shadow:0 6px 18px #6688ff20;transition:filter .18s,transform .18s}
-    .primary:hover{filter:brightness(1.12)}.primary:active{transform:scale(.97)}.primary:disabled{opacity:.35;cursor:not-allowed}
-    .feed-head{display:flex;align-items:center;justify-content:space-between;margin:25px 3px 12px}
-    .feed-head h2{font-size:13px;margin:0;font-weight:800;letter-spacing:-.02em}
-    .feed-head span{font-size:10px;color:var(--muted)}
-    .post{padding:17px;margin-bottom:12px;animation:rise .45s both}
-    @keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
-    .post-head{display:flex;align-items:center;gap:11px}
-    .person{min-width:0;flex:1}.person strong{font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.person span{display:block;color:var(--muted);font-size:10px;margin-top:3px}
-    .more{border:0;background:transparent;color:var(--muted);padding:8px;border-radius:10px}.more:hover{background:#ffffff0a;color:var(--text)}
-    .post-text{font-size:13px;line-height:1.85;letter-spacing:-.015em;white-space:pre-wrap;overflow-wrap:anywhere;margin:15px 0 16px;color:#e5e9fb}
-    .post-text a{color:#9eb3ff}
-    .post-actions{display:flex;gap:5px;align-items:center;border-top:1px solid var(--line);padding-top:10px}
-    .action{display:flex;align-items:center;gap:7px;padding:8px 10px;border:1px solid transparent;border-radius:11px;background:transparent;color:#8f9aba;font-size:10px;font-weight:700;transition:all .18s}
-    .action svg{width:16px;height:16px}.action:hover{background:#ffffff08;color:#e8ecff}.action.liked{color:#ff8eb3}.action.reposted{color:#75e0bd}
-    .action:last-child{margin-left:auto}
-    .reply-box{display:none;padding-top:12px}.reply-box.open{display:flex;gap:8px}.reply-box input{min-width:0;flex:1;background:#080c1b;border:1px solid var(--line);border-radius:11px;padding:10px 12px;color:var(--text);font-size:11px}
-    .empty{display:none;text-align:center;padding:42px 20px;color:var(--muted);font-size:12px}.empty strong{display:block;color:var(--text);font-size:15px;margin-bottom:7px}
-    .rightbar{padding-top:64px;min-width:0}.right-card{padding:17px;margin-bottom:14px}
-    .right-card h3{font-size:12px;margin:0 0 14px;font-weight:800}
-    .status-row{display:flex;align-items:center;gap:9px;font-size:11px;color:#dce2f8}.status-dot{width:8px;height:8px;background:var(--good);border-radius:50%;box-shadow:0 0 12px #76e3c066}
-    .right-card p{font-size:10px;color:var(--muted);line-height:1.8;margin:10px 0 0}
-    .feature{display:flex;gap:10px;align-items:flex-start;margin:13px 0}.feature-icon{width:29px;height:29px;display:grid;place-items:center;border-radius:10px;background:#6688ff15;color:#a6b7ff;flex:none}.feature-icon svg{width:15px;height:15px}.feature strong{display:block;font-size:10px;margin:1px 0 4px}.feature span{display:block;font-size:10px;color:var(--muted);line-height:1.55}
-    .profile-card{padding:0;overflow:hidden;margin-bottom:15px;display:none}
-    .profile-banner{height:115px;background:radial-gradient(ellipse at 20% 20%,#99aaff99,transparent 40%),linear-gradient(120deg,#3556c9,#7246bc 60%,#282d6d)}
-    .profile-info{padding:0 18px 18px}.profile-info .avatar{width:66px;height:66px;font-size:20px;border:4px solid #11162a;margin-top:-32px;position:relative}
-    .profile-info h2{font-size:20px;margin:9px 0 3px;letter-spacing:-.05em}.profile-info .handle{font-size:11px;color:var(--muted)}
-    .profile-bio{font-size:12px;line-height:1.7;color:#d3daf2;margin:12px 0}
-    .stats{display:flex;gap:19px;margin-top:16px}.stats strong{font-size:13px;display:block}.stats span{font-size:10px;color:var(--muted)}
-    .edit-profile{margin-top:16px;border:1px solid var(--line);border-radius:11px;background:#ffffff06;padding:9px 13px;font-size:10px;font-weight:700}
-    .profile-view .composer,.profile-view #feedTitle,.profile-view #feedList,.profile-view #emptyFeed{display:none}
-    .profile-view #profileCard{display:block}
-    .mobile-brand{display:none}
-    .toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,15px);opacity:0;pointer-events:none;background:#202744;border:1px solid #8d9cff35;color:#f1f3ff;border-radius:13px;padding:12px 16px;font-size:11px;box-shadow:0 12px 40px #0007;transition:all .25s;z-index:20;max-width:calc(100vw - 32px);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
-    .modal-backdrop{position:fixed;inset:0;background:#030511b8;backdrop-filter:blur(10px);display:none;place-items:center;padding:18px;z-index:30}.modal-backdrop.open{display:grid}.modal{width:min(100%,430px);background:#12182d;border:1px solid var(--line);border-radius:23px;padding:22px;box-shadow:0 25px 100px #0008}.modal h2{font-size:19px;margin:0 0 7px}.modal p{font-size:11px;line-height:1.7;color:var(--muted);margin:0 0 18px}.field{display:grid;gap:7px;margin:13px 0}.field label{font-size:10px;color:#aeb9d9;font-weight:700}.field input,.field textarea{border:1px solid var(--line);background:#090e20;border-radius:12px;padding:12px;color:var(--text);font-size:12px;min-height:0}.field textarea{min-height:80px}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:18px}.secondary{border:1px solid var(--line);background:#ffffff06;border-radius:12px;padding:10px 14px;font-size:11px;font-weight:700}
-    @media(max-width:1000px){.shell{grid-template-columns:190px minmax(0,650px);max-width:900px}.rightbar{display:none}}
-    @media(max-width:650px){.shell{display:block;padding:13px 12px calc(86px + env(safe-area-inset-bottom));max-width:540px}.sidebar{display:none}.mobile-brand{display:flex;align-items:center;gap:9px;font-size:19px;font-weight:800;letter-spacing:-.06em}.mobile-brand .brand-mark{width:30px;height:30px;border-radius:10px}.topbar{padding:7px 3px 17px}.topbar h1{font-size:22px}.preview-chip{font-size:9px;padding:7px 9px}.notice{font-size:10px;padding:11px 12px}.composer{padding:14px;border-radius:19px}.post{padding:14px;border-radius:19px}.post-text{font-size:12px}.nav.mobile{display:flex;position:fixed;z-index:10;bottom:0;left:0;right:0;padding:8px 18px calc(8px + env(safe-area-inset-bottom));justify-content:space-around;gap:5px;background:#0b1020eF;border-top:1px solid var(--line);backdrop-filter:blur(22px)}.nav.mobile button{flex-direction:column;gap:4px;justify-content:center;padding:7px 14px;font-size:9px;border-radius:12px}.nav.mobile button svg{width:19px;height:19px}.nav.mobile .active{background:#6688ff16}.feed-head{margin-top:22px}.action{padding:8px}.action:last-child{margin-left:auto}.profile-info h2{font-size:19px}}
-    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+    :root{font-family:"Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:light dark;--bg:#fff;--text:#171717;--secondary:#737373;--line:#e8e8e8;--surface:#f7f7f8;--blue:#3478f6;--avatar:#e7eaf0}
+    @media(prefers-color-scheme:dark){:root{--bg:#000;--text:#f5f5f7;--secondary:#98989f;--line:#292929;--surface:#171719;--blue:#0a84ff;--avatar:#292a2e}}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:inherit;font-size:14px;-webkit-font-smoothing:antialiased}
+    button,input,textarea{font:inherit}button{cursor:pointer;color:inherit}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+    .app{max-width:680px;min-height:100vh;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line);padding-bottom:calc(66px + env(safe-area-inset-bottom))}
+    header{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+    .wordmark{font-size:21px;font-weight:800;letter-spacing:-1.1px}.header-actions{display:flex;gap:16px;align-items:center}.icon-button{display:grid;place-items:center;width:34px;height:34px;border:0;background:transparent;border-radius:50%;color:var(--text)}.icon-button:hover{background:var(--surface)}svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .page-title{font-size:20px;font-weight:800;letter-spacing:-.6px;margin:0}
+    .feed{display:block}.composer{display:flex;gap:12px;padding:17px 18px;border-bottom:8px solid var(--surface)}
+    .avatar{width:42px;height:42px;border-radius:50%;background:var(--avatar);display:grid;place-items:center;flex-shrink:0;font-size:14px;font-weight:700;overflow:hidden;color:var(--text)}
+    .composer-content{min-width:0;flex:1}.composer textarea{display:block;width:100%;resize:vertical;min-height:54px;max-height:180px;padding:7px 0;border:0;outline:none;background:transparent;color:var(--text);font-size:14px;line-height:1.6}.composer textarea::placeholder{color:var(--secondary)}
+    .composer-footer{display:flex;justify-content:space-between;align-items:center;margin-top:7px}.count{font-size:11px;color:var(--secondary)}.count.over{color:#d93025}
+    .primary{border:0;border-radius:999px;background:var(--blue);color:#fff;font-size:12px;font-weight:700;padding:9px 16px}.primary:disabled{opacity:.4;cursor:default}
+    .post{padding:16px 18px 10px;border-bottom:1px solid var(--line)}.post-header{display:flex;align-items:center;gap:10px}.post-person{min-width:0;flex:1}.post-person strong{font-size:13px;font-weight:700}.handle,.time{font-size:12px;color:var(--secondary)}.post-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:3px}.more{border:0;background:transparent;color:var(--secondary);font-size:21px;line-height:1;padding:4px 7px}.post-text{font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere;margin:12px 0 13px}
+    .actions{display:flex;align-items:center;justify-content:space-between;max-width:420px;padding:2px 0}.action{display:inline-flex;align-items:center;gap:6px;border:0;background:transparent;padding:7px 5px;color:var(--secondary);font-size:11px}.action svg{width:18px;height:18px}.action:hover{color:var(--blue)}.action.liked{color:#e5486d}.action.reposted{color:#15966a}
+    .empty{padding:60px 25px;text-align:center;color:var(--secondary)}.empty strong{display:block;font-size:16px;color:var(--text);margin-bottom:8px}.empty p{font-size:13px;line-height:1.6;margin:0 auto;max-width:290px}
+    .profile{display:none}.profile-cover{height:145px;background:var(--surface);border-bottom:1px solid var(--line)}.profile-details{padding:0 18px 20px;border-bottom:8px solid var(--surface)}.profile-top{display:flex;align-items:flex-end;justify-content:space-between;margin-top:-34px;gap:12px}.profile-top .avatar{width:76px;height:76px;border:4px solid var(--bg);font-size:20px}.outline-button{background:transparent;border:1px solid var(--line);border-radius:999px;padding:9px 14px;font-size:12px;font-weight:700}.profile h2{font-size:21px;letter-spacing:-.6px;margin:12px 0 2px}.profile-bio{font-size:13px;line-height:1.6;margin:12px 0}.stats{display:flex;gap:18px;margin-top:13px}.stats div{display:flex;gap:4px;font-size:12px}.stats strong{font-weight:700}.stats span{color:var(--secondary)}.profile-tabs{height:48px;display:flex;border-bottom:1px solid var(--line)}.profile-tabs button{flex:1;border:0;background:transparent;font-weight:700;font-size:12px;position:relative}.profile-tabs button.active:after{content:"";position:absolute;bottom:0;left:25%;right:25%;height:2px;background:var(--blue);border-radius:2px}
+    .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,680px);height:calc(57px + env(safe-area-inset-bottom));padding:4px 20px env(safe-area-inset-bottom);display:flex;justify-content:space-around;align-items:center;background:color-mix(in srgb,var(--bg) 94%,transparent);border-top:1px solid var(--line);z-index:6}
+    .bottom-nav button{width:52px;height:45px;display:grid;place-items:center;border:0;background:transparent;color:var(--secondary);border-radius:12px}.bottom-nav button.active{color:var(--blue)}.bottom-nav button svg{width:23px;height:23px}
+    .modal-backdrop{display:none;position:fixed;inset:0;background:#0007;z-index:20;align-items:flex-end;justify-content:center}.modal-backdrop.open{display:flex}.sheet{width:min(100%,680px);background:var(--bg);border-radius:20px 20px 0 0;padding:20px 20px calc(22px + env(safe-area-inset-bottom));border:1px solid var(--line)}.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.sheet h2{font-size:17px;margin:0}.field{display:grid;gap:7px;margin:15px 0}.field label{font-size:12px;color:var(--secondary)}.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;background:var(--surface);color:var(--text);font-size:14px}.field textarea{min-height:80px;resize:vertical}.sheet-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}.toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translate(-50%,10px);opacity:0;background:var(--text);color:var(--bg);padding:11px 15px;border-radius:10px;font-size:12px;z-index:30;transition:opacity .2s,transform .2s;pointer-events:none;max-width:calc(100vw - 30px);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(min-width:681px){.bottom-nav{bottom:0}.app{padding-bottom:70px}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
   </style>
 </head>
 <body>
-  <div class="shell">
-    <aside class="sidebar">
-      <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 13.5h4l2.1-6 3.8 10 2.1-6H20" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>PULSE</div>
-      <nav class="nav" aria-label="Main navigation">
-        <button class="active" data-view="home"><svg viewBox="0 0 24 24" fill="none"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Home</button>
-        <button data-view="profile"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M4 21a8 8 0 0 1 16 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Profile</button>
-      </nav>
-      <button class="new-post" id="focusComposer">＋ &nbsp; Write a post</button>
-      <div class="side-note"><strong>Early web preview</strong>This is a feature-testing playground. Changes here stay in this browser and do not publish to the live iOS app.</div>
-    </aside>
-
-    <main id="mainView">
-      <header class="topbar">
-        <div class="mobile-brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 13.5h4l2.1-6 3.8 10 2.1-6H20" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>PULSE</div>
-        <h1 id="pageTitle">Your feed</h1>
-        <span class="preview-chip"><i></i> Web preview</span>
-      </header>
-
-      <div class="notice"><strong>Preview mode.</strong> Try composing posts, liking, replying, reposting, and editing this local profile. This prototype is not connected to Firebase or real PULSE accounts.</div>
-
-      <section class="composer" id="composer">
-        <div class="composer-top">
-          <div class="avatar" id="composerAvatar">H</div>
-          <textarea id="postInput" maxlength="280" rows="2" placeholder="What's happening?"></textarea>
-        </div>
-        <div class="composer-bottom"><span class="char-count" id="charCount">0 / 280</span><button class="primary" id="publishPost" disabled>Publish post ↗</button></div>
-      </section>
-
-      <section class="profile-card" id="profileCard">
-        <div class="profile-banner"></div>
-        <div class="profile-info">
-          <div class="avatar" id="profileAvatar">H</div>
-          <h2 id="profileName">PULSE Tester</h2><div class="handle" id="profileHandle">@pulse_tester</div>
-          <p class="profile-bio" id="profileBio">Trying out PULSE on the web ✨</p>
-          <div class="stats"><div><strong id="postStat">0</strong><span>Posts</span></div><div><strong>—</strong><span>Followers</span></div><div><strong>—</strong><span>Following</span></div></div>
-          <button class="edit-profile" id="editProfile">Edit profile</button>
-        </div>
-      </section>
-
-      <div class="feed-head" id="feedTitle"><h2 id="feedHeading">Latest posts</h2><span>Newest first · local preview</span></div>
-      <section id="feedList" aria-live="polite"></section>
-      <div class="empty" id="emptyFeed"><strong>Your feed starts here.</strong>Write a post above to try out the composer.</div>
-    </main>
-
-    <aside class="rightbar">
-      <div class="right-card"><h3>Preview status</h3><div class="status-row"><span class="status-dot"></span> Interface is running</div><p>Everything on this page runs in your browser. Refreshing the page resets the sample session.</p></div>
-      <div class="right-card"><h3>Try these features</h3>
-        <div class="feature"><span class="feature-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span><div><strong>Likes & reposts</strong><span>Tap the action buttons under a post.</span></div></div>
-        <div class="feature"><span class="feature-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span><div><strong>Replies</strong><span>Open a reply field and add a response.</span></div></div>
-        <div class="feature"><span class="feature-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4L16.5 3.5Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><strong>Profile editing</strong><span>Switch to Profile to edit your preview details.</span></div></div>
+  <div class="app">
+    <header>
+      <span class="wordmark" id="wordmark">PULSE</span>
+      <h1 class="page-title" id="pageTitle" hidden>Profile</h1>
+      <div class="header-actions">
+        <button class="icon-button" id="headerCompose" aria-label="Write a post"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4L16.5 3.5Z"/></svg></button>
       </div>
-      <div class="right-card"><h3>Built for conversation</h3><p>PULSE is an iOS-first social network focused on expressive conversations and user control. This page is an early web UI experiment.</p></div>
-    </aside>
+    </header>
+    <section class="feed" id="feedView">
+      <div class="composer">
+        <div class="avatar" id="composerAvatar">P</div>
+        <div class="composer-content">
+          <textarea id="postInput" maxlength="280" placeholder="What's happening?" rows="2" aria-label="Write a post"></textarea>
+          <div class="composer-footer"><span class="count" id="charCount">0 / 280</span><button class="primary" id="publish" disabled>Post</button></div>
+        </div>
+      </div>
+      <div id="posts"></div>
+      <div class="empty" id="emptyFeed"><strong>Your feed starts here.</strong><p>Write a post to try out the PULSE interface.</p></div>
+    </section>
+    <section class="profile" id="profileView">
+      <div class="profile-cover"></div>
+      <div class="profile-details">
+        <div class="profile-top"><div class="avatar" id="profileAvatar">P</div><button class="outline-button" id="editProfile">Edit profile</button></div>
+        <h2 id="profileName">PULSE Tester</h2><div class="handle" id="profileHandle">@pulse_tester</div>
+        <p class="profile-bio" id="profileBio">Trying out PULSE.</p>
+        <div class="stats"><div><strong id="postCount">0</strong><span>Posts</span></div><div><strong>—</strong><span>Followers</span></div><div><strong>—</strong><span>Following</span></div></div>
+      </div>
+      <div class="profile-tabs"><button class="active">Posts</button></div>
+      <div id="profilePosts"></div>
+      <div class="empty" id="emptyProfile"><strong>No posts yet</strong><p>Your posts will appear here.</p></div>
+    </section>
   </div>
-
-  <nav class="nav mobile" aria-label="Mobile navigation">
-    <button class="active" data-view="home"><svg viewBox="0 0 24 24" fill="none"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>Home</button>
-    <button data-view="profile"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M4 21a8 8 0 0 1 16 0" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Profile</button>
-    <button id="mobileCompose"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Post</button>
+  <nav class="bottom-nav" aria-label="Main navigation">
+    <button class="active" data-view="home" aria-label="Home"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Z"/></svg></button>
+    <button data-view="profile" aria-label="Profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></button>
   </nav>
-
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <div class="modal-backdrop" id="editModal" role="dialog" aria-modal="true" aria-labelledby="editTitle">
-    <form class="modal" id="profileForm">
-      <h2 id="editTitle">Edit preview profile</h2><p>These details are only stored in this page's current session.</p>
-      <div class="field"><label for="nameField">Display name</label><input id="nameField" maxlength="40" value="PULSE Tester" required></div>
-      <div class="field"><label for="handleField">Username</label><input id="handleField" maxlength="24" value="pulse_tester" required></div>
-      <div class="field"><label for="bioField">Bio</label><textarea id="bioField" maxlength="160">Trying out PULSE on the web ✨</textarea></div>
-      <div class="modal-actions"><button type="button" class="secondary" id="cancelEdit">Cancel</button><button class="primary" type="submit">Save changes</button></div>
+  <div class="modal-backdrop" id="editSheet" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+    <form class="sheet" id="profileForm">
+      <div class="sheet-head"><button type="button" class="icon-button" id="cancelEdit" aria-label="Cancel"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></button><h2 id="editTitle">Edit profile</h2><button class="primary" type="submit">Save</button></div>
+      <div class="field"><label for="nameField">Name</label><input id="nameField" maxlength="40" value="PULSE Tester" required></div>
+      <div class="field"><label for="usernameField">Username</label><input id="usernameField" maxlength="24" value="pulse_tester" required></div>
+      <div class="field"><label for="bioField">Bio</label><textarea id="bioField" maxlength="160" placeholder="Write a little about yourself"></textarea></div>
     </form>
   </div>
-
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script>
-    const $ = (id) => document.getElementById(id);
-    const state = {
-      view: "home",
-      name: "PULSE Tester",
-      username: "pulse_tester",
-      bio: "Trying out PULSE on the web ✨",
-      posts: [
-        {id:1,name:"PULSE Preview",username:"pulse_preview",initials:"P",tone:"green",text:"Welcome to the PULSE web preview! ✨\n\nThis is sample content so you and your friends can explore the interface. Try the buttons, write a post, or edit the preview profile.",time:"Just now",likes:4,replies:2,reposts:1,liked:false,reposted:false,sample:true},
-        {id:2,name:"Design notes",username:"design_notes",initials:"D",tone:"pink",text:"A little space for thoughts, conversations, and ideas. The best UI gets out of the way and lets people connect.",time:"Preview post",likes:2,replies:0,reposts:0,liked:false,reposted:false,sample:true}
-      ],
-      nextId:3
-    };
-    const icons = {
-      heart:'<svg viewBox="0 0 24 24" fill="none"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
-      reply:'<svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>',
-      repost:'<svg viewBox="0 0 24 24" fill="none"><path d="m17 1 4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4m14-2v2a4 4 0 0 1-4 4H3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-      share:'<svg viewBox="0 0 24 24" fill="none"><path d="M12 16V3m-5 5 5-5 5 5M5 13v7h14v-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    const $=id=>document.getElementById(id);
+    const state={view:"home",name:"PULSE Tester",username:"pulse_tester",bio:"Trying out PULSE.",posts:[],nextId:1};
+    const icons={
+      like:'<svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></svg>',
+      reply:'<svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z"/></svg>',
+      repost:'<svg viewBox="0 0 24 24"><path d="m17 1 4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4m14-2v2a4 4 0 0 1-4 4H3"/></svg>'
     };
     let toastTimer;
-    function toast(message){$('toast').textContent=message;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2400)}
-    function escapeHTML(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-    function initials(name){return name.trim().split(/\s+/).slice(0,2).map(s=>s[0]||'').join('').toUpperCase()||'P'}
-    function updateProfile(){
-      $('profileName').textContent=state.name;$('profileHandle').textContent='@'+state.username;$('profileBio').textContent=state.bio;
-      $('profileAvatar').textContent=initials(state.name);$('composerAvatar').textContent=initials(state.name);
-      $('postStat').textContent=state.posts.filter(p=>!p.sample&&p.username===state.username).length;
-    }
-    function renderPosts(){
-      const list=$('feedList');
-      const visible=state.view==='profile'?state.posts.filter(p=>!p.sample&&p.username===state.username):state.posts;
-      list.innerHTML=visible.map((p,index)=>'<article class="post" style="animation-delay:'+Math.min(index*45,180)+'ms" data-post="'+p.id+'"><div class="post-head"><div class="avatar '+(p.tone||'')+'">'+escapeHTML(p.initials||initials(p.name))+'</div><div class="person"><strong>'+escapeHTML(p.name)+'</strong><span>@'+escapeHTML(p.username)+' · '+escapeHTML(p.time)+'</span></div><button class="more" data-action="more" aria-label="Post options">···</button></div><div class="post-text">'+escapeHTML(p.text)+'</div><div class="post-actions"><button class="action '+(p.liked?'liked':'')+'" data-action="like" aria-label="Like post">'+icons.heart+'<span>'+p.likes+'</span></button><button class="action" data-action="reply" aria-label="Reply to post">'+icons.reply+'<span>'+p.replies+'</span></button><button class="action '+(p.reposted?'reposted':'')+'" data-action="repost" aria-label="Repost">'+icons.repost+'<span>'+p.reposts+'</span></button><button class="action" data-action="share" aria-label="Share post">'+icons.share+'</button></div><div class="reply-box" id="reply-'+p.id+'"><input maxlength="280" aria-label="Reply text" placeholder="Write a reply…"><button class="primary" data-action="send-reply">Reply</button></div></article>').join('');
-      $('emptyFeed').style.display=visible.length?'none':'block';
-      $('emptyFeed').innerHTML=state.view==='profile'?'<strong>No preview posts yet.</strong>Posts you write in this session will appear here.':'<strong>Your feed starts here.</strong>Write a post above to try out the composer.';
+    function toast(s){$("toast").textContent=s;$("toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").classList.remove("show"),2200)}
+    function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+    function initials(s){return s.trim().split(/\s+/).slice(0,2).map(v=>v[0]||"").join("").toUpperCase()||"P"}
+    function card(p){return '<article class="post" data-id="'+p.id+'"><div class="post-header"><div class="avatar">'+escapeHTML(p.initials)+'</div><div class="post-person"><strong>'+escapeHTML(p.name)+'</strong><div class="post-meta"><span class="handle">@'+escapeHTML(p.username)+'</span><span class="time">· '+escapeHTML(p.time)+'</span></div></div><button class="more" data-action="more" aria-label="More options">···</button></div><div class="post-text">'+escapeHTML(p.text)+'</div><div class="actions"><button class="action '+(p.liked?"liked":"")+'" data-action="like" aria-label="Like">'+icons.like+'<span>'+p.likes+'</span></button><button class="action" data-action="reply" aria-label="Reply">'+icons.reply+'<span>'+p.replies+'</span></button><button class="action '+(p.reposted?"reposted":"")+'" data-action="repost" aria-label="Repost">'+icons.repost+'<span>'+p.reposts+'</span></button></div></article>'}
+    function updateProfile(){$("profileName").textContent=state.name;$("profileHandle").textContent="@"+state.username;$("profileBio").textContent=state.bio;$("profileAvatar").textContent=initials(state.name);$("composerAvatar").textContent=initials(state.name);$("postCount").textContent=state.posts.filter(p=>p.username===state.username).length}
+    function render(){
+      $("posts").innerHTML=state.posts.map(card).join("");
+      const mine=state.posts.filter(p=>p.username===state.username);
+      $("profilePosts").innerHTML=mine.map(card).join("");
+      $("emptyFeed").style.display=state.posts.length?"none":"block";
+      $("emptyProfile").style.display=mine.length?"none":"block";
       updateProfile();
     }
     function setView(view){
-      state.view=view;$('mainView').classList.toggle('profile-view',view==='profile');
-      $('pageTitle').textContent=view==='profile'?'Your profile':'Your feed';
-      $('feedHeading').textContent=view==='profile'?'Your posts':'Latest posts';
-      document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
-      renderPosts();window.scrollTo({top:0,behavior:'smooth'});
+      state.view=view;const profile=view==="profile";
+      $("feedView").style.display=profile?"none":"block";$("profileView").style.display=profile?"block":"none";
+      $("wordmark").hidden=profile;$("pageTitle").hidden=!profile;
+      document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
+      window.scrollTo({top:0,behavior:"smooth"});
     }
-    document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
-    $('postInput').addEventListener('input',()=>{
-      const n=$('postInput').value.length;$('charCount').textContent=n+' / 280';
-      $('charCount').classList.toggle('over',n>280);$('publishPost').disabled=!$('postInput').value.trim()||n>280;
+    document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.view)));
+    $("postInput").addEventListener("input",()=>{const n=$("postInput").value.length;$("charCount").textContent=n+" / 280";$("charCount").classList.toggle("over",n>280);$("publish").disabled=!$("postInput").value.trim()||n>280});
+    function publish(){const text=$("postInput").value.trim();if(!text)return;state.posts.unshift({id:state.nextId++,name:state.name,username:state.username,initials:initials(state.name),text,time:"now",likes:0,replies:0,reposts:0,liked:false,reposted:false});$("postInput").value="";$("charCount").textContent="0 / 280";$("publish").disabled=true;render();toast("Added to this preview only");}
+    $("publish").addEventListener("click",publish);$("headerCompose").addEventListener("click",()=>{$("postInput").focus();window.scrollTo({top:0,behavior:"smooth"})});
+    document.addEventListener("click",e=>{
+      const b=e.target.closest("[data-action]");if(!b)return;
+      const article=b.closest("[data-id]");const p=state.posts.find(v=>v.id===Number(article?.dataset.id));if(!p)return;
+      if(b.dataset.action==="like"){p.liked=!p.liked;p.likes+=p.liked?1:-1;render()}
+      else if(b.dataset.action==="repost"){p.reposted=!p.reposted;p.reposts+=p.reposted?1:-1;render();toast(p.reposted?"Reposted in preview":"Repost removed")}
+      else if(b.dataset.action==="reply"){const value=prompt("Write a reply (preview only):");if(value?.trim()){p.replies++;render();toast("Reply interaction tested")}}
+      else if(b.dataset.action==="more"){toast("More post options can be added here")}
     });
-    function publish(){
-      const text=$('postInput').value.trim();if(!text)return;
-      state.posts.unshift({id:state.nextId++,name:state.name,username:state.username,initials:initials(state.name),text,time:'Just now',likes:0,replies:0,reposts:0,liked:false,reposted:false,sample:false,tone:''});
-      $('postInput').value='';$('charCount').textContent='0 / 280';$('publishPost').disabled=true;setView('home');toast('Post added to this local preview ✨');
-    }
-    $('publishPost').addEventListener('click',publish);
-    $('postInput').addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter')publish()});
-    $('focusComposer').addEventListener('click',()=>{$('postInput').focus();$('composer').scrollIntoView({behavior:'smooth',block:'center'})});
-    $('mobileCompose').addEventListener('click',()=>{$('postInput').focus();$('composer').scrollIntoView({behavior:'smooth',block:'center'})});
-    $('feedList').addEventListener('click',async e=>{
-      const button=e.target.closest('[data-action]');if(!button)return;
-      const card=button.closest('[data-post]');const post=state.posts.find(p=>p.id===Number(card.dataset.post));if(!post)return;
-      const action=button.dataset.action;
-      if(action==='like'){post.liked=!post.liked;post.likes+=post.liked?1:-1;renderPosts()}
-      else if(action==='repost'){post.reposted=!post.reposted;post.reposts+=post.reposted?1:-1;renderPosts();toast(post.reposted?'Reposted in this preview':'Repost removed')}
-      else if(action==='reply'){const box=$('reply-'+post.id);box.classList.toggle('open');if(box.classList.contains('open'))box.querySelector('input').focus()}
-      else if(action==='send-reply'){const box=$('reply-'+post.id);const input=box.querySelector('input');if(!input.value.trim())return;post.replies++;input.value='';renderPosts();toast('Reply added to this local preview')}
-      else if(action==='share'){try{await navigator.clipboard.writeText(location.href+'#post-'+post.id);toast('Page link copied')}catch{toast('Share this page URL with your friends')}}
-      else if(action==='more'){toast('Post options are part of the preview roadmap')}
+    $("editProfile").addEventListener("click",()=>{$("nameField").value=state.name;$("usernameField").value=state.username;$("bioField").value=state.bio;$("editSheet").classList.add("open")});
+    $("cancelEdit").addEventListener("click",()=>$("editSheet").classList.remove("open"));
+    $("editSheet").addEventListener("click",e=>{if(e.target===$("editSheet"))$("editSheet").classList.remove("open")});
+    $("profileForm").addEventListener("submit",e=>{
+      e.preventDefault();const name=$("nameField").value.trim();const username=$("usernameField").value.trim().replace(/^@/,"").replace(/[^a-zA-Z0-9_.]/g,"").toLowerCase();if(!name||!username){toast("Enter a name and username");return}
+      const previous=state.username;state.name=name;state.username=username;state.bio=$("bioField").value.trim();
+      state.posts.forEach(p=>{if(p.username===previous){p.name=name;p.username=username;p.initials=initials(name)}});
+      $("editSheet").classList.remove("open");render();toast("Profile updated in preview");
     });
-    $('editProfile').addEventListener('click',()=>{$('nameField').value=state.name;$('handleField').value=state.username;$('bioField').value=state.bio;$('editModal').classList.add('open');$('nameField').focus()});
-    $('cancelEdit').addEventListener('click',()=>$('editModal').classList.remove('open'));
-    $('editModal').addEventListener('click',e=>{if(e.target===$('editModal'))$('editModal').classList.remove('open')});
-    $('profileForm').addEventListener('submit',e=>{
-      e.preventDefault();const name=$('nameField').value.trim();const username=$('handleField').value.trim().replace(/^@/,'').replace(/[^a-zA-Z0-9_.]/g,'').toLowerCase();
-      if(!name||!username){toast('Add a display name and valid username');return}
-      const oldUsername=state.username;state.name=name;state.username=username;state.bio=$('bioField').value.trim();
-      state.posts.forEach(p=>{if(!p.sample&&p.username===oldUsername){p.name=name;p.username=username;p.initials=initials(name)}});
-      $('editModal').classList.remove('open');renderPosts();toast('Preview profile updated');
-    });
-    document.addEventListener('keydown',e=>{if(e.key==='Escape')$('editModal').classList.remove('open')});
-    renderPosts();
+    render();
   </script>
 </body>
 </html>
