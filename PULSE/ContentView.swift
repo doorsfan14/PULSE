@@ -111,6 +111,7 @@ private func L(_ key:String)->String { PULSELocalization.t(key) }
 import SwiftUI
 import CoreMotion
 import UIKit
+import FirebaseAuth
 
 private enum AuthScreen: Equatable {
     case welcome
@@ -128,6 +129,9 @@ private enum LegalDocument: String, Identifiable {
 struct ContentView: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var screen: AuthScreen = .welcome
+    @State private var authUser: User? = Auth.auth().currentUser
+    @State private var authListener: AuthStateDidChangeListenerHandle?
+    @State private var isWorking = false
     @State private var name = ""
     @State private var username = ""
     @State private var email = ""
@@ -161,6 +165,10 @@ struct ContentView: View {
     }
 
     var body: some View {
+        Group {
+            if let user = authUser {
+                PULSEHomeView(user: user)
+            } else {
         NavigationStack {
             ZStack {
                 // Share one animated backdrop across screens so transitions don't
@@ -207,6 +215,20 @@ struct ContentView: View {
                 }
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
+            }
+        }
+            }
+        }
+        .onAppear {
+            guard authListener == nil else { return }
+            authListener = Auth.auth().addStateDidChangeListener { _, user in
+                authUser = user
+            }
+        }
+        .onDisappear {
+            if let authListener {
+                Auth.auth().removeStateDidChangeListener(authListener)
+                self.authListener = nil
             }
         }
     }
@@ -538,7 +560,7 @@ struct ContentView: View {
                 .modifier(PULSEEntrance(delay: 0.12))
 
                 Button {
-                    showBackendNotice("Account registration")
+                    Task { await registerAccount() }
                 } label: {
                     Text(L("Create account"))
                         .font(.custom("PlusJakartaSans-SemiBold", size: 17))
@@ -546,7 +568,7 @@ struct ContentView: View {
                         .frame(height: 52)
                 }
                 .buttonStyle(PULSEPrimaryButtonStyle())
-                .disabled(!canCreateAccount)
+                .disabled(!canCreateAccount || isWorking)
                 .modifier(PULSEEntrance(delay: 0.20))
 
                 HStack(spacing: 4) {
@@ -723,7 +745,7 @@ struct ContentView: View {
                 .modifier(PULSEEntrance(delay: 0.12))
 
                 Button {
-                    showBackendNotice("Sign in")
+                    Task { await signInAccount() }
                 } label: {
                     Text(L("Sign in"))
                         .font(.custom("PlusJakartaSans-SemiBold", size: 17))
@@ -731,7 +753,7 @@ struct ContentView: View {
                         .frame(height: 52)
                 }
                 .buttonStyle(PULSEPrimaryButtonStyle())
-                .disabled(!isValidEmail(signInEmail) || signInPassword.isEmpty)
+                .disabled(!isValidEmail(signInEmail) || signInPassword.isEmpty || isWorking)
                 .modifier(PULSEEntrance(delay: 0.18))
 
                 separatorLabel(L("OR"))
@@ -877,8 +899,32 @@ struct ContentView: View {
             usernameAvailabilityIsError = true
             return
         }
-        usernameAvailabilityMessage = L("Format looks good. Unique availability must be confirmed by the account service.")
-        usernameAvailabilityIsError = true
+        usernameAvailabilityMessage = L("Username availability will be checked when you create your account.")
+        usernameAvailabilityIsError = false
+    }
+
+    private func registerAccount() async {
+        guard canCreateAccount, !isWorking else { return }
+        isWorking = true
+        defer { isWorking = false }
+        do {
+            try await PULSEBackend.shared.createAccount(name: name, username: username, email: email, password: password)
+        } catch {
+            message = error.localizedDescription
+            showMessage = true
+        }
+    }
+
+    private func signInAccount() async {
+        guard isValidEmail(signInEmail), !signInPassword.isEmpty, !isWorking else { return }
+        isWorking = true
+        defer { isWorking = false }
+        do {
+            try await PULSEBackend.shared.signIn(email: signInEmail, password: signInPassword)
+        } catch {
+            message = error.localizedDescription
+            showMessage = true
+        }
     }
 
     private func showBackendNotice(_ feature: String) {
