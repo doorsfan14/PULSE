@@ -182,19 +182,19 @@ struct PULSEHomeView: View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    // Identity sits beside the avatar inside a translucent system-color wash.
-                    ZStack(alignment: .topLeading) {
+                    // Keep the avatar and identity anchored to the bottom of the cover.
+                    ZStack(alignment: .bottomLeading) {
                         PULSEAvatarPalette.color(for: resolvedDisplayName)
                         LinearGradient(
                             colors: [
-                                Color(uiColor: .systemBackground).opacity(0.88),
+                                Color(uiColor: .systemBackground).opacity(0),
                                 Color(uiColor: .systemBackground).opacity(0.52),
-                                Color(uiColor: .systemBackground).opacity(0)
+                                Color(uiColor: .systemBackground).opacity(0.88)
                             ],
                             startPoint: .top,
                             endPoint: .bottom
                         )
-                        HStack(spacing: 14) {
+                        HStack(alignment: .center, spacing: 14) {
                             PULSEAvatar(name: resolvedDisplayName, size: 70)
                                 .overlay(Circle().stroke(Color(uiColor: .systemBackground).opacity(0.9), lineWidth: 3))
                             VStack(alignment: .leading, spacing: 5) {
@@ -203,6 +203,7 @@ struct PULSEHomeView: View {
                                         .font(.custom("PlusJakartaSans-Bold", size: 21))
                                         .foregroundStyle(Color(uiColor: .label))
                                         .lineLimit(1)
+                                        .minimumScaleFactor(0.8)
                                     Image(systemName: "checkmark.seal.fill")
                                         .font(.system(size: 16, weight: .semibold))
                                         .foregroundStyle(PULSEStyle.blue)
@@ -216,9 +217,10 @@ struct PULSEHomeView: View {
                             Spacer(minLength: 0)
                         }
                         .padding(.horizontal, 18)
-                        .padding(.top, 26)
+                        .padding(.bottom, 18)
                     }
                     .frame(height: 176)
+                    .frame(maxWidth: .infinity)
                     .clipped()
 
                     VStack(alignment: .leading, spacing: 0) {
