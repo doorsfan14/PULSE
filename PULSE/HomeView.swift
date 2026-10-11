@@ -1,6 +1,9 @@
 import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
+import PhotosUI
+import UniformTypeIdentifiers
 
 private struct PULSEPost: Identifiable {
     let id: String
@@ -10,6 +13,7 @@ private struct PULSEPost: Identifiable {
     let text: String
     let createdAt: Date
     let isPrivate: Bool
+    let avatarURL: String?
 
     init?(document: QueryDocumentSnapshot) {
         let data = document.data()
@@ -27,6 +31,7 @@ private struct PULSEPost: Identifiable {
         self.text = text
         self.createdAt = (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
         self.isPrivate = data["isPrivate"] as? Bool ?? false
+        self.avatarURL = data["authorAvatarURL"] as? String
     }
 }
 
@@ -44,6 +49,8 @@ struct PULSEHomeView: View {
     @State private var displayName = ""
     @State private var username = ""
     @State private var bio = ""
+    @State private var avatarURL: String?
+    @State private var bannerURL: String?
     @State private var isAccountPrivate = false
     @State private var showEditProfile = false
     @State private var showDeleteAccountConfirmation = false
@@ -82,9 +89,11 @@ struct PULSEHomeView: View {
                 user: user,
                 displayName: displayName,
                 bio: bio,
+                avatarURL: avatarURL,
+                bannerURL: bannerURL,
                 isPrivate: isAccountPrivate,
-                onSave: { newName, newBio, makePrivate in
-                    Task { await saveProfile(name: newName, bio: newBio, isPrivate: makePrivate) }
+                onSave: { newName, newBio, makePrivate, newAvatarURL, newBannerURL in
+                    Task { await saveProfile(name: newName, bio: newBio, isPrivate: makePrivate, avatarURL: newAvatarURL, bannerURL: newBannerURL) }
                 },
                 onDeleteAccount: { showDeleteAccountConfirmation = true }
             )
@@ -185,7 +194,17 @@ struct PULSEHomeView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     // The avatar breaks past the cover edge; the fade matches the system appearance.
                     ZStack(alignment: .bottomLeading) {
-                        PULSEAvatarPalette.color(for: resolvedDisplayName)
+                        if let bannerURL, let url = URL(string: bannerURL) {
+                            AsyncImage(url: url) { phase in
+                                if let image = phase.image { image.resizable().scaledToFill() }
+                                else { PULSEAvatarPalette.color(for: resolvedDisplayName) }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 190)
+                            .clipped()
+                        } else {
+                            PULSEAvatarPalette.color(for: resolvedDisplayName)
+                        }
                         LinearGradient(
                             colors: [
                                 Color.clear,
@@ -196,7 +215,7 @@ struct PULSEHomeView: View {
                             endPoint: .bottom
                         )
                         HStack(alignment: .bottom, spacing: 12) {
-                            PULSEAvatar(name: resolvedDisplayName, size: 92)
+                            PULSEAvatar(name: resolvedDisplayName, size: 92, imageURL: avatarURL)
                                 .overlay(Circle().stroke(bannerBottomColor, lineWidth: 3))
                                 .offset(y: 36)
                             VStack(alignment: .leading, spacing: 5) {
@@ -457,6 +476,8 @@ struct PULSEHomeView: View {
             displayName = snapshot.data()?["displayName"] as? String ?? user.displayName ?? ""
             username = snapshot.data()?["username"] as? String ?? "habib"
             bio = snapshot.data()?["bio"] as? String ?? ""
+            avatarURL = snapshot.data()?["avatarURL"] as? String
+            bannerURL = snapshot.data()?["bannerURL"] as? String
             isAccountPrivate = snapshot.data()?["isPrivate"] as? Bool ?? false
         } catch {
             displayName = user.displayName ?? ""
@@ -523,7 +544,7 @@ struct PULSEHomeView: View {
         }
     }
 
-    private func saveProfile(name: String, bio newBio: String, isPrivate: Bool) async {
+    private func saveProfile(name: String, bio newBio: String, isPrivate: Bool, avatarURL newAvatarURL: String?, bannerURL newBannerURL: String?) async {
         let cleanName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         let cleanBio = newBio.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleanName.isEmpty, cleanName.count <= 60, cleanBio.count <= 160 else { return }
@@ -541,13 +562,17 @@ struct PULSEHomeView: View {
             try await db.collection("users").document(user.uid).updateData([
                 "displayName": cleanName,
                 "bio": cleanBio,
-                "isPrivate": isPrivate
+                "isPrivate": isPrivate,
+                "avatarURL": newAvatarURL ?? "",
+                "bannerURL": newBannerURL ?? ""
             ])
             let profileChange = user.createProfileChangeRequest()
             profileChange.displayName = cleanName
             try await profileChange.commitChanges()
             displayName = cleanName
             bio = cleanBio
+            avatarURL = newAvatarURL
+            bannerURL = newBannerURL
             isAccountPrivate = isPrivate
             showEditProfile = false
         } catch {
@@ -598,11 +623,27 @@ private enum PULSEAvatarPalette {
 private struct PULSEAvatar: View {
     let name: String
     var size: CGFloat = 42
+    var imageURL: String? = nil
 
     var body: some View {
+        Group {
+            if let imageURL, let url = URL(string: imageURL) {
+                AsyncImage(url: url) { phase in
+                    if let image = phase.image { image.resizable().scaledToFill() }
+                    else { fallback }
+                }
+            } else {
+                fallback
+            }
+        }
+        .frame(width: size, height: size)
+        .clipShape(Circle())
+        .accessibilityLabel("\(name) avatar")
+    }
+
+    private var fallback: some View {
         Circle()
             .fill(PULSEAvatarPalette.color(for: name))
-            .frame(width: size, height: size)
             .overlay {
                 Text(String(name.trimmingCharacters(in: .whitespacesAndNewlines).prefix(1)).uppercased().isEmpty
                      ? "P"
@@ -610,7 +651,6 @@ private struct PULSEAvatar: View {
                     .font(.system(size: size * 0.38, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
             }
-            .accessibilityLabel("\(name) avatar")
     }
 }
 
@@ -643,7 +683,7 @@ private struct PULSEPostRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            PULSEAvatar(name: post.authorName, size: 42)
+            PULSEAvatar(name: post.authorName, size: 42, imageURL: post.avatarURL)
 
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .firstTextBaseline, spacing: 5) {
@@ -1043,22 +1083,30 @@ private struct PULSEReplyComposer: View {
 
 private struct PULSEEditProfileView: View {
     let user: User
-    let onSave: (String, String, Bool) -> Void
+    let onSave: (String, String, Bool, String?, String?) -> Void
     let onDeleteAccount: () -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var name: String
     @State private var bio: String
     @State private var isPrivate: Bool
+    @State private var avatarURL: String?
+    @State private var bannerURL: String?
+    @State private var selectedAvatar: PhotosPickerItem?
+    @State private var selectedBanner: PhotosPickerItem?
+    @State private var isSaving = false
+    @State private var imageError = ""
 
-    init(user: User, displayName: String, bio: String, isPrivate: Bool,
-         onSave: @escaping (String, String, Bool) -> Void,
+    init(user: User, displayName: String, bio: String, avatarURL: String?, bannerURL: String?, isPrivate: Bool,
+         onSave: @escaping (String, String, Bool, String?, String?) -> Void,
          onDeleteAccount: @escaping () -> Void) {
         self.user = user
         self.onSave = onSave
         self.onDeleteAccount = onDeleteAccount
         _name = State(initialValue: displayName)
         _bio = State(initialValue: bio)
+        _avatarURL = State(initialValue: avatarURL)
+        _bannerURL = State(initialValue: bannerURL)
         _isPrivate = State(initialValue: isPrivate)
     }
 
@@ -1072,6 +1120,56 @@ private struct PULSEEditProfileView: View {
                     TextField("Bio", text: $bio, axis: .vertical)
                         .lineLimit(2...4)
                         .onChange(of: bio) { _, value in if value.count > 160 { bio = String(value.prefix(160)) } }
+                }
+                Section("Profile images") {
+                    HStack(spacing: 14) {
+                        Group {
+                            if let avatarURL, let url = URL(string: avatarURL) {
+                                AsyncImage(url: url) { phase in
+                                    if let image = phase.image { image.resizable().scaledToFill() }
+                                    else { Image(systemName: "person.crop.circle.fill").resizable().scaledToFit().foregroundStyle(.secondary) }
+                                }
+                            } else {
+                                Image(systemName: "person.crop.circle.fill").resizable().scaledToFit().foregroundStyle(.secondary)
+                            }
+                        }
+                        .frame(width: 56, height: 56)
+                        .clipShape(Circle())
+                        VStack(alignment: .leading, spacing: 7) {
+                            PhotosPicker(selection: $selectedAvatar, matching: .images) {
+                                Label("Choose profile photo", systemImage: "photo")
+                            }
+                            if avatarURL != nil {
+                                Button("Remove photo", role: .destructive) { avatarURL = nil; selectedAvatar = nil }
+                                    .font(.footnote)
+                            }
+                        }
+                    }
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Banner image").font(.subheadline.weight(.medium))
+                        if let bannerURL, let url = URL(string: bannerURL) {
+                            AsyncImage(url: url) { phase in
+                                if let image = phase.image { image.resizable().scaledToFill() }
+                                else { Color.secondary.opacity(0.15) }
+                            }
+                            .frame(height: 90).frame(maxWidth: .infinity).clipped().clipShape(RoundedRectangle(cornerRadius: 12))
+                        } else {
+                            RoundedRectangle(cornerRadius: 12).fill(Color.secondary.opacity(0.12)).frame(height: 70)
+                                .overlay(Image(systemName: "photo").foregroundStyle(.secondary))
+                        }
+                        PhotosPicker(selection: $selectedBanner, matching: .images) {
+                            Label("Choose banner image", systemImage: "photo.on.rectangle")
+                        }
+                        if bannerURL != nil {
+                            Button("Remove banner", role: .destructive) { bannerURL = nil; selectedBanner = nil }
+                                .font(.footnote)
+                        }
+                    }
+                    if !imageError.isEmpty {
+                        Text(imageError).font(.footnote).foregroundStyle(.red)
+                    }
+                    Text("Choose images up to 5 MB. Changes sync with the PULSE website.")
+                        .font(.footnote).foregroundStyle(.secondary)
                 }
                 Section("Privacy") {
                     Toggle("Private account", isOn: $isPrivate)
@@ -1091,12 +1189,46 @@ private struct PULSEEditProfileView: View {
             .navigationTitle("Edit profile")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .topBarLeading) { Button("Cancel") { dismiss() }.disabled(isSaving) }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Save") { onSave(name, bio, isPrivate) }
-                        .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    Button {
+                        Task { await saveChanges() }
+                    } label: {
+                        if isSaving { ProgressView() } else { Text("Save") }
+                    }
+                    .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSaving)
                 }
             }
+        }
+    }
+
+    private func upload(_ item: PhotosPickerItem?, kind: String, currentURL: String?) async throws -> String? {
+        guard let item else { return currentURL }
+        guard let data = try await item.loadTransferable(type: Data.self) else {
+            throw NSError(domain: "PULSEProfileImages", code: 1, userInfo: [NSLocalizedDescriptionKey: "Could not read that image. Try another one."])
+        }
+        guard data.count <= 5 * 1024 * 1024 else {
+            throw NSError(domain: "PULSEProfileImages", code: 2, userInfo: [NSLocalizedDescriptionKey: "Images must be 5 MB or smaller."])
+        }
+        let contentType = item.supportedContentTypes.first?.preferredMIMEType ?? "image/jpeg"
+        let metadata = StorageMetadata()
+        metadata.contentType = contentType
+        let ref = Storage.storage().reference().child("profileMedia/\\(user.uid)/\\(kind)")
+        _ = try await ref.putDataAsync(data, metadata: metadata)
+        let url = try await ref.downloadURL()
+        return url.absoluteString
+    }
+
+    private func saveChanges() async {
+        imageError = ""
+        isSaving = true
+        defer { isSaving = false }
+        do {
+            let newAvatarURL = try await upload(selectedAvatar, kind: "avatar", currentURL: avatarURL)
+            let newBannerURL = try await upload(selectedBanner, kind: "banner", currentURL: bannerURL)
+            onSave(name, bio, isPrivate, newAvatarURL, newBannerURL)
+        } catch {
+            imageError = error.localizedDescription
         }
     }
 }
@@ -1211,6 +1343,7 @@ private struct PULSEComposerView: View {
                 "authorID": user.uid,
                 "authorName": currentName,
                 "username": currentUsername,
+                "authorAvatarURL": profileData["avatarURL"] as? String ?? "",
                 "text": body,
                 "createdAt": FieldValue.serverTimestamp(),
                 "isPrivate": accountIsPrivate
