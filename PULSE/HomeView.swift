@@ -51,6 +51,7 @@ struct PULSEHomeView: View {
     @State private var showComposer = false
     @State private var selectedTab = 0
     @State private var selectedReplyPost: PULSEPost?
+    @State private var showReplies = false
     @State private var feedListeners: [ListenerRegistration] = []
     @State private var publicPosts: [PULSEPost] = []
     @State private var ownPrivatePosts: [PULSEPost] = []
@@ -67,10 +68,7 @@ struct PULSEHomeView: View {
                 .tabItem { Image(systemName: "person.crop.circle") }
                 .tag(1)
 
-            repliesScreen
-                .tabItem { Image(systemName: "bubble.left.and.bubble.right") }
-                .tag(2)
-        }
+         }
         .tint(PULSEStyle.blue)
         .task { await loadProfile() }
         .onAppear(perform: startFeedListener)
@@ -167,6 +165,16 @@ struct PULSEHomeView: View {
                     .accessibilityLabel("Write a post")
                 }
             }
+            .navigationDestination(isPresented: $showReplies) {
+                if let post = selectedReplyPost {
+                    PULSEReplyComposer(
+                        post: post,
+                        user: user,
+                        displayName: resolvedDisplayName,
+                        username: username.isEmpty ? "habib" : username
+                    )
+                }
+            }
         }
     }
 
@@ -174,22 +182,48 @@ struct PULSEHomeView: View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    // Profile cover banner: edge-to-edge, not a card.
-                    ZStack(alignment: .bottomLeading) {
+                    // Identity sits beside the avatar inside a translucent system-color wash.
+                    ZStack(alignment: .topLeading) {
                         PULSEAvatarPalette.color(for: resolvedDisplayName)
+                        LinearGradient(
+                            colors: [
+                                Color(uiColor: .systemBackground).opacity(0.88),
+                                Color(uiColor: .systemBackground).opacity(0.52),
+                                Color(uiColor: .systemBackground).opacity(0)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        HStack(spacing: 14) {
+                            PULSEAvatar(name: resolvedDisplayName, size: 70)
+                                .overlay(Circle().stroke(Color(uiColor: .systemBackground).opacity(0.9), lineWidth: 3))
+                            VStack(alignment: .leading, spacing: 5) {
+                                HStack(spacing: 5) {
+                                    Text(resolvedDisplayName)
+                                        .font(.custom("PlusJakartaSans-Bold", size: 21))
+                                        .foregroundStyle(Color(uiColor: .label))
+                                        .lineLimit(1)
+                                    Image(systemName: "checkmark.seal.fill")
+                                        .font(.system(size: 16, weight: .semibold))
+                                        .foregroundStyle(PULSEStyle.blue)
+                                        .accessibilityLabel("Verified account")
+                                }
+                                Text("@\\(username.isEmpty ? "habib" : username)")
+                                    .font(.custom("PlusJakartaSans-Regular", size: 14))
+                                    .foregroundStyle(Color(uiColor: .secondaryLabel))
+                                    .lineLimit(1)
+                            }
+                            Spacer(minLength: 0)
+                        }
+                        .padding(.horizontal, 18)
+                        .padding(.top, 26)
                     }
                     .frame(height: 176)
                     .clipped()
 
                     VStack(alignment: .leading, spacing: 0) {
-                        HStack(alignment: .bottom) {
-                            PULSEAvatar(name: resolvedDisplayName, size: 88)
-                                .overlay(Circle().stroke(Color(uiColor: .systemBackground), lineWidth: 5))
-                                .offset(y: -34)
-                                .padding(.bottom, -34)
-
+                        HStack {
                             Spacer()
-
                             HStack(spacing: 8) {
                                 Button {
                                     showEditProfile = true
@@ -219,25 +253,8 @@ struct PULSEHomeView: View {
                                         .overlay(Circle().stroke(PULSEStyle.divider, lineWidth: 1))
                                 }
                             }
-                            .padding(.top, 12)
                         }
-
-                        HStack(spacing: 6) {
-                            Text(resolvedDisplayName)
-                                .font(.custom("PlusJakartaSans-Bold", size: 23))
-                                .foregroundStyle(.primary)
-                            Image(systemName: "checkmark.seal.fill")
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundStyle(PULSEStyle.blue)
-                                .accessibilityLabel("Verified account")
-                        }
-                        .padding(.top, 12)
-
-                        Text("@\(username.isEmpty ? "habib" : username)")
-                            .font(.custom("PlusJakartaSans-Regular", size: 14))
-                            .foregroundStyle(.secondary)
-                            .padding(.top, 3)
-
+                        .padding(.top, 14)
                         if !bio.isEmpty {
                             Text(bio)
                                 .font(.custom("PlusJakartaSans-Regular", size: 14))
@@ -340,35 +357,9 @@ struct PULSEHomeView: View {
         return name.isEmpty ? "Your profile" : name
     }
 
-    private var repliesScreen: some View {
-        Group {
-            if let post = selectedReplyPost {
-                PULSEReplyComposer(
-                    postID: post.id,
-                    user: user,
-                    displayName: resolvedDisplayName,
-                    username: username.isEmpty ? "habib" : username,
-                    onClose: {
-                        selectedReplyPost = nil
-                        selectedTab = 0
-                    }
-                )
-            } else {
-                NavigationStack {
-                    ContentUnavailableView(
-                        "Replies",
-                        systemImage: "bubble.left.and.bubble.right",
-                        description: Text("Choose the reply button on a post to open its conversation here.")
-                    )
-                    .navigationTitle("Replies")
-                }
-            }
-        }
-    }
-
     private func openReplies(for post: PULSEPost) {
         selectedReplyPost = post
-        selectedTab = 2
+        showReplies = true
     }
 
     private func loadProfile() async {
@@ -546,9 +537,11 @@ private struct PULSEPostRow: View {
     @State private var isLiked = false
     @State private var likeCount = 0
     @State private var repostCount = 0
+    @State private var replyCount = 0
     @State private var isReposted = false
     @State private var likesListener: ListenerRegistration?
     @State private var repostsListener: ListenerRegistration?
+    @State private var repliesListener: ListenerRegistration?
     @State private var ownRepostListener: ListenerRegistration?
     @State private var likeError = ""
 
@@ -640,10 +633,8 @@ private struct PULSEPostRow: View {
                     .buttonStyle(.plain)
                     .accessibilityLabel(isLiked ? "Unlike post" : "Like post")
 
-                    Button {
-                        onReply()
-                    } label: {
-                        Image(systemName: "bubble")
+                    Button(action: onReply) {
+                        Label("\\(replyCount)", systemImage: "bubble")
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -685,9 +676,11 @@ private struct PULSEPostRow: View {
         .onDisappear {
             likesListener?.remove()
             repostsListener?.remove()
+            repliesListener?.remove()
             ownRepostListener?.remove()
             likesListener = nil
             repostsListener = nil
+            repliesListener = nil
             ownRepostListener = nil
         }
      }
@@ -708,6 +701,10 @@ private struct PULSEPostRow: View {
         repostsListener = repostsRef.addSnapshotListener { snapshot, error in
             if let error { likeError = error.localizedDescription; return }
             repostCount = snapshot?.documents.count ?? 0
+        }
+        repliesListener = postRef.collection("replies").addSnapshotListener { snapshot, error in
+            if let error { likeError = error.localizedDescription; return }
+            replyCount = snapshot?.documents.count ?? 0
         }
         ownRepostListener = repostsRef.document(currentUserID).addSnapshotListener { snapshot, error in
             if let error { likeError = error.localizedDescription; return }
@@ -784,11 +781,12 @@ private struct PULSEReply: Identifiable {
 }
 
 private struct PULSEReplyComposer: View {
-    let postID: String
-    let user: User?
+    let post: PULSEPost
+    let user: User
     let displayName: String
     let username: String
-    let onClose: () -> Void
+
+    @Environment(\\.dismiss) private var dismiss
     @State private var text = ""
     @State private var errorMessage = ""
     @State private var isSending = false
@@ -796,32 +794,65 @@ private struct PULSEReplyComposer: View {
     @State private var repliesListener: ListenerRegistration?
 
     var body: some View {
-        NavigationStack {
-            VStack(alignment: .leading, spacing: 14) {
-                if replies.isEmpty {
-                    Text("No replies yet")
-                        .font(.custom("PlusJakartaSans-Regular", size: 13))
-                        .foregroundStyle(.secondary)
-                        .padding(.vertical, 12)
-                } else {
-                    ScrollView {
-                        LazyVStack(alignment: .leading, spacing: 0) {
-                            ForEach(replies) { reply in
+        VStack(spacing: 0) {
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    HStack(alignment: .top, spacing: 12) {
+                        PULSEAvatar(name: post.authorName, size: 44)
+                        VStack(alignment: .leading, spacing: 7) {
+                            HStack(spacing: 5) {
+                                Text(post.authorName)
+                                    .font(.custom("PlusJakartaSans-SemiBold", size: 14))
+                                if post.authorID == user.uid {
+                                    Image(systemName: "checkmark.seal.fill")
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundStyle(PULSEStyle.blue)
+                                }
+                                Text("@\\(post.username)")
+                                    .font(.custom("PlusJakartaSans-Regular", size: 12))
+                                    .foregroundStyle(.secondary)
+                                Spacer(minLength: 0)
+                                Text(post.createdAt, style: .relative)
+                                    .font(.custom("PlusJakartaSans-Regular", size: 11))
+                                    .foregroundStyle(.tertiary)
+                            }
+                            Text(post.text)
+                                .font(.custom("PlusJakartaSans-Regular", size: 15))
+                                .fixedSize(horizontal: false, vertical: true)
+                            Text("\\(replies.count) \\(replies.count == 1 ? "reply" : "replies")")
+                                .font(.custom("PlusJakartaSans-Medium", size: 12))
+                                .foregroundStyle(.secondary)
+                                .padding(.top, 4)
+                        }
+                    }
+                    .padding(16)
+
+                    Rectangle().fill(PULSEStyle.divider).frame(height: 1)
+
+                    if replies.isEmpty {
+                        ContentUnavailableView(
+                            "No replies yet",
+                            systemImage: "bubble.left",
+                            description: Text("Be the first to join the conversation.")
+                        )
+                        .padding(.top, 28)
+                    } else {
+                        ForEach(replies) { reply in
+                            HStack(alignment: .top, spacing: 10) {
+                                PULSEAvatar(name: reply.authorName, size: 36)
                                 VStack(alignment: .leading, spacing: 5) {
                                     HStack(spacing: 5) {
                                         Text(reply.authorName)
                                             .font(.custom("PlusJakartaSans-SemiBold", size: 13))
-                                        if reply.authorID == Auth.auth().currentUser?.uid {
+                                        if reply.authorID == user.uid {
                                             Image(systemName: "checkmark.seal.fill")
                                                 .font(.system(size: 11, weight: .semibold))
                                                 .foregroundStyle(PULSEStyle.blue)
-                                                .accessibilityLabel("Verified account")
                                         }
-                                        Text("@\(reply.username)")
+                                        Text("@\\(reply.username)")
                                             .font(.custom("PlusJakartaSans-Regular", size: 12))
                                             .foregroundStyle(.secondary)
-                                        Text("·")
-                                            .foregroundStyle(.tertiary)
+                                        Text("·").foregroundStyle(.tertiary)
                                         Text(reply.createdAt, style: .relative)
                                             .font(.custom("PlusJakartaSans-Regular", size: 11))
                                             .foregroundStyle(.secondary)
@@ -831,52 +862,69 @@ private struct PULSEReplyComposer: View {
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.vertical, 12)
-                                Rectangle().fill(PULSEStyle.divider).frame(height: 1)
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 13)
+                            Rectangle().fill(PULSEStyle.divider).frame(height: 1).padding(.leading, 62)
                         }
                     }
                 }
+            }
 
-                TextEditor(text: $text)
-                    .font(.custom("PlusJakartaSans-Regular", size: 16))
-                    .frame(minHeight: 100)
-                    .overlay(alignment: .topLeading) {
-                        if text.isEmpty {
-                            Text("Write a reply…")
-                                .foregroundStyle(.tertiary)
-                                .padding(.top, 8)
-                                .padding(.leading, 5)
-                                .allowsHitTesting(false)
-                        }
+            if !errorMessage.isEmpty {
+                Text(errorMessage)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 14)
+                    .padding(.top, 8)
+            }
+
+            HStack(alignment: .bottom, spacing: 10) {
+                PULSEAvatar(name: displayName, size: 34)
+                TextField("Write a reply…", text: $text, axis: .vertical)
+                    .font(.custom("PlusJakartaSans-Regular", size: 14))
+                    .lineLimit(1...5)
+                    .padding(.horizontal, 13)
+                    .padding(.vertical, 10)
+                    .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 18))
+                Button {
+                    Task { await sendReply() }
+                } label: {
+                    if isSending {
+                        ProgressView()
+                    } else {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .font(.system(size: 29))
                     }
-                if !errorMessage.isEmpty {
-                    Text(errorMessage).font(.caption).foregroundStyle(.red)
                 }
+                .foregroundStyle(PULSEStyle.blue)
+                .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSending)
+                .accessibilityLabel("Send reply")
             }
-            .padding(18)
-            .navigationTitle("Replies")
-            .navigationBarTitleDisplayMode(.inline)
-            .onAppear(perform: listenForReplies)
-            .onDisappear {
-                repliesListener?.remove()
-                repliesListener = nil
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(Color(uiColor: .systemBackground))
+            .overlay(alignment: .top) { Rectangle().fill(PULSEStyle.divider).frame(height: 1) }
+        }
+        .background(Color(uiColor: .systemBackground))
+        .navigationTitle("Conversation")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Done") { dismiss() }
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Done", action: onClose)
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Reply") { Task { await sendReply() } }
-                        .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSending)
-                }
-            }
+        }
+        .onAppear(perform: listenForReplies)
+        .onDisappear {
+            repliesListener?.remove()
+            repliesListener = nil
         }
     }
 
     private func listenForReplies() {
         guard repliesListener == nil else { return }
-        repliesListener = Firestore.firestore().collection("posts").document(postID)
+        repliesListener = Firestore.firestore().collection("posts").document(post.id)
             .collection("replies").order(by: "createdAt", descending: false)
             .addSnapshotListener { snapshot, error in
                 if let error { errorMessage = error.localizedDescription; return }
@@ -885,13 +933,12 @@ private struct PULSEReplyComposer: View {
     }
 
     private func sendReply() async {
-        guard let user else { errorMessage = "Sign in to reply."; return }
         let body = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !body.isEmpty, body.count <= 280 else { return }
         isSending = true
         defer { isSending = false }
         do {
-            try await Firestore.firestore().collection("posts").document(postID)
+            try await Firestore.firestore().collection("posts").document(post.id)
                 .collection("replies").addDocument(data: [
                     "authorID": user.uid,
                     "authorName": displayName,
@@ -900,6 +947,7 @@ private struct PULSEReplyComposer: View {
                     "createdAt": FieldValue.serverTimestamp()
                 ])
             text = ""
+            errorMessage = ""
         } catch { errorMessage = error.localizedDescription }
     }
 }
