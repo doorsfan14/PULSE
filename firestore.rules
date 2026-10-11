@@ -8,7 +8,7 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if signedIn();
       allow create: if signedIn() && request.auth.uid == userId
-        && request.resource.data.keys().hasOnly(['displayName', 'username', 'usernameLowercase', 'createdAt', 'bio', 'isPrivate'])
+        && request.resource.data.keys().hasOnly(['displayName', 'username', 'usernameLowercase', 'createdAt', 'bio', 'isPrivate', 'avatarURL', 'bannerURL'])
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() >= 1 && request.resource.data.displayName.size() <= 60
         && request.resource.data.username is string
@@ -17,14 +17,22 @@ service cloud.firestore {
         && request.resource.data.createdAt is timestamp
         && request.resource.data.get('bio', '') is string
         && request.resource.data.get('bio', '').size() <= 160
-        && request.resource.data.get('isPrivate', false) is bool;
+        && request.resource.data.get('isPrivate', false) is bool
+        && request.resource.data.get('avatarURL', '') is string
+        && request.resource.data.get('avatarURL', '').size() <= 2048
+        && request.resource.data.get('bannerURL', '') is string
+        && request.resource.data.get('bannerURL', '').size() <= 2048;
       allow update: if signedIn() && request.auth.uid == userId
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'bio', 'isPrivate'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'bio', 'isPrivate', 'avatarURL', 'bannerURL'])
         && request.resource.data.displayName is string
         && request.resource.data.displayName.size() >= 1 && request.resource.data.displayName.size() <= 60
         && request.resource.data.get('bio', '') is string
         && request.resource.data.get('bio', '').size() <= 160
-        && request.resource.data.get('isPrivate', false) is bool;
+        && request.resource.data.get('isPrivate', false) is bool
+        && request.resource.data.get('avatarURL', '') is string
+        && request.resource.data.get('avatarURL', '').size() <= 2048
+        && request.resource.data.get('bannerURL', '') is string
+        && request.resource.data.get('bannerURL', '').size() <= 2048;
       allow delete: if signedIn() && request.auth.uid == userId;
     }
 
@@ -41,12 +49,62 @@ service cloud.firestore {
     match /posts/{postId} {
       allow read: if signedIn() && (resource.data.get('isPrivate', false) == false || resource.data.authorID == request.auth.uid);
       allow create: if signedIn()
-        && request.resource.data.keys().hasOnly(['authorID', 'authorName', 'username', 'text', 'createdAt', 'isPrivate'])
+        && request.resource.data.keys().hasOnly(['authorID', 'authorName', 'username', 'authorAvatarURL', 'text', 'createdAt', 'isPrivate'])
         && request.resource.data.authorID == request.auth.uid
         && request.resource.data.authorName is string
         && request.resource.data.authorName.size() >= 1 && request.resource.data.authorName.size() <= 60
         && request.resource.data.username is string
-        && request.resource.data.username.matches('^[A-Za-z0-9_]{3,20}$')
+        && request.resource.data.username.matches('^[A-Za-z0-9_]{3,20}
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.isPrivate is bool;
+      allow update: if signedIn() && resource.data.authorID == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'isPrivate'])
+        && validPostText(request.resource.data.text)
+        && request.resource.data.get('isPrivate', false) is bool;
+      allow delete: if signedIn() && resource.data.authorID == request.auth.uid;
+
+      match /likes/{userId} {
+        allow read: if signedIn();
+        allow create: if signedIn() && userId == request.auth.uid
+          && request.resource.data.keys().hasOnly(['uid', 'createdAt'])
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.createdAt is timestamp;
+        allow update: if false;
+        allow delete: if signedIn() && userId == request.auth.uid;
+      }
+
+      match /reposts/{userId} {
+        allow read: if signedIn();
+        allow create: if signedIn() && userId == request.auth.uid
+          && get(/databases/$(database)/documents/posts/$(postId)).data.get('isPrivate', false) == false
+          && request.resource.data.keys().hasOnly(['uid', 'authorName', 'username', 'createdAt'])
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.createdAt is timestamp;
+        allow update: if false;
+        allow delete: if signedIn() && userId == request.auth.uid;
+      }
+
+      match /replies/{replyId} {
+        allow read: if signedIn() && (get(/databases/$(database)/documents/posts/$(postId)).data.get('isPrivate', false) == false
+          || get(/databases/$(database)/documents/posts/$(postId)).data.authorID == request.auth.uid);
+        allow create: if signedIn()
+          && get(/databases/$(database)/documents/posts/$(postId)).data.get('isPrivate', false) == false
+          && request.resource.data.keys().hasOnly(['authorID', 'authorName', 'username', 'text', 'createdAt'])
+          && request.resource.data.authorID == request.auth.uid
+          && request.resource.data.authorName is string
+          && request.resource.data.username.matches('^[A-Za-z0-9_]{3,20}$')
+          && validPostText(request.resource.data.text)
+          && request.resource.data.createdAt is timestamp;
+        allow update: if false;
+        allow delete: if signedIn() && resource.data.authorID == request.auth.uid;
+      }
+    }
+
+    match /{document=**} { allow read, write: if false; }
+  }
+})
+        && request.resource.data.get('authorAvatarURL', '') is string
+        && request.resource.data.get('authorAvatarURL', '').size() <= 2048
         && validPostText(request.resource.data.text)
         && request.resource.data.createdAt is timestamp
         && request.resource.data.isPrivate is bool;
