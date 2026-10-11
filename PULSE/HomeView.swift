@@ -895,7 +895,10 @@ private struct PULSEEditProfileView: View {
                         .foregroundStyle(.secondary)
                 }
                 Section {
-                    Button("Delete account", role: .destructive, action: onDeleteAccount)
+                    Button("Delete account", role: .destructive) {
+                        dismiss()
+                        onDeleteAccount()
+                    }
                 } footer: {
                     Text("Deleting your account is permanent. You may need to sign in again before deleting it.")
                 }
