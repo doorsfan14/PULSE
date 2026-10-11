@@ -23,7 +23,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-xcode-${{ hashFiles('PULSE.xcodeproj/project.pbxproj', '**/Package.resolved') }}-
 
+      # Simulator compilation is a useful PR check, but redundant on every main-branch push.
       - name: Build PULSE for the iOS Simulator
+        if: github.event_name == 'pull_request'
         run: |
           xcodebuild \
             -project PULSE.xcodeproj \
