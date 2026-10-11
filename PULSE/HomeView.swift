@@ -720,6 +720,26 @@ private struct PULSEPostRow: View {
     }
 }
 
+private struct PULSEReply: Identifiable {
+    let id: String
+    let authorName: String
+    let username: String
+    let text: String
+    let createdAt: Date
+
+    init?(document: QueryDocumentSnapshot) {
+        let data = document.data()
+        guard let authorName = data["authorName"] as? String,
+              let username = data["username"] as? String,
+              let text = data["text"] as? String else { return nil }
+        id = document.documentID
+        self.authorName = authorName
+        self.username = username
+        self.text = text
+        createdAt = (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
+    }
+}
+
 private struct PULSEReplyComposer: View {
     let postID: String
     let user: User?
@@ -730,16 +750,49 @@ private struct PULSEReplyComposer: View {
     @State private var text = ""
     @State private var errorMessage = ""
     @State private var isSending = false
+    @State private var replies: [PULSEReply] = []
+    @State private var repliesListener: ListenerRegistration?
 
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 14) {
-                Text("Replying to a post")
-                    .font(.custom("PlusJakartaSans-SemiBold", size: 14))
-                    .foregroundStyle(.secondary)
+                if replies.isEmpty {
+                    Text("No replies yet")
+                        .font(.custom("PlusJakartaSans-Regular", size: 13))
+                        .foregroundStyle(.secondary)
+                        .padding(.vertical, 12)
+                } else {
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: 0) {
+                            ForEach(replies) { reply in
+                                VStack(alignment: .leading, spacing: 5) {
+                                    HStack(spacing: 5) {
+                                        Text(reply.authorName)
+                                            .font(.custom("PlusJakartaSans-SemiBold", size: 13))
+                                        Text("@\(reply.username)")
+                                            .font(.custom("PlusJakartaSans-Regular", size: 12))
+                                            .foregroundStyle(.secondary)
+                                        Text("·")
+                                            .foregroundStyle(.tertiary)
+                                        Text(reply.createdAt, style: .relative)
+                                            .font(.custom("PlusJakartaSans-Regular", size: 11))
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    Text(reply.text)
+                                        .font(.custom("PlusJakartaSans-Regular", size: 14))
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.vertical, 12)
+                                Rectangle().fill(PULSEStyle.divider).frame(height: 1)
+                            }
+                        }
+                    }
+                }
+
                 TextEditor(text: $text)
                     .font(.custom("PlusJakartaSans-Regular", size: 16))
-                    .frame(minHeight: 130)
+                    .frame(minHeight: 100)
                     .overlay(alignment: .topLeading) {
                         if text.isEmpty {
                             Text("Write a reply…")
@@ -752,14 +805,18 @@ private struct PULSEReplyComposer: View {
                 if !errorMessage.isEmpty {
                     Text(errorMessage).font(.caption).foregroundStyle(.red)
                 }
-                Spacer()
             }
             .padding(18)
-            .navigationTitle("Reply")
+            .navigationTitle("Replies")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear(perform: listenForReplies)
+            .onDisappear {
+                repliesListener?.remove()
+                repliesListener = nil
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") { dismiss() }
+                    Button("Done") { dismiss() }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Reply") { Task { await sendReply() } }
@@ -767,6 +824,16 @@ private struct PULSEReplyComposer: View {
                 }
             }
         }
+    }
+
+    private func listenForReplies() {
+        guard repliesListener == nil else { return }
+        repliesListener = Firestore.firestore().collection("posts").document(postID)
+            .collection("replies").order(by: "createdAt", descending: false)
+            .addSnapshotListener { snapshot, error in
+                if let error { errorMessage = error.localizedDescription; return }
+                replies = snapshot?.documents.compactMap(PULSEReply.init(document:)) ?? []
+            }
     }
 
     private func sendReply() async {
