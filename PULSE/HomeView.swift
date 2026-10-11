@@ -406,10 +406,25 @@ private struct PULSEComposerView: View {
         defer { isPublishing = false }
 
         do {
+            // Fetch the authoritative profile at publish time. The composer can open
+            // before the Home screen's asynchronous profile load has finished.
+            let profile = try await db.collection("users").document(user.uid).getDocument()
+            let profileData = profile.data() ?? [:]
+            let currentName = (profileData["displayName"] as? String ?? displayName)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            let currentUsername = (profileData["username"] as? String ?? username)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+
+            guard !currentName.isEmpty,
+                  currentUsername.range(of: "^[A-Za-z0-9_]{3,20}$", options: .regularExpression) != nil else {
+                errorMessage = "Your profile is still loading or is incomplete. Close the composer, wait a moment, and try again."
+                return
+            }
+
             try await db.collection("posts").addDocument(data: [
                 "authorID": user.uid,
-                "authorName": displayName,
-                "username": username,
+                "authorName": currentName,
+                "username": currentUsername,
                 "text": body,
                 "createdAt": FieldValue.serverTimestamp()
             ])
