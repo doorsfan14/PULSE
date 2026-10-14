@@ -25,11 +25,55 @@
     .bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:calc(57px + env(safe-area-inset-bottom));padding:3px 20px env(safe-area-inset-bottom);display:flex;justify-content:space-around;align-items:center;background:color-mix(in srgb,var(--bg) 94%,transparent);border-top:1px solid var(--line);z-index:6;backdrop-filter:saturate(180%) blur(18px);-webkit-backdrop-filter:saturate(180%) blur(18px)}.bottom-nav button{width:56px;height:45px;display:grid;place-items:center;border:0;background:transparent;color:var(--secondary);border-radius:12px}.bottom-nav button.active{color:var(--blue)}.bottom-nav button svg{width:24px;height:24px}
     .backdrop{display:none;position:fixed;inset:0;background:#0006;z-index:20;align-items:flex-end;justify-content:center}.backdrop.open{display:flex}.sheet{width:100%;max-height:90dvh;overflow:auto;background:var(--bg);border-radius:20px 20px 0 0;padding:20px 20px calc(24px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px}.sheet h2{font-size:18px;margin:0}.field{display:grid;gap:7px;margin:15px 0}.field label{font-size:12px;color:var(--secondary)}.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--surface);color:var(--text);font-size:15px;outline:none}.field textarea{min-height:80px;resize:vertical}.field input:focus,.field textarea:focus{border-color:var(--blue)}.sheet-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}.secondary-button{border:0;border-radius:999px;padding:10px 16px;background:var(--surface);font-size:14px;font-weight:600}.error{color:var(--danger);font-size:13px;line-height:1.5;margin:12px 0}.muted{color:var(--secondary);font-size:12px;line-height:1.5}.auth-wrap{min-height:calc(100vh - 70px);display:flex;align-items:center;justify-content:center;padding:24px 22px 70px}.auth-card{width:100%;max-width:420px}.auth-card h1{font-size:32px;letter-spacing:-1px;margin:0 0 8px}.auth-card>p{color:var(--secondary);font-size:14px;line-height:1.6;margin:0 0 24px}.auth-card .field{margin:14px 0}.auth-submit{width:100%;margin-top:8px;padding:12px}.auth-switch{display:block;border:0;background:transparent;color:var(--blue);font-weight:600;font-size:13px;margin:18px auto 0;padding:8px}.toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translate(-50%,10px);opacity:0;background:var(--text);color:var(--bg);padding:11px 15px;border-radius:12px;font-size:12px;z-index:30;transition:opacity .2s,transform .2s;pointer-events:none;max-width:calc(100vw - 30px);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
     @media(min-width:700px){.app{max-width:680px;margin:0 auto;padding-bottom:72px}.bottom-nav{left:50%;transform:translateX(-50%);width:min(100%,680px)}header{padding-top:10px}.large-title{margin-top:12px}}
+
+    .desktop-sidebar,.desktop-rail{display:none}
+    .desktop-logo{font-size:27px;font-weight:800;letter-spacing:-1.5px;padding:5px 14px 24px}
+    .desktop-nav{display:grid;gap:6px}
+    .desktop-nav-item{display:flex;align-items:center;gap:16px;width:calc(100% - 18px);min-height:50px;padding:0 14px;border:0;border-radius:999px;background:transparent;text-align:left;font-size:16px;color:var(--text)}
+    .desktop-nav-item svg{width:23px;height:23px;flex-shrink:0}
+    .desktop-nav-item.active{font-weight:800}
+    .desktop-nav-item:hover,.rail-link:hover{background:var(--surface)}
+    .desktop-compose{width:calc(100% - 22px);margin:18px 11px 0;padding:13px 18px;font-size:16px}
+    .desktop-rail{font-size:14px}
+    .rail-card{padding:18px;border:1px solid var(--line);border-radius:18px;background:var(--surface)}
+    .rail-card h2{font-size:19px;letter-spacing:-.4px;margin:0 0 8px}
+    .rail-card p{font-size:13px;color:var(--secondary);line-height:1.55;margin:0}
+    .rail-divider{height:1px;background:var(--line);margin:16px 0 8px}
+    .rail-link{display:flex;align-items:center;justify-content:space-between;width:100%;padding:11px 7px;border:0;border-radius:8px;background:transparent;text-align:left;font-size:13px;font-weight:600}
+    .rail-link span{font-size:18px;color:var(--secondary)}
+    .rail-footer{font-size:11px;color:var(--secondary);line-height:1.6;padding:12px 8px}
+    @media(min-width:1100px){
+      .app{display:grid;grid-template-columns:220px minmax(0,600px) 290px;column-gap:26px;max-width:1210px;margin:0 auto;padding:0 18px 24px;align-items:start}
+      .desktop-sidebar{display:block;grid-column:1;grid-row:1 / span 2;position:sticky;top:0;height:100vh;padding:20px 0;border-right:1px solid var(--line)}
+      .app>header{grid-column:2;grid-row:1;min-height:58px;padding:10px 18px;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+      .app>header .wordmark{display:none}
+      .app>#mainView{grid-column:2;grid-row:2;min-width:0;border-left:1px solid var(--line);border-right:1px solid var(--line);min-height:calc(100vh - 58px)}
+      .app>#authView{grid-column:1 / -1;grid-row:1 / span 2;min-height:100vh}
+      .desktop-rail{display:block;grid-column:3;grid-row:2;position:sticky;top:16px;padding-top:14px}
+      .bottom-nav{display:none!important}
+      .app .large-title{margin:12px 18px 18px}
+      .app .composer{border-bottom:1px solid var(--line)}
+      .app .profile-details{border-bottom:1px solid var(--line)}
+      .app .profile-cover{height:190px}
+      .app .post{padding:17px 18px 13px}
+      .app .profile{min-height:70vh}
+      .app .auth-wrap{padding-bottom:24px}
+    }
+
     @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
   </style>
 </head>
 <body>
   <div class="app">
+
+    <aside class="desktop-sidebar" id="desktopSidebar" hidden aria-label="Desktop navigation">
+      <div class="desktop-logo">PULSE</div>
+      <nav class="desktop-nav">
+        <button class="desktop-nav-item active" data-view="home"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Z"/></svg><span>Home</span></button>
+        <button class="desktop-nav-item" data-view="profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Profile</span></button>
+      </nav>
+      <button class="primary desktop-compose" id="desktopCompose">Post</button>
+    </aside>
     <header>
       <span class="wordmark" id="wordmark">PULSE</span>
       <h1 class="page-title" id="pageTitle" hidden>Profile</h1>
@@ -83,6 +127,17 @@
         <div class="empty" id="emptyProfile" hidden><strong>No posts yet</strong><p>Your posts will appear here.</p></div>
       </section>
     </main>
+
+    <aside class="desktop-rail" id="desktopRail" hidden aria-label="PULSE information">
+      <section class="rail-card">
+        <h2>Your PULSE</h2>
+        <p>A place for your thoughts and conversations.</p>
+        <div class="rail-divider"></div>
+        <button class="rail-link" data-view="home">Go to Home <span>→</span></button>
+        <button class="rail-link" data-view="profile">View your profile <span>→</span></button>
+      </section>
+      <p class="rail-footer">PULSE · Keep the conversation going.</p>
+    </aside>
   </div>
 
   <nav class="bottom-nav" id="bottomNav" aria-label="Main navigation" hidden>
@@ -150,8 +205,8 @@
     function friendlyError(error){const code=error?.code||"";const messages={"auth/email-already-in-use":"That email already has an account.","auth/invalid-email":"Enter a valid email address.","auth/invalid-credential":"Email or password is incorrect.","auth/weak-password":"Choose a password with at least 6 characters.","auth/too-many-requests":"Too many attempts. Try again later.","permission-denied":"Firebase denied this action. Check that Firestore rules are published.","unavailable":"Firebase is temporarily unavailable. Check your connection."};return messages[code]||error?.message||"Something went wrong. Try again."}
     function setError(id,message){$(id).textContent=message||"";$(id).hidden=!message}
     function setBusy(value){state.busy=value;$("authSubmit").disabled=value;$("authSubmit").textContent=value?"Please wait…":(state.signup?"Create account":"Sign in")}
-    function showAuth(){ $("authView").hidden=false;$("mainView").hidden=true;$("bottomNav").hidden=true;$("headerCompose").hidden=true;$("signOut").hidden=true;$("wordmark").hidden=false;$("pageTitle").hidden=true; }
-    function showMain(){ $("authView").hidden=true;$("mainView").hidden=false;$("bottomNav").hidden=false;$("headerCompose").hidden=false;$("signOut").hidden=false; }
+    function showAuth(){ $("authView").hidden=false;$("mainView").hidden=true;$("bottomNav").hidden=true;$("desktopSidebar").hidden=true;$("desktopRail").hidden=true;$("headerCompose").hidden=true;$("signOut").hidden=true;$("wordmark").hidden=false;$("pageTitle").hidden=true; }
+    function showMain(){ $("authView").hidden=true;$("mainView").hidden=false;$("bottomNav").hidden=false;$("desktopSidebar").hidden=false;$("desktopRail").hidden=false;$("headerCompose").hidden=false;$("signOut").hidden=false; }
     function setAuthMode(signup){state.signup=signup;$("signupFields").hidden=!signup;$("authTitle").textContent=signup?"Create your account.":"Welcome to PULSE.";$("authSubtitle").textContent=signup?"Join the conversation with a PULSE account.":"A place for your thoughts and conversations.";$("authPassword").autocomplete=signup?"new-password":"current-password";$("authSwitch").textContent=signup?"Already have an account? Sign in":"Create an account";setError("authError","");setBusy(false)}
     $("authSwitch").addEventListener("click",()=>setAuthMode(!state.signup));
     $("authForm").addEventListener("submit",async e=>{
@@ -181,6 +236,7 @@
     });
     $("signOut").addEventListener("click",async()=>{try{await firebaseSignOut(auth)}catch(error){toast(friendlyError(error))}});
     $("headerCompose").addEventListener("click",()=>{$("postInput").focus();window.scrollTo({top:0,behavior:"smooth"})});
+    $("desktopCompose").addEventListener("click",()=>{$("postInput").focus();window.scrollTo({top:0,behavior:"smooth"})});
     $("emptyCompose").addEventListener("click",()=>{$("postInput").focus();window.scrollTo({top:0,behavior:"smooth"})});
     $("postInput").addEventListener("input",()=>{const n=$("postInput").value.length;$("charCount").textContent=n+"/280";$("charCount").classList.toggle("over",n>280);$("publish").disabled=!$("postInput").value.trim()||n>280});
     $("publish").addEventListener("click",async()=>{
@@ -264,6 +320,7 @@
     }
     function setView(view){state.view=view;const profile=view==="profile";$("feedView").hidden=profile;$("profileView").style.display=profile?"block":"none";$("wordmark").hidden=profile;$("pageTitle").hidden=!profile;$("pageTitle").textContent="Profile";document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));window.scrollTo({top:0,behavior:"smooth"})}
     document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.view)));
+    document.querySelectorAll(".desktop-nav-item").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".desktop-nav-item").forEach(item=>item.classList.toggle("active",item.dataset.view===b.dataset.view))}));
     $("editProfile").addEventListener("click",()=>{$("nameField").value=state.profile.displayName;$("bioField").value=state.profile.bio;$("privateField").checked=state.profile.isPrivate;$("avatarFile").value="";$("bannerFile").value="";state.removeAvatar=false;state.removeBanner=false;$("removeAvatar").textContent=state.profile.avatarURL?"Remove profile photo":"No profile photo set";$("removeBanner").textContent=state.profile.bannerURL?"Remove banner":"No banner set";setError("profileError","");$("editSheet").classList.add("open")});
     $("removeAvatar").addEventListener("click",()=>{state.removeAvatar=true;$("avatarFile").value="";$("removeAvatar").textContent="Profile photo will be removed"});
     $("removeBanner").addEventListener("click",()=>{state.removeBanner=true;$("bannerFile").value="";$("removeBanner").textContent="Banner will be removed"});
